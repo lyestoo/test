@@ -4,58 +4,55 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultCDATA.java,v 1.10 2004/09/24 12:24:10 maartenc Exp $
+ * $Id: DefaultHandler2.java,v 1.1 2004/09/11 11:56:20 maartenc Exp $
  */
 
-package org.dom4j.tree;
+package org.dom4j.io.aelfred2;
 
-import org.dom4j.Element;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.DeclHandler;
+import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.helpers.DefaultHandler;
 
-/** <p><code>DefaultCDATA</code> is the default CDATA implementation.
-  * It is a doubly linked node which supports the parent relationship 
-  * and can be modified in place.</p>
-  *
-  * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.10 $
-  */
-public class DefaultCDATA extends FlyweightCDATA {
+/**
+ * @author Maarten Coene
+ */
+public class DefaultHandler2 extends DefaultHandler implements DeclHandler,
+		LexicalHandler {
 
-    /** The parent of this node */
-    private Element parent;
+	public void elementDecl(String arg0, String arg1) throws SAXException {
+	}
 
-    /** @param text is the CDATA text
-      */
-    public DefaultCDATA(String text) {
-    	super(text);
-    }
+	public void attributeDecl(String arg0, String arg1, String arg2, String arg3, String arg4) throws SAXException {
+	}
 
-    /** @param parent is the parent element
-      * @param text is the CDATA text
-      */
-    public DefaultCDATA(Element parent,String text) {
-    	super(text);
-        this.parent = parent;
-    }
+	public void internalEntityDecl(String arg0, String arg1) throws SAXException {
+	}
 
-    public void setText(String text) {
-    	this.text = text;
-    }
-    
-    public Element getParent() {
-        return parent;
-    }
+	public void externalEntityDecl(String arg0, String arg1, String arg2) throws SAXException {
+	}
 
-    public void setParent(Element parent) {
-        this.parent = parent;
-    }
-    
-    public boolean supportsParent() {
-        return true;
-    }
+	public void startDTD(String arg0, String arg1, String arg2) throws SAXException {
+	}
 
-    public boolean isReadOnly() {
-        return false;
-    }
+	public void endDTD() throws SAXException {
+	}
+
+	public void startEntity(String arg0) throws SAXException {
+	}
+
+	public void endEntity(String arg0) throws SAXException {
+	}
+
+	public void startCDATA() throws SAXException {
+	}
+
+	public void endCDATA() throws SAXException {
+	}
+
+	public void comment(char[] arg0, int arg1, int arg2) throws SAXException {
+	}
+
 }
 
 
@@ -103,5 +100,5 @@ public class DefaultCDATA extends FlyweightCDATA {
  *
  * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultCDATA.java,v 1.10 2004/09/24 12:24:10 maartenc Exp $
+ * $Id: DefaultHandler2.java,v 1.1 2004/09/11 11:56:20 maartenc Exp $
  */

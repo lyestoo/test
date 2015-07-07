@@ -4,11 +4,12 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: NamespaceCache.java,v 1.11 2004/08/04 18:22:39 maartenc Exp $
+ * $Id: NamespaceCache.java,v 1.12 2004/10/09 11:48:53 maartenc Exp $
  */
 
 package org.dom4j.tree;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ import org.dom4j.Namespace;
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
  * @author Maarten Coene
  * @author Brett Finnell
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class NamespaceCache {
 
@@ -58,17 +59,24 @@ public class NamespaceCache {
     }
 
 
-    /** @return the name model for the given name and namepsace
+    /** @return the namespace for the given prefix and uri
       */
     public Namespace get(String prefix, String uri) {
         Map cache = getURICache(uri);
-        Namespace answer = (Namespace) cache.get(prefix);
+        WeakReference ref = (WeakReference) cache.get(prefix);
+        Namespace answer = null;
+        if (ref != null) {
+        	answer = (Namespace) ref.get();
+        }
         if (answer == null) {
             synchronized (cache) {
-                answer = (Namespace) cache.get(prefix);
+                ref = (WeakReference) cache.get(prefix);
+                if (ref != null) {
+                	answer = (Namespace) ref.get();
+                }
                 if (answer == null) {
                     answer = createNamespace(prefix, uri);
-                    cache.put(prefix, answer);
+                    cache.put(prefix, new WeakReference(answer));
                 }
             }
         }
@@ -79,13 +87,20 @@ public class NamespaceCache {
     /** @return the name model for the given name and namepsace
       */
     public Namespace get(String uri) {
-        Namespace answer = (Namespace) noPrefixCache.get(uri);
+        WeakReference ref = (WeakReference) noPrefixCache.get(uri);
+        Namespace answer = null;
+        if (ref != null) {
+        	answer = (Namespace) ref.get();
+        }
         if (answer == null) {
             synchronized (noPrefixCache) {
-                answer = (Namespace) noPrefixCache.get(uri);
+            	ref = (WeakReference) noPrefixCache.get(uri);
+                if (ref != null) {
+                	answer = (Namespace) ref.get();
+                }
                 if (answer == null) {
                     answer = createNamespace("", uri);
-                    noPrefixCache.put(uri, answer);
+                    noPrefixCache.put(uri, new WeakReference(answer));
                 }
             }
         }
@@ -163,5 +178,5 @@ public class NamespaceCache {
  *
  * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: NamespaceCache.java,v 1.11 2004/08/04 18:22:39 maartenc Exp $
+ * $Id: NamespaceCache.java,v 1.12 2004/10/09 11:48:53 maartenc Exp $
  */

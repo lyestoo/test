@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: SAXModifier.java,v 1.1 2004/08/02 18:44:07 maartenc Exp $
+ * $Id: SAXModifier.java,v 1.2 2004/10/16 19:03:41 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -241,7 +241,7 @@ public class SAXModifier {
     * when the specified element path is encounted while parsing the source.
     *
     * @param path The element path to be handled
-    * @param handler The {@link ElementModifier} to be called by the event based processor.
+    * @param modifier The {@link ElementModifier} to be called by the event based processor.
     */
    public void addModifier(String path, ElementModifier modifier) {
       this.modifiers.put(path, modifier);
@@ -400,5 +400,5 @@ public class SAXModifier {
  *
  * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXModifier.java,v 1.1 2004/08/02 18:44:07 maartenc Exp $
+ * $Id: SAXModifier.java,v 1.2 2004/10/16 19:03:41 maartenc Exp $
  */

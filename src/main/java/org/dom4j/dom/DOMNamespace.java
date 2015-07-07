@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DOMNamespace.java,v 1.7 2004/06/25 08:03:35 maartenc Exp $
+ * $Id: DOMNamespace.java,v 1.8 2004/10/28 20:20:09 maartenc Exp $
  */
 
 package org.dom4j.dom;
@@ -20,7 +20,7 @@ import org.w3c.dom.NodeList;
   * with the DOM API.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.7 $
+  * @version $Revision: 1.8 $
   */
 public class DOMNamespace extends DefaultNamespace implements org.w3c.dom.Node {
     
@@ -44,9 +44,9 @@ public class DOMNamespace extends DefaultNamespace implements org.w3c.dom.Node {
         return DOMNodeHelper.getNamespaceURI(this);
     }
 
-    public String getPrefix() {
-        return DOMNodeHelper.getPrefix(this);
-    }
+//    public String getPrefix() {
+//        return DOMNodeHelper.getPrefix(this);
+//    }
     
     public void setPrefix(String prefix) throws DOMException {
         DOMNodeHelper.setPrefix(this, prefix);
@@ -195,5 +195,5 @@ public class DOMNamespace extends DefaultNamespace implements org.w3c.dom.Node {
  *
  * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMNamespace.java,v 1.7 2004/06/25 08:03:35 maartenc Exp $
+ * $Id: DOMNamespace.java,v 1.8 2004/10/28 20:20:09 maartenc Exp $
  */

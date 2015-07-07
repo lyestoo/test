@@ -4,12 +4,13 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractCDATA.java,v 1.9 2004/06/25 08:03:41 maartenc Exp $
+ * $Id: AbstractCDATA.java,v 1.10 2004/10/28 20:20:09 maartenc Exp $
  */
 
 package org.dom4j.tree;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 
 import org.dom4j.CDATA;
@@ -19,7 +20,7 @@ import org.dom4j.Visitor;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.9 $
+  * @version $Revision: 1.10 $
   */
 public abstract class AbstractCDATA extends AbstractCharacterData implements CDATA {
 
@@ -35,12 +36,21 @@ public abstract class AbstractCDATA extends AbstractCharacterData implements CDA
     }
 
     public String asXML() {
-        return "<![CDATA[" + getText() + "]]>";
+        StringWriter writer = new StringWriter();
+        try {
+        	write(writer);
+        } catch (IOException e) {
+        	// will not happen since we are using a StringWriter!
+        }
+        	
+        return writer.toString();
     }
     
     public void write(Writer writer) throws IOException {
         writer.write( "<![CDATA[" );
-        writer.write( getText() );
+        if (getText() != null) {
+        	writer.write(getText());
+        }
         writer.write( "]]>" );
     }
     
@@ -94,5 +104,5 @@ public abstract class AbstractCDATA extends AbstractCharacterData implements CDA
  *
  * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractCDATA.java,v 1.9 2004/06/25 08:03:41 maartenc Exp $
+ * $Id: AbstractCDATA.java,v 1.10 2004/10/28 20:20:09 maartenc Exp $
  */

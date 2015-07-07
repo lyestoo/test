@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Visitor.java,v 1.5 2004/06/25 12:34:47 maartenc Exp $
+ * $Id: Visitor.java,v 1.6 2004/10/16 19:08:08 maartenc Exp $
  */
 
 package org.dom4j;
@@ -17,14 +17,14 @@ package org.dom4j;
   * for more details on the <code>Visitor</code> pattern.</p>
   *
   * <p> This 
-  * <a href="http://rampages.onramp.net/~huston/dp/patterns.html">article</a>
+  * <a href="http://www.patterndepot.com/put/8/JavaPatterns.htm">site</a>
   * has further discussion on design patterns and links to the GOF book.
-  * This <a href="http://rampages.onramp.net/~huston/dp/visitor.html">link</a>
+  * This <a href="http://www.patterndepot.com/put/8/visitor.pdf">link</a>
   * describes the Visitor pattern in detail.
   * </p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.5 $
+  * @version $Revision: 1.6 $
   */
 public interface Visitor {
 
@@ -137,5 +137,5 @@ public interface Visitor {
  *
  * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Visitor.java,v 1.5 2004/06/25 12:34:47 maartenc Exp $
+ * $Id: Visitor.java,v 1.6 2004/10/16 19:08:08 maartenc Exp $
  */
