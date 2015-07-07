@@ -116,7 +116,7 @@ public interface Element extends Branch {
      * 
      * @since 1.5
      */
-    List getNamespacesForURI(String uri);
+    List<Namespace> getNamespacesForURI(String uri);
 
     /**
      * <p>
@@ -169,7 +169,7 @@ public interface Element extends Branch {
      * 
      * @return a list of any additional namespace declarations.
      */
-    List additionalNamespaces();
+    List<Namespace> additionalNamespaces();
 
     /**
      * <p>
@@ -181,7 +181,7 @@ public interface Element extends Branch {
      * 
      * @return a list of namespaces declared for this element.
      */
-    List declaredNamespaces();
+    List<Namespace> declaredNamespaces();
 
     // Builder methods
     // -------------------------------------------------------------------------
@@ -489,7 +489,7 @@ public interface Element extends Branch {
      * 
      * @return the attributes that this element contains as a <code>List</code>
      */
-    List attributes();
+    List<Attribute> attributes();
 
     /**
      * Sets the attributes that this element contains
@@ -497,7 +497,7 @@ public interface Element extends Branch {
      * @param attributes
      *            DOCUMENT ME!
      */
-    void setAttributes(List attributes);
+    void setAttributes(List<Attribute> attributes);
 
     /**
      * DOCUMENT ME!
@@ -511,7 +511,7 @@ public interface Element extends Branch {
      * 
      * @return an iterator over the attributes of this element
      */
-    Iterator attributeIterator();
+    Iterator<Attribute> attributeIterator();
 
     /**
      * Returns the attribute at the specified indexGets the
@@ -614,40 +614,6 @@ public interface Element extends Branch {
      */
     String attributeValue(QName qName, String defaultValue);
 
-    /**
-     * <p>
-     * Sets the attribute value of the given local name.
-     * </p>
-     * 
-     * @param name
-     *            is the name of the attribute whose value is to be added or
-     *            updated
-     * @param value
-     *            is the attribute's value
-     * 
-     * @deprecated As of version 0.5. Please use {@link
-     *             #addAttribute(String,String)} instead. WILL BE REMOVED IN
-     *             dom4j-1.6 !!
-     */
-    void setAttributeValue(String name, String value);
-
-    /**
-     * <p>
-     * Sets the attribute value of the given fully qualified name.
-     * </p>
-     * 
-     * @param qName
-     *            is the fully qualified name of the attribute whose value is to
-     *            be added or updated
-     * @param value
-     *            is the attribute's value
-     * 
-     * @deprecated As of version 0.5. Please use {@link
-     *             #addAttribute(QName,String)} instead. WILL BE REMOVED IN
-     *             dom4j-1.6 !!
-     */
-    void setAttributeValue(QName qName, String value);
-
     // Content methods
     // -------------------------------------------------------------------------
 
@@ -681,7 +647,7 @@ public interface Element extends Branch {
      * 
      * @return a list of all the elements in this element.
      */
-    List elements();
+    List<Element> elements();
 
     /**
      * <p>
@@ -697,7 +663,7 @@ public interface Element extends Branch {
      * @return a list of all the elements in this element for the given local
      *         name
      */
-    List elements(String name);
+    List<Element> elements(String name);
 
     /**
      * <p>
@@ -713,14 +679,14 @@ public interface Element extends Branch {
      * @return a list of all the elements in this element for the given fully
      *         qualified name.
      */
-    List elements(QName qName);
+    List<Element> elements(QName qName);
 
     /**
      * Returns an iterator over all this elements child elements.
      * 
      * @return an iterator over the contained elements
      */
-    Iterator elementIterator();
+    Iterator<Element> elementIterator();
 
     /**
      * Returns an iterator over the elements contained in this element which
@@ -732,7 +698,7 @@ public interface Element extends Branch {
      * @return an iterator over the contained elements matching the given local
      *         name
      */
-    Iterator elementIterator(String name);
+    Iterator<Element> elementIterator(String name);
 
     /**
      * Returns an iterator over the elements contained in this element which
@@ -744,7 +710,7 @@ public interface Element extends Branch {
      * @return an iterator over the contained elements matching the given fully
      *         qualified name
      */
-    Iterator elementIterator(QName qName);
+    Iterator<Element> elementIterator(QName qName);
 
     // Helper methods
     // -------------------------------------------------------------------------

@@ -12,6 +12,7 @@ import java.io.Writer;
 
 import org.dom4j.Comment;
 import org.dom4j.Element;
+import org.dom4j.NodeType;
 import org.dom4j.Visitor;
 
 /**
@@ -28,10 +29,12 @@ public abstract class AbstractComment extends AbstractCharacterData implements
     public AbstractComment() {
     }
 
-    public short getNodeType() {
-        return COMMENT_NODE;
+    @Override
+    public NodeType getNodeTypeEnum() {
+        return NodeType.COMMENT_NODE;
     }
 
+    @Override
     public String getPath(Element context) {
         Element parent = getParent();
 
@@ -39,6 +42,7 @@ public abstract class AbstractComment extends AbstractCharacterData implements
                 .getPath(context) + "/comment()") : "comment()";
     }
 
+    @Override
     public String getUniquePath(Element context) {
         Element parent = getParent();
 
@@ -46,14 +50,19 @@ public abstract class AbstractComment extends AbstractCharacterData implements
                 .getUniquePath(context) + "/comment()") : "comment()";
     }
 
-    public String toString() {
-        return super.toString() + " [Comment: \"" + getText() + "\"]";
+    @Override
+    protected void toString(StringBuilder builder) {
+        super.toString(builder);
+        builder.append(" [Comment: \"");
+        builder.append(getText());
+        builder.append("\"]");
     }
 
     public String asXML() {
         return "<!--" + getText() + "-->";
     }
 
+    @Override
     public void write(Writer writer) throws IOException {
         writer.write("<!--");
         writer.write(getText());

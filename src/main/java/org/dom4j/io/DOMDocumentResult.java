@@ -5,72 +5,63 @@
  * See the bottom of this file for the licence.
  */
 
-package org.dom4j.dtd;
+package org.dom4j.io;
+
+import javax.xml.transform.sax.SAXResult;
+
+import org.w3c.dom.Document;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.ext.LexicalHandler;
 
 /**
  * <p>
- * <code>AttributeDecl</code> represents an element declaration in a DTD.
+ * <code>DOMDocumentResult</code> implements a JAXP {@link SAXResult} for a
+ * {@link org.w3c.dom.Document}.
  * </p>
  * 
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
- * @version $Revision: 1.6 $
+ * @author Todd Wolff
+ * @version $Revision: 1.1 $
  */
-public class ElementDecl implements Declaration {
-    /** Holds value of property name. */
-    private String name;
+public class DOMDocumentResult extends SAXResult {
+    private DOMSAXContentHandler contentHandler;
 
-    /** Holds value of property model. */
-    private String model;
-
-    public ElementDecl() {
+    public DOMDocumentResult() {
+        this(new DOMSAXContentHandler());
     }
 
-    public ElementDecl(String name, String model) {
-        this.name = name;
-        this.model = model;
-    }
-
-    /**
-     * Getter for property name.
-     * 
-     * @return Value of property name.
-     */
-    public String getName() {
-        return name;
+    public DOMDocumentResult(DOMSAXContentHandler contentHandler) {
+        this.contentHandler = contentHandler;
+        super.setHandler(this.contentHandler);
+        super.setLexicalHandler(this.contentHandler);
     }
 
     /**
-     * Setter for property name.
+     * Retrieves w3c dom object generated via transformation
      * 
-     * @param name
-     *            New value of property name.
+     * @return the Document created by the transformation
      */
-    public void setName(String name) {
-        this.name = name;
+    public Document getDocument() {
+        return contentHandler.getDocument();
     }
 
-    /**
-     * Getter for property model.
-     * 
-     * @return Value of property model.
-     */
-    public String getModel() {
-        return model;
+    // Overloaded methods
+    // -------------------------------------------------------------------------
+    public void setHandler(ContentHandler handler) {
+        if (handler instanceof DOMSAXContentHandler) {
+            this.contentHandler = (DOMSAXContentHandler) handler;
+            super.setHandler(this.contentHandler);
+        }
     }
 
-    /**
-     * Setter for property model.
-     * 
-     * @param model
-     *            New value of property model.
-     */
-    public void setModel(String model) {
-        this.model = model;
+    public void setLexicalHandler(LexicalHandler handler) {
+        if (handler instanceof DOMSAXContentHandler) {
+            this.contentHandler = (DOMSAXContentHandler) handler;
+            super.setLexicalHandler(this.contentHandler);
+        }
     }
-
-    public String toString() {
-        return "<!ELEMENT " + name + " " + model + ">";
-    }
+    
 }
 
 /*

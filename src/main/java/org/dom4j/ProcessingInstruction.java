@@ -63,11 +63,11 @@ public interface ProcessingInstruction extends Node {
      * 
      * @return the values for this processing instruction as a Map
      */
-    Map getValues();
+    Map<String, String> getValues();
 
     void setValue(String name, String value);
 
-    void setValues(Map data);
+    void setValues(Map<String, String> data);
 
     boolean removeValue(String name);
 }

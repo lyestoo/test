@@ -33,54 +33,6 @@ import java.util.List;
  * @see #isReadOnly
  */
 public interface Node extends Cloneable {
-    // W3C DOM complient node type codes
-
-    /** Matches Element nodes */
-    short ANY_NODE = 0;
-
-    /** Matches Element nodes */
-    short ELEMENT_NODE = 1;
-
-    /** Matches elements nodes */
-    short ATTRIBUTE_NODE = 2;
-
-    /** Matches elements nodes */
-    short TEXT_NODE = 3;
-
-    /** Matches elements nodes */
-    short CDATA_SECTION_NODE = 4;
-
-    /** Matches elements nodes */
-    short ENTITY_REFERENCE_NODE = 5;
-
-    /** Matches elements nodes */
-
-    // public static final short ENTITY_NODE = 6;
-    /** Matches ProcessingInstruction */
-    short PROCESSING_INSTRUCTION_NODE = 7;
-
-    /** Matches Comments nodes */
-    short COMMENT_NODE = 8;
-
-    /** Matches Document nodes */
-    short DOCUMENT_NODE = 9;
-
-    /** Matches DocumentType nodes */
-    short DOCUMENT_TYPE_NODE = 10;
-
-    // public static final short DOCUMENT_FRAGMENT_NODE = 11;
-    // public static final short NOTATION_NODE = 12;
-
-    /** Matchs a Namespace Node - NOTE this differs from DOM */
-
-    // XXXX: ????
-    short NAMESPACE_NODE = 13;
-
-    /** Does not match any valid node */
-    short UNKNOWN_NODE = 14;
-
-    /** The maximum number of node types for sizing purposes */
-    short MAX_NODE_TYPE = 14;
 
     /**
      * <p>
@@ -332,6 +284,11 @@ public interface Node extends Cloneable {
      */
     void write(Writer writer) throws IOException;
 
+    /*
+     * TODO DOC
+     */
+    NodeType getNodeTypeEnum();
+
     /**
      * Returns the code according to the type of node. This makes processing
      * nodes polymorphically much easier as the switch statement can be used
@@ -381,7 +338,7 @@ public interface Node extends Cloneable {
      * @return the list of <code>Node</code> or <code>String</code>
      *         instances depending on the XPath expression
      */
-    List selectNodes(String xpathExpression);
+    List<? extends Node> selectNodes(String xpathExpression);
 
     /**
      * <p>
@@ -417,7 +374,7 @@ public interface Node extends Cloneable {
      * @return the list of <code>Node</code> instances sorted by the
      *         comparisonXPathExpression
      */
-    List selectNodes(String xpathExpression, String comparisonXPathExpression);
+    List<? extends Node> selectNodes(String xpathExpression, String comparisonXPathExpression);
 
     /**
      * <p>
@@ -438,7 +395,7 @@ public interface Node extends Cloneable {
      * @return the list of <code>Node</code> instances sorted by the
      *         comparisonXPathExpression
      */
-    List selectNodes(String xpathExpression, String comparisonXPathExpression,
+    List<? extends Node> selectNodes(String xpathExpression, String comparisonXPathExpression, 
             boolean removeDuplicates);
 
     /**

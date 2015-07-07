@@ -39,10 +39,12 @@ public class FlyweightComment extends AbstractComment implements Comment {
         this.text = text;
     }
 
+    @Override
     public String getText() {
         return text;
     }
 
+    @Override
     protected Node createXPathResult(Element parent) {
         return new DefaultComment(parent, getText());
     }

@@ -4,7 +4,6 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.tree;
 
 import java.io.IOException;
@@ -14,6 +13,7 @@ import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.Node;
+import org.dom4j.NodeType;
 import org.dom4j.Visitor;
 
 /**
@@ -27,8 +27,10 @@ import org.dom4j.Visitor;
  */
 public abstract class AbstractAttribute extends AbstractNode implements
         Attribute {
-    public short getNodeType() {
-        return ATTRIBUTE_NODE;
+
+    @Override
+    public NodeType getNodeTypeEnum() {
+        return NodeType.ATTRIBUTE_NODE;
     }
 
     public void setNamespace(Namespace namespace) {
@@ -36,10 +38,12 @@ public abstract class AbstractAttribute extends AbstractNode implements
         throw new UnsupportedOperationException(msg);
     }
 
+    @Override
     public String getText() {
         return getValue();
     }
 
+    @Override
     public void setText(String text) {
         setValue(text);
     }
@@ -57,15 +61,21 @@ public abstract class AbstractAttribute extends AbstractNode implements
         setValue((data == null) ? null : data.toString());
     }
 
-    public String toString() {
-        return super.toString() + " [Attribute: name " + getQualifiedName()
-                + " value \"" + getValue() + "\"]";
+    @Override
+    protected  void toString(StringBuilder builder) {
+        super.toString(builder);
+        builder.append(" [Attribute: name ");
+        builder.append(getQualifiedName());
+        builder.append(" value \"");
+        builder.append(getValue());
+        builder.append("\"]");
     }
 
     public String asXML() {
         return getQualifiedName() + "=\"" + getValue() + "\"";
     }
 
+    @Override
     public void write(Writer writer) throws IOException {
         writer.write(getQualifiedName());
         writer.write("=\"");
@@ -82,6 +92,7 @@ public abstract class AbstractAttribute extends AbstractNode implements
         return getQName().getNamespace();
     }
 
+    @Override
     public String getName() {
         return getQName().getName();
     }
@@ -113,8 +124,7 @@ public abstract class AbstractAttribute extends AbstractNode implements
         String uri = getNamespaceURI();
         String prefix = getNamespacePrefix();
 
-        if ((uri == null) || (uri.length() == 0) || (prefix == null)
-                || (prefix.length() == 0)) {
+        if ((uri == null) || (uri.length() == 0) || (prefix == null) || (prefix.length() == 0)) {
             result.append(getName());
         } else {
             result.append(getQualifiedName());
@@ -138,8 +148,7 @@ public abstract class AbstractAttribute extends AbstractNode implements
         String uri = getNamespaceURI();
         String prefix = getNamespacePrefix();
 
-        if ((uri == null) || (uri.length() == 0) || (prefix == null)
-                || (prefix.length() == 0)) {
+        if ((uri == null) || (uri.length() == 0) || (prefix == null) || (prefix.length() == 0)) {
             result.append(getName());
         } else {
             result.append(getQualifiedName());
@@ -148,6 +157,7 @@ public abstract class AbstractAttribute extends AbstractNode implements
         return result.toString();
     }
 
+    @Override
     protected Node createXPathResult(Element parent) {
         return new DefaultAttribute(parent, getQName(), getValue());
     }

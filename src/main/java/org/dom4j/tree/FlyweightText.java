@@ -39,10 +39,12 @@ public class FlyweightText extends AbstractText implements Text {
         this.text = text;
     }
 
+    @Override
     public String getText() {
         return text;
     }
 
+    @Override
     protected Node createXPathResult(Element parent) {
         return new DefaultText(parent, getText());
     }

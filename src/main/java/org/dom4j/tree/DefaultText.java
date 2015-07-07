@@ -46,22 +46,27 @@ public class DefaultText extends FlyweightText {
         this.parent = parent;
     }
 
+    @Override
     public void setText(String text) {
         this.text = text;
     }
 
+    @Override
     public Element getParent() {
         return parent;
     }
 
+    @Override
     public void setParent(Element parent) {
         this.parent = parent;
     }
 
+    @Override
     public boolean supportsParent() {
         return true;
     }
 
+    @Override
     public boolean isReadOnly() {
         return false;
     }

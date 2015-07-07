@@ -20,6 +20,7 @@ import org.dom4j.DocumentType;
 import org.dom4j.Element;
 import org.dom4j.IllegalAddException;
 import org.dom4j.Node;
+import org.dom4j.NodeType;
 import org.dom4j.ProcessingInstruction;
 import org.dom4j.QName;
 import org.dom4j.Text;
@@ -45,8 +46,9 @@ public abstract class AbstractDocument extends AbstractBranch implements
     public AbstractDocument() {
     }
 
-    public short getNodeType() {
-        return DOCUMENT_NODE;
+    @Override
+    public NodeType getNodeTypeEnum() {
+        return NodeType.DOCUMENT_NODE;
     }
 
     public String getPath(Element context) {
@@ -57,6 +59,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
         return "/";
     }
 
+    @Override
     public Document getDocument() {
         return this;
     }
@@ -65,6 +68,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
         return null;
     }
 
+    @Override
     public String getStringValue() {
         Element root = getRootElement();
 
@@ -88,6 +92,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
         }
     }
 
+    @Override
     public void write(Writer out) throws IOException {
         OutputFormat format = new OutputFormat();
         format.setEncoding(encoding);
@@ -133,8 +138,12 @@ public abstract class AbstractDocument extends AbstractBranch implements
         }
     }
 
-    public String toString() {
-        return super.toString() + " [Document: name " + getName() + "]";
+    @Override
+    protected void toString(StringBuilder builder) {
+        super.toString(builder);
+        builder.append(" [Document: name ");
+        builder.append(getName());
+        builder.append(']');
     }
 
     public void normalize() {
@@ -168,6 +177,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
         return this;
     }
 
+    @Override
     public Element addElement(String name) {
         Element element = getDocumentFactory().createElement(name);
         add(element);
@@ -175,6 +185,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
         return element;
     }
 
+    @Override
     public Element addElement(String qualifiedName, String namespaceURI) {
         Element element = getDocumentFactory().createElement(qualifiedName,
                 namespaceURI);
@@ -183,6 +194,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
         return element;
     }
 
+    @Override
     public Element addElement(QName qName) {
         Element element = getDocumentFactory().createElement(qName);
         add(element);
@@ -199,12 +211,14 @@ public abstract class AbstractDocument extends AbstractBranch implements
         }
     }
 
+    @Override
     public void add(Element element) {
         checkAddElementAllowed(element);
         super.add(element);
         rootElementAdded(element);
     }
 
+    @Override
     public boolean remove(Element element) {
         boolean answer = super.remove(element);
         Element root = getRootElement();
@@ -218,6 +232,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
         return answer;
     }
 
+    @Override
     public Node asXPathResult(Element parent) {
         return this;
     }

@@ -4,21 +4,18 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.NodeHelper;
 import org.dom4j.QName;
 import org.dom4j.tree.BackedList;
 import org.dom4j.tree.DefaultElement;
+import org.dom4j.tree.LazyList;
 
 /**
  * <p>
@@ -31,256 +28,170 @@ import org.dom4j.tree.DefaultElement;
  * @version $Revision: 1.10 $
  */
 public class IndexedElement extends DefaultElement {
-    /** Lazily constructed index for elements */
-    private Map elementIndex;
 
-    /** Lazily constructed index for attributes */
-    private Map attributeIndex;
+	/** Lazily constructed index for elements */
+	private DoubleNameMap<List<Element>> elementIndex;
+	/** Lazily constructed index for attributes */
+	private DoubleNameMap<Attribute> attributeIndex;
 
-    public IndexedElement(String name) {
-        super(name);
-    }
+	public IndexedElement(String name) {
+		super(name);
+	}
 
-    public IndexedElement(QName qname) {
-        super(qname);
-    }
+	public IndexedElement(QName qname) {
+		super(qname);
+	}
 
-    public IndexedElement(QName qname, int attributeCount) {
-        super(qname, attributeCount);
-    }
+	public IndexedElement(QName qname, int attributeCount) {
+		super(qname, attributeCount);
+	}
 
-    public Attribute attribute(String name) {
-        return (Attribute) attributeIndex().get(name);
-    }
+	@Override
+	public Attribute attribute(String name) {
+		return attributeIndex().get(name);
+	}
 
-    public Attribute attribute(QName qName) {
-        return (Attribute) attributeIndex().get(qName);
-    }
+	@Override
+	public Attribute attribute(QName qName) {
+		return attributeIndex().get(qName);
+	}
 
-    public Element element(String name) {
-        return asElement(elementIndex().get(name));
-    }
+	@Override
+	public Element element(String name) {
+		return firstElement(elementIndex().get(name));
+	}
 
-    public Element element(QName qName) {
-        return asElement(elementIndex().get(qName));
-    }
+	@Override
+	public Element element(QName qName) {
+		return firstElement(elementIndex().get(qName));
+	}
 
-    public List elements(String name) {
-        return asElementList(elementIndex().get(name));
-    }
+	@Override
+	public List<Element> elements(String name) {
+		return asElementList(elementIndex().get(name));
+	}
 
-    public List elements(QName qName) {
-        return asElementList(elementIndex().get(qName));
-    }
+	@Override
+	public List<Element> elements(QName qName) {
+		return asElementList(elementIndex().get(qName));
+	}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-    protected Element asElement(Object object) {
-        if (object instanceof Element) {
-            return (Element) object;
-        } else if (object != null) {
-            List list = (List) object;
+	protected static Element firstElement(List<Element> list) {
+		if (list.isEmpty()) {
+			return null;
+		}
 
-            if (list.size() >= 1) {
-                return (Element) list.get(0);
-            }
-        }
+		return list.get(0);
+	}
 
-        return null;
-    }
+	protected List<Element> asElementList(List<Element> list) {
+		BackedList<Element> answer = createResultList();
+		for (Element element : list) {
+			answer.addLocal(element);
+		}
 
-    protected List asElementList(Object object) {
-        if (object instanceof Element) {
-            return createSingleResultList(object);
-        } else if (object != null) {
-            List list = (List) object;
-            BackedList answer = createResultList();
+		return answer;
+	}
 
-            for (int i = 0, size = list.size(); i < size; i++) {
-                answer.addLocal(list.get(i));
-            }
+	// #### could we override the add(Element) remove(Element methods?
+	@Override
+	protected void addNode(Node node) {
+		super.addNode(node);
 
-            return answer;
-        }
+		switch (node.getNodeTypeEnum()) {
+			case ELEMENT_NODE:
+				if (elementIndex != null) {
+					addToElementIndex((Element) node);
+				}
+				break;
+			case ATTRIBUTE_NODE:
+				if (attributeIndex != null) {
+					addToAttributeIndex((Attribute) node);
+				}
+				break;
+		}
+	}
 
-        return createEmptyList();
-    }
+	@Override
+	protected boolean removeNode(Node node) {
+		if (super.removeNode(node)) {
+			switch (node.getNodeTypeEnum()) {
+				case ELEMENT_NODE:
+					if (elementIndex != null) {
+						removeFromElementIndex((Element) node);
+					}
+					break;
+				case ATTRIBUTE_NODE:
+					if (attributeIndex != null) {
+						removeFromAttributeIndex((Attribute) node);
+					}
+					break;
+			}
+			return true;
+		}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param object
-     *            DOCUMENT ME!
-     * 
-     * @return DOCUMENT ME!
-     * 
-     * @deprecated WILL BE REMOVED IN dom4j-1.6 !!
-     */
-    protected Iterator asElementIterator(Object object) {
-        return asElementList(object).iterator();
-    }
+		return false;
+	}
 
-    // #### could we override the add(Element) remove(Element methods?
-    protected void addNode(Node node) {
-        super.addNode(node);
+	protected DoubleNameMap<Attribute> attributeIndex() {
+		if (attributeIndex == null) {
+			attributeIndex = new DoubleNameMap<Attribute>();
+			for (Attribute attribute : attributeList()) {
+				addToAttributeIndex(attribute);
+			}
 
-        if ((elementIndex != null) && node instanceof Element) {
-            addToElementIndex((Element) node);
-        } else if ((attributeIndex != null) && node instanceof Attribute) {
-            addToAttributeIndex((Attribute) node);
-        }
-    }
+		}
 
-    protected boolean removeNode(Node node) {
-        if (super.removeNode(node)) {
-            if ((elementIndex != null) && node instanceof Element) {
-                removeFromElementIndex((Element) node);
-            } else if ((attributeIndex != null) && node instanceof Attribute) {
-                removeFromAttributeIndex((Attribute) node);
-            }
+		return attributeIndex;
+	}
 
-            return true;
-        }
+	protected DoubleNameMap<List<Element>> elementIndex() {
+		if (elementIndex == null) {
+			elementIndex = new DoubleNameMap<List<Element>>();
+			for (Node node : contentList()) {
+				Element element = NodeHelper.nodeAsElement(node);
+				if (element != null) {
+					addToElementIndex(element);
+				}
 
-        return false;
-    }
+			}
+		}
 
-    protected Map attributeIndex() {
-        if (attributeIndex == null) {
-            attributeIndex = createAttributeIndex();
+		return elementIndex;
+	}
 
-            for (Iterator iter = attributeIterator(); iter.hasNext();) {
-                addToAttributeIndex((Attribute) iter.next());
-            }
-        }
+	protected void addToElementIndex(Element element) {
+		QName qName = element.getQName();
+		List<Element> list = elementIndex.get(qName);
+		if (list == null) {
+			list = new LazyList<Element>(1);
+			elementIndex.put(qName, list);
+		}
 
-        return attributeIndex;
-    }
+		list.add(element);
+	}
 
-    protected Map elementIndex() {
-        if (elementIndex == null) {
-            elementIndex = createElementIndex();
+	protected void removeFromElementIndex(Element element) {
+		QName qName = element.getQName();
+		List<Element> list = elementIndex.get(qName);
+		if (list != null) {
+			list.remove(element);
+			if (list.isEmpty()) {
+				elementIndex.remove(qName);
+			}
 
-            for (Iterator iter = elementIterator(); iter.hasNext();) {
-                addToElementIndex((Element) iter.next());
-            }
-        }
+		}
+	}
 
-        return elementIndex;
-    }
+	protected void addToAttributeIndex(Attribute attribute) {
+		QName qName = attribute.getQName();
+		attributeIndex.put(qName, attribute);
+	}
 
-    /**
-     * A Factory Method to create the index for attributes
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected Map createAttributeIndex() {
-        Map answer = createIndex();
-
-        return answer;
-    }
-
-    /**
-     * A Factory Method to create the index for elements
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected Map createElementIndex() {
-        Map answer = createIndex();
-
-        return answer;
-    }
-
-    protected void addToElementIndex(Element element) {
-        QName qName = element.getQName();
-        String name = qName.getName();
-        addToElementIndex(qName, element);
-        addToElementIndex(name, element);
-    }
-
-    protected void addToElementIndex(Object key, Element value) {
-        Object oldValue = elementIndex.get(key);
-
-        if (oldValue == null) {
-            elementIndex.put(key, value);
-        } else {
-            if (oldValue instanceof List) {
-                List list = (List) oldValue;
-                list.add(value);
-            } else {
-                List list = createList();
-                list.add(oldValue);
-                list.add(value);
-                elementIndex.put(key, list);
-            }
-        }
-    }
-
-    protected void removeFromElementIndex(Element element) {
-        QName qName = element.getQName();
-        String name = qName.getName();
-        removeFromElementIndex(qName, element);
-        removeFromElementIndex(name, element);
-    }
-
-    protected void removeFromElementIndex(Object key, Element value) {
-        Object oldValue = elementIndex.get(key);
-
-        if (oldValue instanceof List) {
-            List list = (List) oldValue;
-            list.remove(value);
-        } else {
-            elementIndex.remove(key);
-        }
-    }
-
-    protected void addToAttributeIndex(Attribute attribute) {
-        QName qName = attribute.getQName();
-        String name = qName.getName();
-        addToAttributeIndex(qName, attribute);
-        addToAttributeIndex(name, attribute);
-    }
-
-    protected void addToAttributeIndex(Object key, Attribute value) {
-        Object oldValue = attributeIndex.get(key);
-
-        if (oldValue != null) {
-            attributeIndex.put(key, value);
-        }
-    }
-
-    protected void removeFromAttributeIndex(Attribute attribute) {
-        QName qName = attribute.getQName();
-        String name = qName.getName();
-        removeFromAttributeIndex(qName, attribute);
-        removeFromAttributeIndex(name, attribute);
-    }
-
-    protected void removeFromAttributeIndex(Object key, Attribute value) {
-        Object oldValue = attributeIndex.get(key);
-
-        if ((oldValue != null) && oldValue.equals(value)) {
-            attributeIndex.remove(key);
-        }
-    }
-
-    /**
-     * Factory method to return a new map implementation for indices
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected Map createIndex() {
-        return new HashMap();
-    }
-
-    /**
-     * Factory method to return a list implementation for indices
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected List createList() {
-        return new ArrayList();
-    }
+	protected void removeFromAttributeIndex(Attribute attribute) {
+		QName qName = attribute.getQName();
+		attributeIndex.remove(qName);
+	}
 }
 
 /*

@@ -9,6 +9,7 @@ package org.dom4j.rule.pattern;
 
 import org.dom4j.Node;
 import org.dom4j.NodeFilter;
+import org.dom4j.NodeType;
 import org.dom4j.rule.Pattern;
 
 /**
@@ -43,8 +44,8 @@ public class DefaultPattern implements Pattern {
         return null;
     }
 
-    public short getMatchType() {
-        return ANY_NODE;
+    public NodeType getMatchType() {
+        return NodeType.ANY_NODE;
     }
 
     public String getMatchesNodeName() {

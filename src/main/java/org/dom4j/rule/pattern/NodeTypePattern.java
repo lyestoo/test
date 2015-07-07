@@ -8,6 +8,7 @@
 package org.dom4j.rule.pattern;
 
 import org.dom4j.Node;
+import org.dom4j.NodeType;
 import org.dom4j.rule.Pattern;
 
 /**
@@ -22,31 +23,31 @@ import org.dom4j.rule.Pattern;
 public class NodeTypePattern implements Pattern {
     /** A pattern which matches any Attribute node */
     public static final NodeTypePattern ANY_ATTRIBUTE = new NodeTypePattern(
-            Node.ATTRIBUTE_NODE);
+            NodeType.ATTRIBUTE_NODE);
 
     /** A pattern which matches any Comment node */
     public static final NodeTypePattern ANY_COMMENT = new NodeTypePattern(
-            Node.COMMENT_NODE);
+            NodeType.COMMENT_NODE);
 
     /** A pattern which matches any Document node */
     public static final NodeTypePattern ANY_DOCUMENT = new NodeTypePattern(
-            Node.DOCUMENT_NODE);
+            NodeType.DOCUMENT_NODE);
 
     /** A pattern which matches any Element node */
     public static final NodeTypePattern ANY_ELEMENT = new NodeTypePattern(
-            Node.ELEMENT_NODE);
+            NodeType.ELEMENT_NODE);
 
     /** A pattern which matches any ProcessingInstruction node */
     public static final NodeTypePattern ANY_PROCESSING_INSTRUCTION = 
-            new NodeTypePattern(Node.PROCESSING_INSTRUCTION_NODE);
+            new NodeTypePattern(NodeType.PROCESSING_INSTRUCTION_NODE);
 
     /** A pattern which matches any Text node */
     public static final NodeTypePattern ANY_TEXT = new NodeTypePattern(
-            Node.TEXT_NODE);
+            NodeType.TEXT_NODE);
 
-    private short nodeType;
+    private NodeType nodeType;
 
-    public NodeTypePattern(short nodeType) {
+    public NodeTypePattern(NodeType nodeType) {
         this.nodeType = nodeType;
     }
 
@@ -62,7 +63,7 @@ public class NodeTypePattern implements Pattern {
         return null;
     }
 
-    public short getMatchType() {
+    public NodeType getMatchType() {
         return nodeType;
     }
 

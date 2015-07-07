@@ -4,10 +4,8 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.tree;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -31,43 +29,46 @@ import org.dom4j.QName;
  * @version $Revision: 1.44 $
  */
 public abstract class AbstractBranch extends AbstractNode implements Branch {
+
     protected static final int DEFAULT_CONTENT_LIST_SIZE = 5;
 
     public AbstractBranch() {
     }
 
+    @Override
     public boolean isReadOnly() {
         return false;
     }
 
+    @Override
     public boolean hasContent() {
         return nodeCount() > 0;
     }
 
-    public List content() {
-        List backingList = contentList();
-
-        return new ContentListFacade(this, backingList);
+    public List<Node> content() {
+        List<Node> backingList = contentList();
+        return new ContentListFacade<Node>(this, backingList);
     }
 
+    @Override
     public String getText() {
-        List content = contentList();
+        List<Node> content = contentList();
 
         if (content != null) {
             int size = content.size();
 
             if (size >= 1) {
-                Object first = content.get(0);
+                Node first = content.get(0);
                 String firstText = getContentAsText(first);
 
                 if (size == 1) {
-                    // optimised to avoid StringBuffer creation
+                    // optimised to avoid StringBuilder creation
                     return firstText;
                 } else {
-                    StringBuffer buffer = new StringBuffer(firstText);
+                    StringBuilder buffer = new StringBuilder(firstText);
 
                     for (int i = 1; i < size; i++) {
-                        Object node = content.get(i);
+                        Node node = content.get(i);
                         buffer.append(getContentAsText(node));
                     }
 
@@ -88,26 +89,17 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * @return the text value of the given content object as text which returns
      *         the text value of CDATA, Entity or Text nodes
      */
-    protected String getContentAsText(Object content) {
-        if (content instanceof Node) {
-            Node node = (Node) content;
+    protected String getContentAsText(Node node) {
+        switch (node.getNodeTypeEnum()) {
+            case CDATA_SECTION_NODE:
+            // case ENTITY_NODE:
+            case ENTITY_REFERENCE_NODE:
+            case TEXT_NODE:
+                return node.getText();
 
-            switch (node.getNodeType()) {
-                case CDATA_SECTION_NODE:
-
-                // case ENTITY_NODE:
-                case ENTITY_REFERENCE_NODE:
-                case TEXT_NODE:
-                    return node.getText();
-
-                default:
-                    break;
-            }
-        } else if (content instanceof String) {
-            return (String) content;
+            default:
+                return "";
         }
-
-        return "";
     }
 
     /**
@@ -118,33 +110,23 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * 
      * @return the XPath defined string-value of the given content object
      */
-    protected String getContentAsStringValue(Object content) {
-        if (content instanceof Node) {
-            Node node = (Node) content;
-
-            switch (node.getNodeType()) {
-                case CDATA_SECTION_NODE:
-
-                // case ENTITY_NODE:
-                case ENTITY_REFERENCE_NODE:
-                case TEXT_NODE:
-                case ELEMENT_NODE:
-                    return node.getStringValue();
-
-                default:
-                    break;
-            }
-        } else if (content instanceof String) {
-            return (String) content;
+    protected String getContentAsStringValue(Node node) {
+        switch (node.getNodeTypeEnum()) {
+            case CDATA_SECTION_NODE:
+            // case ENTITY_NODE:
+            case ENTITY_REFERENCE_NODE:
+            case TEXT_NODE:
+            case ELEMENT_NODE:
+                return node.getStringValue();
+            default:
+                return "";
         }
-
-        return "";
     }
 
     public String getTextTrim() {
         String text = getText();
 
-        StringBuffer textContent = new StringBuffer();
+        StringBuilder textContent = new StringBuilder();
         StringTokenizer tokenizer = new StringTokenizer(text);
 
         while (tokenizer.hasMoreTokens()) {
@@ -159,7 +141,7 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
         return textContent.toString();
     }
 
-    public void setProcessingInstructions(List listOfPIs) {
+    public void setProcessingInstructions(List<ProcessingInstruction> listOfPIs) {
         for (Iterator iter = listOfPIs.iterator(); iter.hasNext();) {
             ProcessingInstruction pi = (ProcessingInstruction) iter.next();
             addNode(pi);
@@ -197,41 +179,31 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
 
     // polymorphic node methods
     public void add(Node node) {
-        switch (node.getNodeType()) {
+        switch (node.getNodeTypeEnum()) {
             case ELEMENT_NODE:
                 add((Element) node);
-
                 break;
-
             case COMMENT_NODE:
                 add((Comment) node);
-
                 break;
-
             case PROCESSING_INSTRUCTION_NODE:
                 add((ProcessingInstruction) node);
-
                 break;
-
             default:
                 invalidNodeTypeAddException(node);
         }
     }
 
     public boolean remove(Node node) {
-        switch (node.getNodeType()) {
+        switch (node.getNodeTypeEnum()) {
             case ELEMENT_NODE:
                 return remove((Element) node);
-
             case COMMENT_NODE:
                 return remove((Comment) node);
-
             case PROCESSING_INSTRUCTION_NODE:
                 return remove((ProcessingInstruction) node);
-
             default:
                 invalidNodeTypeAddException(node);
-
                 return false;
         }
     }
@@ -262,7 +234,8 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
     }
 
     public Element elementByID(String elementID) {
-        for (int i = 0, size = nodeCount(); i < size; i++) {
+        //TODO
+        for (   int i = 0, size = nodeCount(); i < size; i++) {
             Node node = node(i);
 
             if (node instanceof Element) {
@@ -285,24 +258,14 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
     }
 
     public void appendContent(Branch branch) {
-        for (int i = 0, size = branch.nodeCount(); i < size; i++) {
-            Node node = branch.node(i);
+        for (Node node : branch) {
             add((Node) node.clone());
         }
     }
 
     public Node node(int index) {
-        Object object = contentList().get(index);
-
-        if (object instanceof Node) {
-            return (Node) object;
-        }
-
-        if (object instanceof String) {
-            return getDocumentFactory().createText(object.toString());
-        }
-
-        return null;
+        Node node = contentList().get(index);
+        return node;
     }
 
     public int nodeCount() {
@@ -313,12 +276,15 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
         return contentList().indexOf(node);
     }
 
-    public Iterator nodeIterator() {
+    public Iterator<Node> nodeIterator() {
         return contentList().iterator();
     }
 
-    // Implementation methods
+    public Iterator<Node> iterator() {
+        return nodeIterator();
+    }
 
+    // Implementation methods
     /**
      * DOCUMENT ME!
      * 
@@ -328,6 +294,7 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * @return the ID of the given <code>Element</code>
      */
     protected String elementID(Element element) {
+        //TODO
         // XXX: there will be other ways of finding the ID
         // XXX: should probably have an IDResolver or something
         return element.attributeValue("ID");
@@ -338,7 +305,7 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * 
      * @return the internal List used to manage the content
      */
-    protected abstract List contentList();
+    protected abstract List<Node> contentList();
 
     /**
      * A Factory Method pattern which creates a List implementation used to
@@ -346,8 +313,8 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * 
      * @return DOCUMENT ME!
      */
-    protected List createContentList() {
-        return new ArrayList(DEFAULT_CONTENT_LIST_SIZE);
+    protected List<Node> createContentList() {
+        return createContentList(DEFAULT_CONTENT_LIST_SIZE);
     }
 
     /**
@@ -359,8 +326,8 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * 
      * @return DOCUMENT ME!
      */
-    protected List createContentList(int size) {
-        return new ArrayList(size);
+    protected List<Node> createContentList(int size) {
+        return new LazyList<Node>(size);
     }
 
     /**
@@ -369,8 +336,8 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * 
      * @return DOCUMENT ME!
      */
-    protected BackedList createResultList() {
-        return new BackedList(this, contentList());
+    protected <T extends Node> BackedList<T> createResultList() {
+        return new BackedList<T>(this, contentList());
     }
 
     /**
@@ -382,8 +349,9 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * 
      * @return DOCUMENT ME!
      */
-    protected List createSingleResultList(Object result) {
-        BackedList list = new BackedList(this, contentList(), 1);
+		@Deprecated
+    protected <T extends Node> List<T> createSingleResultList(T result) {
+        BackedList<T> list = new BackedList<T>(this, contentList(), 1);
         list.addLocal(result);
 
         return list;
@@ -395,8 +363,9 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * 
      * @return DOCUMENT ME!
      */
-    protected List createEmptyList() {
-        return new BackedList(this, contentList(), 0);
+		@Deprecated
+    protected <T extends Node> List<T> createEmptyList() {
+        return new BackedList<T>(this, contentList(), 0);
     }
 
     protected abstract void addNode(Node node);
@@ -428,14 +397,8 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      * have its parent and document relationships cleared
      */
     protected void contentRemoved() {
-        List content = contentList();
-
-        for (int i = 0, size = content.size(); i < size; i++) {
-            Object object = content.get(i);
-
-            if (object instanceof Node) {
-                childRemoved((Node) object);
-            }
+        for (Node node : contentList()) {
+            childRemoved(node);
         }
     }
 
@@ -450,8 +413,7 @@ public abstract class AbstractBranch extends AbstractNode implements Branch {
      *             DOCUMENT ME!
      */
     protected void invalidNodeTypeAddException(Node node) {
-        throw new IllegalAddException("Invalid node type. Cannot add node: "
-                + node + " to this branch: " + this);
+        throw new IllegalAddException("Invalid node type. Cannot add node: " + node + " to this branch: " + this);
     }
 }
 

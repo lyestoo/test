@@ -8,6 +8,7 @@
 package org.dom4j.rule;
 
 import org.dom4j.Node;
+import org.dom4j.NodeType;
 
 /**
  * <p>
@@ -160,7 +161,7 @@ public class Rule implements Comparable {
      * @return the type of node the pattern matches which by default should
      *         return ANY_NODE if it can match any kind of node.
      */
-    public final short getMatchType() {
+    public final NodeType getMatchType() {
         return pattern.getMatchType();
     }
 

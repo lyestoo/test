@@ -17,6 +17,7 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.NodeFilter;
+import org.dom4j.NodeType;
 import org.dom4j.XPath;
 import org.dom4j.rule.Pattern;
 
@@ -30,10 +31,6 @@ import org.dom4j.rule.Pattern;
  * @version $Revision: 1.31 $
  */
 public abstract class AbstractNode implements Node, Cloneable, Serializable {
-    protected static final String[] NODE_TYPE_NAMES = {"Node", "Element",
-            "Attribute", "Text", "CDATA", "Entity", "Entity",
-            "ProcessingInstruction", "Comment", "Document", "DocumentType",
-            "DocumentFragment", "Notation", "Namespace", "Unknown" };
 
     /** The <code>DocumentFactory</code> instance used by default */
     private static final DocumentFactory DOCUMENT_FACTORY = DocumentFactory
@@ -42,18 +39,16 @@ public abstract class AbstractNode implements Node, Cloneable, Serializable {
     public AbstractNode() {
     }
 
+    public NodeType getNodeTypeEnum() {
+        return NodeType.UNKNOWN_NODE;
+    }
+
     public short getNodeType() {
-        return UNKNOWN_NODE;
+        return this.getNodeTypeEnum().getCode();
     }
 
     public String getNodeTypeName() {
-        int type = getNodeType();
-
-        if ((type < 0) || (type >= NODE_TYPE_NAMES.length)) {
-            return "Unknown";
-        }
-
-        return NODE_TYPE_NAMES[type];
+        return this.getNodeTypeEnum().getName();
     }
 
     public Document getDocument() {
@@ -92,6 +87,7 @@ public abstract class AbstractNode implements Node, Cloneable, Serializable {
         return getUniquePath(null);
     }
 
+    @Override
     public Object clone() {
         if (isReadOnly()) {
             return this;
@@ -160,18 +156,18 @@ public abstract class AbstractNode implements Node, Cloneable, Serializable {
         return xpath.evaluate(this);
     }
 
-    public List selectNodes(String xpathExpression) {
+    public List<? extends Node> selectNodes(String xpathExpression) {
         XPath xpath = createXPath(xpathExpression);
 
         return xpath.selectNodes(this);
     }
 
-    public List selectNodes(String xpathExpression,
+    public List<? extends Node> selectNodes(String xpathExpression,
             String comparisonXPathExpression) {
         return selectNodes(xpathExpression, comparisonXPathExpression, false);
     }
 
-    public List selectNodes(String xpathExpression,
+    public List<? extends Node> selectNodes(String xpathExpression,
             String comparisonXPathExpression, boolean removeDuplicates) {
         XPath xpath = createXPath(xpathExpression);
         XPath sortBy = createXPath(comparisonXPathExpression);
@@ -221,6 +217,17 @@ public abstract class AbstractNode implements Node, Cloneable, Serializable {
         }
 
         return createXPathResult(parent);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        this.toString(builder);
+        return builder.toString();
+    }
+    
+    protected void toString(StringBuilder builder) {
+        builder.append(super.toString());
     }
 
     protected DocumentFactory getDocumentFactory() {

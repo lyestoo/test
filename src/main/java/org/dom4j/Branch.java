@@ -21,7 +21,7 @@ import java.util.List;
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.32 $
  */
-public interface Branch extends Node {
+public interface Branch extends Node, Iterable<Node> {
     /**
      * Returns the <code>Node</code> at the specified index position.
      * 
@@ -79,14 +79,21 @@ public interface Branch extends Node {
      * 
      * @return the nodes that this branch contains as a <code>List</code>
      */
-    List content();
+    List<Node> content();
 
     /**
      * Returns an iterator through the content nodes of this branch
      * 
      * @return an iterator through the content nodes of this branch
      */
-    Iterator nodeIterator();
+    Iterator<Node> nodeIterator();
+
+    /**
+     * Returns an iterator through the content nodes of this branch
+     * 
+     * @return an iterator through the content nodes of this branch
+     */
+    Iterator<Node> iterator();
 
     /**
      * Sets the contents of this branch as a <code>List</code> of
@@ -95,7 +102,7 @@ public interface Branch extends Node {
      * @param content
      *            is the list of nodes to use as the content for this branch.
      */
-    void setContent(List content);
+    void setContent(List<Node> content);
 
     /**
      * Appends the content of the given branch to this branch instance. This
@@ -122,7 +129,7 @@ public interface Branch extends Node {
      * 
      * @return a backed list of the processing instructions
      */
-    List processingInstructions();
+    List<ProcessingInstruction> processingInstructions();
 
     /**
      * <p>
@@ -136,7 +143,7 @@ public interface Branch extends Node {
      * 
      * @return a backed list of the processing instructions
      */
-    List processingInstructions(String target);
+    List<ProcessingInstruction> processingInstructions(String target);
 
     /**
      * DOCUMENT ME!
@@ -154,7 +161,7 @@ public interface Branch extends Node {
      * @param listOfPIs
      *            DOCUMENT ME!
      */
-    void setProcessingInstructions(List listOfPIs);
+    void setProcessingInstructions(List<ProcessingInstruction> listOfPIs);
 
     /**
      * Adds a new <code>Element</code> node with the given name to this branch

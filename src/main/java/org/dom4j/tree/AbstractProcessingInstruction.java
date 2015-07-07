@@ -10,11 +10,11 @@ package org.dom4j.tree;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.dom4j.Element;
+import org.dom4j.NodeType;
 import org.dom4j.ProcessingInstruction;
 import org.dom4j.Visitor;
 
@@ -32,8 +32,9 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
     public AbstractProcessingInstruction() {
     }
 
-    public short getNodeType() {
-        return PROCESSING_INSTRUCTION_NODE;
+    @Override
+    public NodeType getNodeTypeEnum() {
+        return NodeType.PROCESSING_INSTRUCTION_NODE;
     }
 
     public String getPath(Element context) {
@@ -52,6 +53,7 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
                 : "processing-instruction()";
     }
 
+    @Override
     public String toString() {
         return super.toString() + " [ProcessingInstruction: &" + getName()
                 + ";]";
@@ -61,6 +63,7 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
         return "<?" + getName() + " " + getText() + "?>";
     }
 
+    @Override
     public void write(Writer writer) throws IOException {
         writer.write("<?");
         writer.write(getName());
@@ -83,10 +86,12 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
                 + "cannot be modified");
     }
 
+    @Override
     public String getName() {
         return getTarget();
     }
 
+    @Override
     public void setName(String name) {
         setTarget(name);
     }
@@ -107,24 +112,23 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
      * 
      * @return DOCUMENT ME!
      */
-    protected String toString(Map values) {
-        StringBuffer buffer = new StringBuffer();
+    protected String toString(Map<String, String> values) {
+        StringBuilder builder = new StringBuilder();
 
-        for (Iterator iter = values.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            String name = (String) entry.getKey();
-            String value = (String) entry.getValue();
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            String name = entry.getKey();
+            String value = entry.getValue();
 
-            buffer.append(name);
-            buffer.append("=\"");
-            buffer.append(value);
-            buffer.append("\" ");
+            builder.append(name);
+            builder.append("=\"");
+            builder.append(value);
+            builder.append("\" ");
         }
 
         // remove the last space
-        buffer.setLength(buffer.length() - 1);
+        builder.setLength(builder.length() - 1);
 
-        return buffer.toString();
+        return builder.toString();
     }
 
     /**
@@ -137,8 +141,8 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
      * 
      * @return DOCUMENT ME!
      */
-    protected Map parseValues(String text) {
-        Map data = new HashMap();
+    protected Map<String, String> parseValues(String text) {
+        Map<String, String> data = new HashMap<String, String>();
 
         StringTokenizer s = new StringTokenizer(text, " =\'\"", true);
 
@@ -156,7 +160,7 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
 
     private String getName(StringTokenizer tokenizer) {
         String token = tokenizer.nextToken();
-        StringBuffer name = new StringBuffer(token);
+        StringBuilder name = new StringBuilder(token);
 
         while (tokenizer.hasMoreTokens()) {
             token = tokenizer.nextToken();
@@ -173,7 +177,7 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
 
     private String getValue(StringTokenizer tokenizer) {
         String token = tokenizer.nextToken();
-        StringBuffer value = new StringBuffer();
+        StringBuilder value = new StringBuilder();
 
         /* get the quote */
         while (tokenizer.hasMoreTokens() && !token.equals("\'")

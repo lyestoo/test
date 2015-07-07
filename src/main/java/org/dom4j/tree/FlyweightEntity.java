@@ -71,6 +71,7 @@ public class FlyweightEntity extends AbstractEntity {
      * 
      * @return the name of the entity
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -80,6 +81,7 @@ public class FlyweightEntity extends AbstractEntity {
      * 
      * @return the text of the entity
      */
+    @Override
     public String getText() {
         return text;
     }
@@ -95,6 +97,7 @@ public class FlyweightEntity extends AbstractEntity {
      * @throws UnsupportedOperationException
      *             DOCUMENT ME!
      */
+    @Override
     public void setText(String text) {
         if (this.text != null) {
             this.text = text;
@@ -104,6 +107,7 @@ public class FlyweightEntity extends AbstractEntity {
         }
     }
 
+    @Override
     protected Node createXPathResult(Element parent) {
         return new DefaultEntity(parent, getName(), getText());
     }

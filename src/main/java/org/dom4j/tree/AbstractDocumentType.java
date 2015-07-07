@@ -4,7 +4,6 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.tree;
 
 import java.io.IOException;
@@ -14,7 +13,9 @@ import java.util.List;
 
 import org.dom4j.DocumentType;
 import org.dom4j.Element;
+import org.dom4j.NodeType;
 import org.dom4j.Visitor;
+import org.dom4j.dtd.InternalDeclaration;
 
 /**
  * <p>
@@ -27,17 +28,21 @@ import org.dom4j.Visitor;
  */
 public abstract class AbstractDocumentType extends AbstractNode implements
         DocumentType {
+
     public AbstractDocumentType() {
     }
 
-    public short getNodeType() {
-        return DOCUMENT_TYPE_NODE;
+    @Override
+    public NodeType getNodeTypeEnum() {
+        return NodeType.DOCUMENT_TYPE_NODE;
     }
 
+    @Override
     public String getName() {
         return getElementName();
     }
 
+    @Override
     public void setName(String name) {
         setElementName(name);
     }
@@ -58,45 +63,51 @@ public abstract class AbstractDocumentType extends AbstractNode implements
      * 
      * @return DOCUMENT ME!
      */
+    @Override
     public String getText() {
-        List list = getInternalDeclarations();
+        List<InternalDeclaration> list = getInternalDeclarations();
 
         if ((list != null) && (list.size() > 0)) {
-            StringBuffer buffer = new StringBuffer();
-            Iterator iter = list.iterator();
-
-            if (iter.hasNext()) {
-                Object decl = iter.next();
-                buffer.append(decl.toString());
-
-                while (iter.hasNext()) {
-                    decl = iter.next();
-                    buffer.append("\n");
-                    buffer.append(decl.toString());
-                }
+            StringBuilder builder = new StringBuilder();
+            for (InternalDeclaration decl : list) {
+                builder.append(decl.toString());
+                builder.append('\n');
             }
-
-            return buffer.toString();
+            if (builder.length() > 0) {
+                builder.setLength(builder.length() - 1);
+            }
+            return builder.toString();
         }
 
         return "";
     }
 
-    public String toString() {
-        return super.toString() + " [DocumentType: " + asXML() + "]";
+    @Override
+    protected void toString(StringBuilder builder) {
+        super.toString(builder);
+        builder.append(" [DocumentType: ");
+        this.asXML(builder);
+        builder.append(']');
     }
 
     public String asXML() {
-        StringBuffer buffer = new StringBuffer("<!DOCTYPE ");
-        buffer.append(getElementName());
+        StringBuilder builder = new StringBuilder();
+        this.asXML(builder);
+        return builder.toString();
+    }
+
+    protected void asXML(StringBuilder builder) {
+        builder.append("<!DOCTYPE ");
+        builder.append(getElementName());
 
         boolean hasPublicID = false;
         String publicID = getPublicID();
 
         if ((publicID != null) && (publicID.length() > 0)) {
-            buffer.append(" PUBLIC \"");
-            buffer.append(publicID);
-            buffer.append("\"");
+            builder.append(" PUBLIC ");
+            builder.append('"');
+            builder.append(publicID);
+            builder.append('"');
             hasPublicID = true;
         }
 
@@ -104,19 +115,18 @@ public abstract class AbstractDocumentType extends AbstractNode implements
 
         if ((systemID != null) && (systemID.length() > 0)) {
             if (!hasPublicID) {
-                buffer.append(" SYSTEM");
+                builder.append(" SYSTEM");
             }
 
-            buffer.append(" \"");
-            buffer.append(systemID);
-            buffer.append("\"");
+            builder.append(" \"");
+            builder.append(systemID);
+            builder.append('"');
         }
 
-        buffer.append(">");
-
-        return buffer.toString();
+        builder.append('>');
     }
 
+    @Override
     public void write(Writer writer) throws IOException {
         writer.write("<!DOCTYPE ");
         writer.write(getElementName());
@@ -127,7 +137,7 @@ public abstract class AbstractDocumentType extends AbstractNode implements
         if ((publicID != null) && (publicID.length() > 0)) {
             writer.write(" PUBLIC \"");
             writer.write(publicID);
-            writer.write("\"");
+            writer.write('\"');
             hasPublicID = true;
         }
 
@@ -140,16 +150,16 @@ public abstract class AbstractDocumentType extends AbstractNode implements
 
             writer.write(" \"");
             writer.write(systemID);
-            writer.write("\"");
+            writer.write('\"');
         }
 
-        List list = getInternalDeclarations();
+        List<InternalDeclaration> list = getInternalDeclarations();
 
         if ((list != null) && (list.size() > 0)) {
             writer.write(" [");
 
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Object decl = iter.next();
+            for (Iterator<InternalDeclaration> iter = list.iterator(); iter.hasNext();) {
+                InternalDeclaration decl = iter.next();
                 writer.write("\n  ");
                 writer.write(decl.toString());
             }
@@ -157,7 +167,7 @@ public abstract class AbstractDocumentType extends AbstractNode implements
             writer.write("\n]");
         }
 
-        writer.write(">");
+        writer.write('>');
     }
 
     public void accept(Visitor visitor) {

@@ -15,12 +15,15 @@ import org.dom4j.tree.DefaultDocument;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
+import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.EntityReference;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.UserDataHandler;
 
 /**
  * <p>
@@ -300,6 +303,110 @@ public class DOMDocument extends DefaultDocument implements Document {
         } else {
             return super.getDocumentFactory();
         }
+    }
+
+    public String getInputEncoding() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getXmlEncoding() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean getXmlStandalone() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setXmlStandalone(boolean xmlStandalone) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getXmlVersion() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setXmlVersion(String xmlVersion) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean getStrictErrorChecking() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setStrictErrorChecking(boolean strictErrorChecking) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getDocumentURI() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setDocumentURI(String documentURI) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Node adoptNode(Node source) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public DOMConfiguration getDomConfig() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void normalizeDocument() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Node renameNode(Node n, String namespaceURI, String qualifiedName) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getBaseURI() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public short compareDocumentPosition(Node other) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getTextContent() throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isSameNode(Node other) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isEqualNode(Node arg) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getFeature(String feature, String version) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getUserData(String key) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

@@ -12,6 +12,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.dom4j.CDATA;
+import org.dom4j.NodeType;
 import org.dom4j.Visitor;
 
 /**
@@ -28,12 +29,17 @@ public abstract class AbstractCDATA extends AbstractCharacterData implements
     public AbstractCDATA() {
     }
 
-    public short getNodeType() {
-        return CDATA_SECTION_NODE;
+    @Override
+    public NodeType getNodeTypeEnum() {
+        return NodeType.CDATA_SECTION_NODE;
     }
 
-    public String toString() {
-        return super.toString() + " [CDATA: \"" + getText() + "\"]";
+    @Override
+    protected void toString(StringBuilder builder) {
+        super.toString(builder);
+        builder.append(" [CDATA: \"");
+        builder.append(getText());
+        builder.append("\"]");
     }
 
     public String asXML() {
@@ -48,6 +54,7 @@ public abstract class AbstractCDATA extends AbstractCharacterData implements
         return writer.toString();
     }
 
+    @Override
     public void write(Writer writer) throws IOException {
         writer.write("<![CDATA[");
 

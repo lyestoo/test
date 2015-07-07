@@ -8,6 +8,8 @@
 package org.dom4j.tree;
 
 import java.util.List;
+import org.dom4j.dtd.ExternalDeclaration;
+import org.dom4j.dtd.InternalDeclaration;
 
 /**
  * <p>
@@ -29,10 +31,10 @@ public class DefaultDocumentType extends AbstractDocumentType {
     private String systemID;
 
     /** The internal DTD declarations */
-    private List internalDeclarations;
+    private List<InternalDeclaration> internalDeclarations;
 
     /** The external DTD declarations */
-    private List externalDeclarations;
+    private List<ExternalDeclaration> externalDeclarations;
 
     public DefaultDocumentType() {
     }
@@ -119,19 +121,19 @@ public class DefaultDocumentType extends AbstractDocumentType {
         this.systemID = systemID;
     }
 
-    public List getInternalDeclarations() {
+    public List<InternalDeclaration> getInternalDeclarations() {
         return internalDeclarations;
     }
 
-    public void setInternalDeclarations(List internalDeclarations) {
+    public void setInternalDeclarations(List<InternalDeclaration> internalDeclarations) {
         this.internalDeclarations = internalDeclarations;
     }
 
-    public List getExternalDeclarations() {
+    public List<ExternalDeclaration> getExternalDeclarations() {
         return externalDeclarations;
     }
 
-    public void setExternalDeclarations(List externalDeclarations) {
+    public void setExternalDeclarations(List<ExternalDeclaration> externalDeclarations) {
         this.externalDeclarations = externalDeclarations;
     }
 }

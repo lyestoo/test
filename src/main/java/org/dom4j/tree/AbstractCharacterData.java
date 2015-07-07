@@ -39,6 +39,7 @@ public abstract class AbstractCharacterData extends AbstractNode implements
     }
 
     public void appendText(String text) {
+        //TODO inefficient implementation
         setText(getText() + text);
     }
 }

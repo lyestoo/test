@@ -39,10 +39,12 @@ public class FlyweightCDATA extends AbstractCDATA implements CDATA {
         this.text = text;
     }
 
+    @Override
     public String getText() {
         return text;
     }
 
+    @Override
     protected Node createXPathResult(Element parent) {
         return new DefaultCDATA(parent, getText());
     }

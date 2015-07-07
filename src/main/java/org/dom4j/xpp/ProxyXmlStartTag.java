@@ -20,12 +20,13 @@ import org.gjt.xpp.XmlPullParserException;
 import org.gjt.xpp.XmlStartTag;
 
 /**
- * <code>ProxyXmlStartTag</code> implements the XPP <code>XmlSmartTag</code>
- * interface while creating a dom4j <code>Element</code> underneath.
+ * <p>
+ * <code>ProxyXmlStartTag</code> implements the XPP XmlSmartTag interface
+ * while creating a dom4j Element underneath.
+ * </p>
  * 
- * @author James Strachan
- * @author Maarten Coene
- * @author Wolfgang Baer
+ * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
+ * @version $Revision: 1.8 $
  */
 public class ProxyXmlStartTag implements XmlStartTag {
     /** The element being constructed */
@@ -160,12 +161,17 @@ public class ProxyXmlStartTag implements XmlStartTag {
     /**
      * parameters modeled after SAX2 attribute approach
      * 
-     * @param namespaceURI DOCUMENT ME!
-     * @param localName DOCUMENT ME!
-     * @param rawName DOCUMENT ME!
-     * @param value DOCUMENT ME!
+     * @param namespaceURI
+     *            DOCUMENT ME!
+     * @param localName
+     *            DOCUMENT ME!
+     * @param rawName
+     *            DOCUMENT ME!
+     * @param value
+     *            DOCUMENT ME!
      * 
-     * @throws XmlPullParserException DOCUMENT ME!
+     * @throws XmlPullParserException
+     *             DOCUMENT ME!
      */
     public void addAttribute(String namespaceURI, String localName,
             String rawName, String value) throws XmlPullParserException {
@@ -200,17 +206,14 @@ public class ProxyXmlStartTag implements XmlStartTag {
     }
 
     /**
-     * Remove all atributes.
+     * remove all atribute
      * 
-     * @deprecated Use {@link #removeAttributes()} instead.
+     * @throws XmlPullParserException
+     *             DOCUMENT ME!
      */
-    public void removeAtttributes() throws XmlPullParserException {
-        removeAttributes();
-    }
-
     public void removeAttributes() throws XmlPullParserException {
         if (element != null) {
-            element.setAttributes(new ArrayList());
+            element.setAttributes(new ArrayList<Attribute>());
 
             // ##### FIXME
             // adding this method would be nice...
@@ -242,33 +245,6 @@ public class ProxyXmlStartTag implements XmlStartTag {
         this.element = null;
     }
 
-    public boolean removeAttributeByName(String namespaceURI, String localName)
-            throws XmlPullParserException {
-        if (element != null) {
-            QName qname = QName.get(localName, namespaceURI);
-            Attribute attribute = element.attribute(qname);
-            return element.remove(attribute);
-        }
-        return false;
-    }
-
-    public boolean removeAttributeByRawName(String rawName)
-            throws XmlPullParserException {
-        if (element != null) {
-            Attribute attribute = null;
-            Iterator it = element.attributeIterator();
-            while (it.hasNext()) {
-                Attribute current = (Attribute) it.next();
-                if (current.getQualifiedName().equals(rawName)) {
-                    attribute = current;
-                    break;
-                }
-            }
-            return element.remove(attribute);
-        }
-        return false;
-    }
-
     // Properties
     // -------------------------------------------------------------------------
     public DocumentFactory getDocumentFactory() {
@@ -282,6 +258,16 @@ public class ProxyXmlStartTag implements XmlStartTag {
     public Element getElement() {
         return element;
     }
+
+	public boolean removeAttributeByName(String arg0, String arg1) throws XmlPullParserException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public boolean removeAttributeByRawName(String arg0) throws XmlPullParserException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }
 
 /*

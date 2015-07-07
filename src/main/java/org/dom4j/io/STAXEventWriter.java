@@ -168,52 +168,52 @@ public class STAXEventWriter {
      */
     public void writeNode(Node n) throws XMLStreamException {
         switch (n.getNodeType()) {
-            case Node.ELEMENT_NODE:
+            case ELEMENT_NODE:
                 writeElement((Element) n);
 
                 break;
 
-            case Node.TEXT_NODE:
+            case TEXT_NODE:
                 writeText((Text) n);
 
                 break;
 
-            case Node.ATTRIBUTE_NODE:
+            case ATTRIBUTE_NODE:
                 writeAttribute((Attribute) n);
 
                 break;
 
-            case Node.NAMESPACE_NODE:
+            case NAMESPACE_NODE:
                 writeNamespace((Namespace) n);
 
                 break;
 
-            case Node.COMMENT_NODE:
+            case COMMENT_NODE:
                 writeComment((Comment) n);
 
                 break;
 
-            case Node.CDATA_SECTION_NODE:
+            case CDATA_SECTION_NODE:
                 writeCDATA((CDATA) n);
 
                 break;
 
-            case Node.PROCESSING_INSTRUCTION_NODE:
+            case PROCESSING_INSTRUCTION_NODE:
                 writeProcessingInstruction((org.dom4j.ProcessingInstruction) n);
 
                 break;
 
-            case Node.ENTITY_REFERENCE_NODE:
+            case ENTITY_REFERENCE_NODE:
                 writeEntity((Entity) n);
 
                 break;
 
-            case Node.DOCUMENT_NODE:
+            case DOCUMENT_NODE:
                 writeDocument((Document) n);
 
                 break;
 
-            case Node.DOCUMENT_TYPE_NODE:
+            case DOCUMENT_TYPE_NODE:
                 writeDocumentType((DocumentType) n);
 
                 break;

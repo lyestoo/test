@@ -84,22 +84,27 @@ public class DefaultAttribute extends FlyweightAttribute {
         this.parent = parent;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
 
+    @Override
     public Element getParent() {
         return parent;
     }
 
+    @Override
     public void setParent(Element parent) {
         this.parent = parent;
     }
 
+    @Override
     public boolean supportsParent() {
         return true;
     }
 
+    @Override
     public boolean isReadOnly() {
         return false;
     }

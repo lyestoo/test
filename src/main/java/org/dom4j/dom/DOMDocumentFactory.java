@@ -174,6 +174,10 @@ public class DOMDocumentFactory extends DocumentFactory implements
                     docType.getPublicId(), docType.getSystemId());
         }
     }
+
+    public Object getFeature(String feature, String version) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
 
 

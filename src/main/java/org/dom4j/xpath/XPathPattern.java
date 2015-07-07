@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import org.dom4j.InvalidXPathException;
 import org.dom4j.Node;
+import org.dom4j.NodeType;
 import org.dom4j.XPathException;
 
 import org.jaxen.Context;
@@ -32,7 +33,7 @@ import org.jaxen.saxpath.SAXPathException;
  * </p>
  * 
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
- * @version $Revision: 1.18.2.1 $
+ * @version $Revision: 1.18 $
  */
 public class XPathPattern implements org.dom4j.rule.Pattern {
     private String text;
@@ -55,14 +56,14 @@ public class XPathPattern implements org.dom4j.rule.Pattern {
             this.pattern = PatternParser.parse(text);
         } catch (SAXPathException e) {
             throw new InvalidXPathException(text, e.getMessage());
-        } catch (Throwable t) {
-            throw new InvalidXPathException(text, t);
+        } catch (RuntimeException e) {
+            throw new InvalidXPathException(text);
         }
     }
 
     public boolean matches(Node node) {
         try {
-            ArrayList list = new ArrayList(1);
+            ArrayList<Node> list = new ArrayList<Node>(1);
             list.add(node);
             context.setNodeSet(list);
 
@@ -99,8 +100,8 @@ public class XPathPattern implements org.dom4j.rule.Pattern {
         return null;
     }
 
-    public short getMatchType() {
-        return pattern.getMatchType();
+    public NodeType getMatchType() {
+        return NodeType.byCode(pattern.getMatchType());
     }
 
     public String getMatchesNodeName() {
@@ -111,6 +112,7 @@ public class XPathPattern implements org.dom4j.rule.Pattern {
         context.getContextSupport().setVariableContext(variableContext);
     }
 
+	@Override
     public String toString() {
         return "[XPathPattern: text: " + text + " Pattern: " + pattern + "]";
     }

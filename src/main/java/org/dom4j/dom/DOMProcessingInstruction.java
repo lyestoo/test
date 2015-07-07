@@ -15,7 +15,9 @@ import org.dom4j.tree.DefaultProcessingInstruction;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.UserDataHandler;
 
 /**
  * <p>
@@ -175,6 +177,54 @@ public class DOMProcessingInstruction extends DefaultProcessingInstruction
         } else {
             setText(data);
         }
+    }
+
+    public String getBaseURI() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public short compareDocumentPosition(Node other) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getTextContent() throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isSameNode(Node other) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isEqualNode(Node arg) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getFeature(String feature, String version) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getUserData(String key) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     // Implementation methods

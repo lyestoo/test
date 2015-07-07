@@ -9,6 +9,7 @@ package org.dom4j.rule;
 
 import org.dom4j.Node;
 import org.dom4j.NodeFilter;
+import org.dom4j.NodeType;
 
 /**
  * <p>
@@ -21,15 +22,6 @@ import org.dom4j.NodeFilter;
  */
 public interface Pattern extends NodeFilter {
     // These node numbers are compatable with DOM4J's Node types
-
-    /** Matches any node */
-    short ANY_NODE = 0;
-
-    /** Matches no nodes */
-    short NONE = 9999;
-
-    /** Count of the number of node types */
-    short NUMBER_OF_TYPES = Node.UNKNOWN_NODE;
 
     /**
      * According to the <a href="http://www.w3.org/TR/xslt11/#conflict">spec
@@ -72,7 +64,7 @@ public interface Pattern extends NodeFilter {
      * @return the type of node the pattern matches which by default should
      *         return ANY_NODE if it can match any kind of node.
      */
-    short getMatchType();
+    NodeType getMatchType();
 
     /**
      * For patterns which only match an ATTRIBUTE_NODE or an ELEMENT_NODE then

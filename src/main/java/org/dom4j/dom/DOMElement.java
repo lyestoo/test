@@ -16,11 +16,14 @@ import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.tree.DefaultElement;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.TypeInfo;
+import org.w3c.dom.UserDataHandler;
 
 /**
  * <p>
@@ -388,6 +391,70 @@ public class DOMElement extends DefaultElement implements org.w3c.dom.Element {
         }
 
         return getDocumentFactory().createQName(localName, prefix, namespace);
+    }
+
+    public TypeInfo getSchemaTypeInfo() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setIdAttribute(String name, boolean isId) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setIdAttributeNS(String namespaceURI, String localName, boolean isId) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setIdAttributeNode(Attr idAttr, boolean isId) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getBaseURI() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public short compareDocumentPosition(Node other) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getTextContent() throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isSameNode(Node other) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isEqualNode(Node arg) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getFeature(String feature, String version) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getUserData(String key) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

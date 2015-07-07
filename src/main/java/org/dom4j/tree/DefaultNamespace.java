@@ -57,6 +57,7 @@ public class DefaultNamespace extends Namespace {
      * @return the hash code based on the qualified name and the URI of the
      *         namespace and the hashCode() of the parent element.
      */
+    @Override
     protected int createHashCode() {
         int hashCode = super.createHashCode();
 
@@ -76,6 +77,7 @@ public class DefaultNamespace extends Namespace {
      * 
      * @return DOCUMENT ME!
      */
+    @Override
     public boolean equals(Object object) {
         if (object instanceof DefaultNamespace) {
             DefaultNamespace that = (DefaultNamespace) object;
@@ -88,22 +90,27 @@ public class DefaultNamespace extends Namespace {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return super.hashCode();
     }
 
+    @Override
     public Element getParent() {
         return parent;
     }
 
+    @Override
     public void setParent(Element parent) {
         this.parent = parent;
     }
 
+    @Override
     public boolean supportsParent() {
         return true;
     }
     
+    @Override
     public boolean isReadOnly() {
         return false;
     }

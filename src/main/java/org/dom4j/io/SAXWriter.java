@@ -24,6 +24,7 @@ import org.dom4j.Element;
 import org.dom4j.Entity;
 import org.dom4j.Namespace;
 import org.dom4j.Node;
+import org.dom4j.NodeType;
 import org.dom4j.ProcessingInstruction;
 import org.dom4j.Text;
 import org.dom4j.tree.NamespaceStack;
@@ -79,17 +80,17 @@ public class SAXWriter implements XMLReader {
     private AttributesImpl attributes = new AttributesImpl();
 
     /** Stores the features */
-    private Map features = new HashMap();
+    private Map<String, Boolean> features = new HashMap<String, Boolean>();
 
     /** Stores the properties */
-    private Map properties = new HashMap();
+    private Map<String, Object> properties = new HashMap<String, Object>();
 
     /** Whether namespace declarations are exported as attributes or not */
     private boolean declareNamespaceAttributes;
 
     public SAXWriter() {
-        properties.put(FEATURE_NAMESPACE_PREFIXES, Boolean.FALSE);
-        properties.put(FEATURE_NAMESPACE_PREFIXES, Boolean.TRUE);
+        properties.put(FEATURE_NAMESPACE_PREFIXES, false);
+        properties.put(FEATURE_NAMESPACE_PREFIXES, true);
     }
 
     public SAXWriter(ContentHandler contentHandler) {
@@ -122,55 +123,55 @@ public class SAXWriter implements XMLReader {
      *             DOCUMENT ME!
      */
     public void write(Node node) throws SAXException {
-        int nodeType = node.getNodeType();
+        NodeType nodeType = node.getNodeTypeEnum();
 
         switch (nodeType) {
-            case Node.ELEMENT_NODE:
+            case ELEMENT_NODE:
                 write((Element) node);
 
                 break;
 
-            case Node.ATTRIBUTE_NODE:
+            case ATTRIBUTE_NODE:
                 write((Attribute) node);
 
                 break;
 
-            case Node.TEXT_NODE:
+            case TEXT_NODE:
                 write(node.getText());
 
                 break;
 
-            case Node.CDATA_SECTION_NODE:
+            case CDATA_SECTION_NODE:
                 write((CDATA) node);
 
                 break;
 
-            case Node.ENTITY_REFERENCE_NODE:
+            case ENTITY_REFERENCE_NODE:
                 write((Entity) node);
 
                 break;
 
-            case Node.PROCESSING_INSTRUCTION_NODE:
+            case PROCESSING_INSTRUCTION_NODE:
                 write((ProcessingInstruction) node);
 
                 break;
 
-            case Node.COMMENT_NODE:
+            case COMMENT_NODE:
                 write((Comment) node);
 
                 break;
 
-            case Node.DOCUMENT_NODE:
+            case DOCUMENT_NODE:
                 write((Document) node);
 
                 break;
 
-            case Node.DOCUMENT_TYPE_NODE:
+            case DOCUMENT_TYPE_NODE:
                 write((DocumentType) node);
 
                 break;
 
-            case Node.NAMESPACE_NODE:
+            case NAMESPACE_NODE:
 
                 // Will be output with attributes
                 // write((Namespace) node);
@@ -493,7 +494,7 @@ public class SAXWriter implements XMLReader {
      */
     public boolean getFeature(String name) throws SAXNotRecognizedException,
             SAXNotSupportedException {
-        Boolean answer = (Boolean) features.get(name);
+        Boolean answer = features.get(name);
 
         return (answer != null) && answer.booleanValue();
     }
@@ -523,7 +524,7 @@ public class SAXWriter implements XMLReader {
             }
         }
 
-        features.put(name, (value) ? Boolean.TRUE : Boolean.FALSE);
+        features.put(name, value);
     }
 
     /**

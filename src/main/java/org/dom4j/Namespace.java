@@ -81,8 +81,9 @@ public class Namespace extends AbstractNode {
         return CACHE.get(uri);
     }
 
-    public short getNodeType() {
-        return NAMESPACE_NODE;
+    @Override
+    public NodeType getNodeTypeEnum() {
+        return NodeType.NAMESPACE_NODE;
     }
 
     /**
@@ -91,6 +92,7 @@ public class Namespace extends AbstractNode {
      * @return the hash code based on the qualified name and the URI of the
      *         namespace.
      */
+    @Override
     public int hashCode() {
         if (hashCode == 0) {
             hashCode = createHashCode();
@@ -124,6 +126,7 @@ public class Namespace extends AbstractNode {
      * 
      * @return DOCUMENT ME!
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;
@@ -140,10 +143,12 @@ public class Namespace extends AbstractNode {
         return false;
     }
 
+    @Override
     public String getText() {
         return uri;
     }
 
+    @Override
     public String getStringValue() {
         return uri;
     }
@@ -202,6 +207,7 @@ public class Namespace extends AbstractNode {
         return path.toString();
     }
 
+    @Override
     public String toString() {
         return super.toString() + " [Namespace: prefix " + getPrefix()
                 + " mapped to URI \"" + getURI() + "\"]";
@@ -229,6 +235,7 @@ public class Namespace extends AbstractNode {
         visitor.visit(this);
     }
 
+    @Override
     protected Node createXPathResult(Element parent) {
         return new DefaultNamespace(parent, getPrefix(), getURI());
     }

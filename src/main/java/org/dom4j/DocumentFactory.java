@@ -324,7 +324,7 @@ public class DocumentFactory implements Serializable {
      * 
      * @return DOCUMENT ME!
      */
-    public List getQNames() {
+    public List<QName> getQNames() {
         return cache.getQNames();
     }
 
@@ -337,7 +337,7 @@ public class DocumentFactory implements Serializable {
      *         namespace URI. This value could well be null to indicate no
      *         namespace URIs are being mapped.
      */
-    public Map getXPathNamespaceURIs() {
+    public Map<String, String> getXPathNamespaceURIs() {
         return xpathNamespaceURIs;
     }
 
@@ -349,7 +349,7 @@ public class DocumentFactory implements Serializable {
      * @param namespaceURIs
      *            DOCUMENT ME!
      */
-    public void setXPathNamespaceURIs(Map namespaceURIs) {
+    public void setXPathNamespaceURIs(Map<String, String> namespaceURIs) {
         this.xpathNamespaceURIs = namespaceURIs;
     }
 

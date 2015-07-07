@@ -4,14 +4,12 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.tree;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +25,8 @@ import org.dom4j.Entity;
 import org.dom4j.IllegalAddException;
 import org.dom4j.Namespace;
 import org.dom4j.Node;
+import org.dom4j.NodeHelper;
+import org.dom4j.NodeType;
 import org.dom4j.ProcessingInstruction;
 import org.dom4j.QName;
 import org.dom4j.Text;
@@ -46,1604 +46,1475 @@ import org.xml.sax.Attributes;
  * @version $Revision: 1.80 $
  */
 public abstract class AbstractElement extends AbstractBranch implements
-        org.dom4j.Element {
-    /** The <code>DocumentFactory</code> instance used by default */
-    private static final DocumentFactory DOCUMENT_FACTORY = DocumentFactory
-            .getInstance();
+				org.dom4j.Element {
 
-    protected static final List EMPTY_LIST = Collections.EMPTY_LIST;
+	/** The <code>DocumentFactory</code> instance used by default */
+	private static final DocumentFactory DOCUMENT_FACTORY = DocumentFactory.getInstance();
+	protected static final boolean VERBOSE_TOSTRING = false;
+	protected static final boolean USE_STRINGVALUE_SEPARATOR = false;
 
-    protected static final Iterator EMPTY_ITERATOR = EMPTY_LIST.iterator();
+	public AbstractElement() {
+	}
 
-    protected static final boolean VERBOSE_TOSTRING = false;
+	@Override
+	public NodeType getNodeTypeEnum() {
+		return NodeType.ELEMENT_NODE;
+	}
 
-    protected static final boolean USE_STRINGVALUE_SEPARATOR = false;
+	public boolean isRootElement() {
+		Document document = getDocument();
 
-    public AbstractElement() {
-    }
+		if (document != null) {
+			Element root = document.getRootElement();
 
-    public short getNodeType() {
-        return ELEMENT_NODE;
-    }
+			if (root == this) {
+				return true;
+			}
+		}
 
-    public boolean isRootElement() {
-        Document document = getDocument();
+		return false;
+	}
 
-        if (document != null) {
-            Element root = document.getRootElement();
+	@Override
+	public void setName(String name) {
+		setQName(getDocumentFactory().createQName(name));
+	}
 
-            if (root == this) {
-                return true;
-            }
-        }
+	public void setNamespace(Namespace namespace) {
+		setQName(getDocumentFactory().createQName(getName(), namespace));
+	}
 
-        return false;
-    }
+	/**
+	 * Returns the XPath expression to match this Elements name which is
+	 * getQualifiedName() if there is a namespace prefix defined or if no
+	 * namespace is present then it is getName() or if a namespace is defined
+	 * with no prefix then the expression is [name()='X'] where X = getName().
+	 * 
+	 * @return DOCUMENT ME!
+	 */
+	public String getXPathNameStep() {
+		String uri = getNamespaceURI();
 
-    public void setName(String name) {
-        setQName(getDocumentFactory().createQName(name));
-    }
+		if ((uri == null) || (uri.length() == 0)) {
+			return getName();
+		}
 
-    public void setNamespace(Namespace namespace) {
-        setQName(getDocumentFactory().createQName(getName(), namespace));
-    }
+		String prefix = getNamespacePrefix();
+
+		if ((prefix == null) || (prefix.length() == 0)) {
+			return "*[name()='" + getName() + "']";
+		}
+
+		return getQualifiedName();
+	}
+
+	public String getPath(Element context) {
+		if (this == context) {
+			return ".";
+		}
+
+		Element parent = getParent();
+
+		if (parent == null) {
+			return "/" + getXPathNameStep();
+		} else if (parent == context) {
+			return getXPathNameStep();
+		}
+
+		return parent.getPath(context) + "/" + getXPathNameStep();
+	}
+
+	public String getUniquePath(Element context) {
+		Element parent = getParent();
+
+		if (parent == null) {
+			return "/" + getXPathNameStep();
+		}
+
+		StringBuffer buffer = new StringBuffer();
+
+		if (parent != context) {
+			buffer.append(parent.getUniquePath(context));
+
+			buffer.append("/");
+		}
+
+		buffer.append(getXPathNameStep());
+
+		List mySiblings = parent.elements(getQName());
+
+		if (mySiblings.size() > 1) {
+			int idx = mySiblings.indexOf(this);
+
+			if (idx >= 0) {
+				buffer.append("[");
+
+				buffer.append(Integer.toString(++idx));
+
+				buffer.append("]");
+			}
+		}
+
+		return buffer.toString();
+	}
+
+	public String asXML() {
+		try {
+			StringWriter out = new StringWriter();
+			XMLWriter writer = new XMLWriter(out, new OutputFormat());
+
+			writer.write(this);
+			writer.flush();
+
+			return out.toString();
+		} catch (IOException e) {
+			throw new RuntimeException("IOException while generating " + "textual representation: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void write(Writer out) throws IOException {
+		XMLWriter writer = new XMLWriter(out, new OutputFormat());
+		writer.write(this);
+	}
+
+	/**
+	 * <p>
+	 * <code>accept</code> method is the <code>Visitor Pattern</code>
+	 * method.
+	 * </p>
+	 * 
+	 * @param visitor
+	 *            <code>Visitor</code> is the visitor.
+	 */
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+
+		// visit attributes
+		for (int i = 0, size = attributeCount(); i < size; i++) {
+			Attribute attribute = attribute(i);
+
+			visitor.visit(attribute);
+		}
+
+		// visit content
+		for (int i = 0, size = nodeCount(); i < size; i++) {
+			Node node = node(i);
+
+			node.accept(visitor);
+		}
+	}
+
+	@Override
+	protected void toString(StringBuilder builder) {
+		String uri = getNamespaceURI();
+
+		super.toString(builder);
+		builder.append(" [Element: <");
+		builder.append(getQualifiedName());
+		if ((uri != null) && (uri.length() > 0)) {
+			builder.append(" uri: ");
+			builder.append(uri);
+		}
+		builder.append(" attributes: ");
+		builder.append(attributeList());
+		if (VERBOSE_TOSTRING) {
+			builder.append(" content: ");
+			builder.append(contentList());
+			builder.append(' ');
+		}
+		builder.append("/>]");
+	}
+
+	// QName methods
+	// -------------------------------------------------------------------------
+	public Namespace getNamespace() {
+		return getQName().getNamespace();
+	}
+
+	@Override
+	public String getName() {
+		return getQName().getName();
+	}
+
+	public String getNamespacePrefix() {
+		return getQName().getNamespacePrefix();
+	}
+
+	public String getNamespaceURI() {
+		return getQName().getNamespaceURI();
+	}
+
+	public String getQualifiedName() {
+		return getQName().getQualifiedName();
+	}
+
+	public Object getData() {
+		return getText();
+	}
+
+	public void setData(Object data) {
+		// ignore this method
+	}
+
+	// Node methods
+	// -------------------------------------------------------------------------
+	@Override
+	public Node node(int index) {
+		if (index >= 0) {
+			List<Node> list = contentList();
+
+			if (index >= list.size()) {
+				return null;
+			}
+			return list.get(index);
+		}
+
+		return null;
+	}
+
+	@Override
+	public int indexOf(Node node) {
+		return contentList().indexOf(node);
+	}
+
+	@Override
+	public int nodeCount() {
+		return contentList().size();
+	}
+
+	@Override
+	public Iterator<Node> nodeIterator() {
+		return contentList().iterator();
+	}
+
+	// Element methods
+	// -------------------------------------------------------------------------
+	public Element element(String name) {
+		for (Node node : contentList()) {
+			Element element = NodeHelper.nodeAsElement(node);
+			if (element != null && name.equals(element.getName())) {
+				return element;
+			}
+
+		}
+
+		return null;
+	}
+
+	public Element element(QName qName) {
+		for (Node node : contentList()) {
+			Element element = NodeHelper.nodeAsElement(node);
+			if (element != null && qName.equals(element.getQName())) {
+				return element;
+			}
+		}
+
+		return null;
+	}
+
+	public Element element(String name, Namespace namespace) {
+		return element(getDocumentFactory().createQName(name, namespace));
+	}
+
+	public List<Element> elements() {
+		BackedList<Element> answer = createResultList();
+		for (Node node : contentList()) {
+			NodeHelper.appendElementLocal(node, answer);
+		}
+
+		return answer;
+	}
+
+	public List<Element> elements(String name) {
+		BackedList<Element> answer = createResultList();
+		for (Node node : contentList()) {
+			NodeHelper.appendElementNamedLocal(node, answer, name);
+		}
+
+		return answer;
+	}
+
+	public List<Element> elements(QName qName) {
+		BackedList<Element> answer = createResultList();
+		for (Node node : contentList()) {
+			NodeHelper.appendElementQNamedLocal(node, answer, qName);
+		}
+
+		return answer;
+	}
+
+	public List elements(String name, Namespace namespace) {
+		return elements(getDocumentFactory().createQName(name, namespace));
+	}
+
+	public Iterator<Element> elementIterator() {
+		return elements().iterator();
+	}
+
+	public Iterator<Element> elementIterator(String name) {
+		return elements(name).iterator();
+	}
+
+	public Iterator<Element> elementIterator(QName qName) {
+		return elements(qName).iterator();
+	}
+
+	public Iterator<Element> elementIterator(String name, Namespace ns) {
+		return elementIterator(getDocumentFactory().createQName(name, ns));
+	}
+
+	// Attribute methods
+	// -------------------------------------------------------------------------
+	public List<Attribute> attributes() {
+		return new ContentListFacade<Attribute>(this, attributeList());
+	}
+
+	public Iterator<Attribute> attributeIterator() {
+		return attributeList().iterator();
+	}
+
+	public Attribute attribute(int index) {
+		return attributeList().get(index);
+	}
+
+	public int attributeCount() {
+		return attributeList().size();
+	}
+
+	public Attribute attribute(String name) {
+		for (Attribute attribute : attributeList()) {
+			if (name.equals(attribute.getName())) {
+				return attribute;
+			}
+		}
+
+		return null;
+	}
+
+	public Attribute attribute(QName qName) {
+		for (Attribute attribute : attributeList()) {
+			if (qName.equals(attribute.getQName())) {
+				return attribute;
+			}
+		}
+
+		return null;
+	}
+
+	public Attribute attribute(String name, Namespace namespace) {
+		return attribute(getDocumentFactory().createQName(name, namespace));
+	}
+
+	/**
+	 * This method provides a more optimal way of setting all the attributes on
+	 * an Element particularly for use in {@link org.dom4j.io.SAXReader}.
+	 * 
+	 * @param attributes
+	 *            DOCUMENT ME!
+	 * @param namespaceStack
+	 *            DOCUMENT ME!
+	 * @param noNamespaceAttributes
+	 *            DOCUMENT ME!
+	 */
+	public void setAttributes(Attributes attributes,
+					NamespaceStack namespaceStack, boolean noNamespaceAttributes) {
+		// now lets add all attribute values
+		int size = attributes.getLength();
+
+		if (size > 0) {
+			DocumentFactory factory = getDocumentFactory();
+
+			if (size == 1) {
+				// allow lazy construction of the List of Attributes
+				String name = attributes.getQName(0);
+
+				if (noNamespaceAttributes || !name.startsWith("xmlns")) {
+					String attributeURI = attributes.getURI(0);
+
+					String attributeLocalName = attributes.getLocalName(0);
+
+					String attributeValue = attributes.getValue(0);
+
+					QName attributeQName = namespaceStack.getAttributeQName(
+									attributeURI, attributeLocalName, name);
+
+					add(factory.createAttribute(this, attributeQName,
+									attributeValue));
+				}
+			} else {
+				List<Attribute> list = attributeList(size);
+
+				list.clear();
+
+				for (int i = 0; i < size; i++) {
+					// optimised to avoid the call to attribute(QName) to
+					// lookup an attribute for a given QName
+					String attributeName = attributes.getQName(i);
+
+					if (noNamespaceAttributes || !attributeName.startsWith("xmlns")) {
+						String attributeURI = attributes.getURI(i);
+
+						String attributeLocalName = attributes.getLocalName(i);
+
+						String attributeValue = attributes.getValue(i);
+
+						QName attributeQName = namespaceStack.getAttributeQName(attributeURI,
+										attributeLocalName, attributeName);
+
+						Attribute attribute = factory.createAttribute(this,
+										attributeQName, attributeValue);
+
+						list.add(attribute);
+
+						childAdded(attribute);
+					}
+				}
+			}
+		}
+	}
+
+	public String attributeValue(String name) {
+		return NodeHelper.getAttributeValue(attribute(name), null);
+	}
+
+	public String attributeValue(QName qName) {
+		return NodeHelper.getAttributeValue(attribute(qName), null);
+	}
+
+	public String attributeValue(String name, String defaultValue) {
+		return NodeHelper.getAttributeValue(attribute(name), defaultValue);
+	}
+
+	public String attributeValue(QName qName, String defaultValue) {
+		return NodeHelper.getAttributeValue(attribute(qName), defaultValue);
+	}
+
+	public void add(Attribute attribute) {
+		if (attribute.getParent() != null) {
+			String message = "The Attribute already has an existing parent \"" + attribute.getParent().getQualifiedName() + "\"";
+
+			throw new IllegalAddException(this, attribute, message);
+		}
+
+		if (attribute.getValue() == null) {
+			// try remove a previous attribute with the same
+			// name since adding an attribute with a null value
+			// is equivalent to removing it.
+			Attribute oldAttribute = attribute(attribute.getQName());
+
+			if (oldAttribute != null) {
+				remove(oldAttribute);
+			}
+		} else {
+			attributeList().add(attribute);
+
+			childAdded(attribute);
+		}
+	}
+
+	public boolean remove(Attribute attribute) {
+		List list = attributeList();
+
+		boolean answer = list.remove(attribute);
+
+		if (answer) {
+			childRemoved(attribute);
+		} else {
+			// we may have a copy of the attribute
+			Attribute copy = attribute(attribute.getQName());
+
+			if (copy != null) {
+				list.remove(copy);
+
+				answer = true;
+			}
+		}
+
+		return answer;
+	}
+
+	// Processing instruction API
+	// -------------------------------------------------------------------------
+	public List<ProcessingInstruction> processingInstructions() {
+		List<? extends Node> list = contentList();
+
+		BackedList<ProcessingInstruction> answer = createResultList();
+
+		int size = list.size();
+
+		for (int i = 0; i < size; i++) {
+			Node node = list.get(i);
+
+			if (node instanceof ProcessingInstruction) {
+				answer.addLocal((ProcessingInstruction) node);
+			}
+		}
+
+		return answer;
+	}
+
+	public List<ProcessingInstruction> processingInstructions(String target) {
+		List<? extends Node> list = contentList();
+
+		BackedList<ProcessingInstruction> answer = createResultList();
+
+		int size = list.size();
+
+		for (int i = 0; i < size; i++) {
+			Node node = list.get(i);
+
+			if (node instanceof ProcessingInstruction) {
+				ProcessingInstruction pi = (ProcessingInstruction) node;
+
+				if (target.equals(pi.getName())) {
+					answer.addLocal(pi);
+				}
+			}
+		}
+
+		return answer;
+	}
+
+	public ProcessingInstruction processingInstruction(String target) {
+		List<? extends Node> list = contentList();
+
+		int size = list.size();
+
+		for (int i = 0; i < size; i++) {
+			Node node = list.get(i);
+
+			if (node instanceof ProcessingInstruction) {
+				ProcessingInstruction pi = (ProcessingInstruction) node;
+
+				if (target.equals(pi.getName())) {
+					return pi;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public boolean removeProcessingInstruction(String target) {
+		List<? extends Node> list = contentList();
+
+		for (Iterator<? extends Node> iter = list.iterator(); iter.hasNext();) {
+			Node node = iter.next();
+
+			if (node instanceof ProcessingInstruction) {
+				ProcessingInstruction pi = (ProcessingInstruction) node;
+
+				if (target.equals(pi.getName())) {
+					iter.remove();
+
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	// Content Model methods
+	// -------------------------------------------------------------------------
+	public Node getXPathResult(int index) {
+		Node answer = node(index);
+
+		if ((answer != null) && !answer.supportsParent()) {
+			return answer.asXPathResult(this);
+		}
+
+		return answer;
+	}
+
+	public Element addAttribute(String name, String value) {
+		// adding a null value is equivalent to removing the attribute
+		Attribute attribute = attribute(name);
+
+		if (value != null) {
+			if (attribute == null) {
+				add(getDocumentFactory().createAttribute(this, name, value));
+			} else if (attribute.isReadOnly()) {
+				remove(attribute);
+
+				add(getDocumentFactory().createAttribute(this, name, value));
+			} else {
+				attribute.setValue(value);
+			}
+		} else if (attribute != null) {
+			remove(attribute);
+		}
+
+		return this;
+	}
+
+	public Element addAttribute(QName qName, String value) {
+		// adding a null value is equivalent to removing the attribute
+		Attribute attribute = attribute(qName);
+
+		if (value != null) {
+			if (attribute == null) {
+				add(getDocumentFactory().createAttribute(this, qName, value));
+			} else if (attribute.isReadOnly()) {
+				remove(attribute);
 
-    /**
-     * Returns the XPath expression to match this Elements name which is
-     * getQualifiedName() if there is a namespace prefix defined or if no
-     * namespace is present then it is getName() or if a namespace is defined
-     * with no prefix then the expression is [name()='X'] where X = getName().
-     * 
-     * @return DOCUMENT ME!
-     */
-    public String getXPathNameStep() {
-        String uri = getNamespaceURI();
+				add(getDocumentFactory().createAttribute(this, qName, value));
+			} else {
+				attribute.setValue(value);
+			}
+		} else if (attribute != null) {
+			remove(attribute);
+		}
 
-        if ((uri == null) || (uri.length() == 0)) {
-            return getName();
-        }
+		return this;
+	}
 
-        String prefix = getNamespacePrefix();
+	public Element addCDATA(String cdata) {
+		CDATA node = getDocumentFactory().createCDATA(cdata);
 
-        if ((prefix == null) || (prefix.length() == 0)) {
-            return "*[name()='" + getName() + "']";
-        }
+		addNewNode(node);
 
-        return getQualifiedName();
-    }
+		return this;
+	}
 
-    public String getPath(Element context) {
-        if (this == context) {
-            return ".";
-        }
+	public Element addComment(String comment) {
+		Comment node = getDocumentFactory().createComment(comment);
 
-        Element parent = getParent();
+		addNewNode(node);
 
-        if (parent == null) {
-            return "/" + getXPathNameStep();
-        } else if (parent == context) {
-            return getXPathNameStep();
-        }
-
-        return parent.getPath(context) + "/" + getXPathNameStep();
-    }
-
-    public String getUniquePath(Element context) {
-        Element parent = getParent();
-
-        if (parent == null) {
-            return "/" + getXPathNameStep();
-        }
-
-        StringBuffer buffer = new StringBuffer();
-
-        if (parent != context) {
-            buffer.append(parent.getUniquePath(context));
-
-            buffer.append("/");
-        }
-
-        buffer.append(getXPathNameStep());
-
-        List mySiblings = parent.elements(getQName());
-
-        if (mySiblings.size() > 1) {
-            int idx = mySiblings.indexOf(this);
-
-            if (idx >= 0) {
-                buffer.append("[");
-
-                buffer.append(Integer.toString(++idx));
-
-                buffer.append("]");
-            }
-        }
-
-        return buffer.toString();
-    }
-
-    public String asXML() {
-        try {
-            StringWriter out = new StringWriter();
-            XMLWriter writer = new XMLWriter(out, new OutputFormat());
-
-            writer.write(this);
-            writer.flush();
-
-            return out.toString();
-        } catch (IOException e) {
-            throw new RuntimeException("IOException while generating "
-                    + "textual representation: " + e.getMessage());
-        }
-    }
-
-    public void write(Writer out) throws IOException {
-        XMLWriter writer = new XMLWriter(out, new OutputFormat());
-        writer.write(this);
-    }
-
-    /**
-     * <p>
-     * <code>accept</code> method is the <code>Visitor Pattern</code>
-     * method.
-     * </p>
-     * 
-     * @param visitor
-     *            <code>Visitor</code> is the visitor.
-     */
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-
-        // visit attributes
-        for (int i = 0, size = attributeCount(); i < size; i++) {
-            Attribute attribute = attribute(i);
-
-            visitor.visit(attribute);
-        }
-
-        // visit content
-        for (int i = 0, size = nodeCount(); i < size; i++) {
-            Node node = node(i);
-
-            node.accept(visitor);
-        }
-    }
-
-    public String toString() {
-        String uri = getNamespaceURI();
-
-        if ((uri != null) && (uri.length() > 0)) {
-            if (VERBOSE_TOSTRING) {
-                return super.toString() + " [Element: <" + getQualifiedName()
-                        + " uri: " + uri + " attributes: " + attributeList()
-                        + " content: " + contentList() + " />]";
-            } else {
-                return super.toString() + " [Element: <" + getQualifiedName()
-                        + " uri: " + uri + " attributes: " + attributeList()
-                        + "/>]";
-            }
-        } else {
-            if (VERBOSE_TOSTRING) {
-                return super.toString() + " [Element: <" + getQualifiedName()
-                        + " attributes: " + attributeList() + " content: "
-                        + contentList() + " />]";
-            } else {
-                return super.toString() + " [Element: <" + getQualifiedName()
-                        + " attributes: " + attributeList() + "/>]";
-            }
-        }
-    }
-
-    // QName methods
-    // -------------------------------------------------------------------------
-    public Namespace getNamespace() {
-        return getQName().getNamespace();
-    }
-
-    public String getName() {
-        return getQName().getName();
-    }
-
-    public String getNamespacePrefix() {
-        return getQName().getNamespacePrefix();
-    }
-
-    public String getNamespaceURI() {
-        return getQName().getNamespaceURI();
-    }
-
-    public String getQualifiedName() {
-        return getQName().getQualifiedName();
-    }
-
-    public Object getData() {
-        return getText();
-    }
-
-    public void setData(Object data) {
-        // ignore this method
-    }
-
-    // Node methods
-    // -------------------------------------------------------------------------
-    public Node node(int index) {
-        if (index >= 0) {
-            List list = contentList();
-
-            if (index >= list.size()) {
-                return null;
-            }
-
-            Object node = list.get(index);
-
-            if (node != null) {
-                if (node instanceof Node) {
-                    return (Node) node;
-                } else {
-                    return getDocumentFactory().createText(node.toString());
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public int indexOf(Node node) {
-        return contentList().indexOf(node);
-    }
-
-    public int nodeCount() {
-        return contentList().size();
-    }
-
-    public Iterator nodeIterator() {
-        return contentList().iterator();
-    }
-
-    // Element methods
-    // -------------------------------------------------------------------------
-    public Element element(String name) {
-        List list = contentList();
-
-        int size = list.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
-
-            if (object instanceof Element) {
-                Element element = (Element) object;
-
-                if (name.equals(element.getName())) {
-                    return element;
-                }
-            }
-        }
+		return this;
+	}
 
-        return null;
-    }
+	@Override
+	public Element addElement(String name) {
+		DocumentFactory factory = getDocumentFactory();
 
-    public Element element(QName qName) {
-        List list = contentList();
+		int index = name.indexOf(":");
 
-        int size = list.size();
+		String prefix = "";
 
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+		String localName = name;
 
-            if (object instanceof Element) {
-                Element element = (Element) object;
+		Namespace namespace = null;
 
-                if (qName.equals(element.getQName())) {
-                    return element;
-                }
-            }
-        }
+		if (index > 0) {
+			prefix = name.substring(0, index);
 
-        return null;
-    }
+			localName = name.substring(index + 1);
 
-    public Element element(String name, Namespace namespace) {
-        return element(getDocumentFactory().createQName(name, namespace));
-    }
+			namespace = getNamespaceForPrefix(prefix);
 
-    public List elements() {
-        List list = contentList();
+			if (namespace == null) {
+				throw new IllegalAddException("No such namespace prefix: " + prefix + " is in scope on: " + this + " so cannot add element: " + name);
+			}
+		} else {
+			namespace = getNamespaceForPrefix("");
+		}
 
-        BackedList answer = createResultList();
+		Element node;
 
-        int size = list.size();
+		if (namespace != null) {
+			QName qname = factory.createQName(localName, namespace);
 
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+			node = factory.createElement(qname);
+		} else {
+			node = factory.createElement(name);
+		}
 
-            if (object instanceof Element) {
-                answer.addLocal(object);
-            }
-        }
+		addNewNode(node);
 
-        return answer;
-    }
+		return node;
+	}
 
-    public List elements(String name) {
-        List list = contentList();
+	public Element addEntity(String name, String text) {
+		Entity node = getDocumentFactory().createEntity(name, text);
 
-        BackedList answer = createResultList();
+		addNewNode(node);
 
-        int size = list.size();
+		return this;
+	}
 
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+	public Element addNamespace(String prefix, String uri) {
+		Namespace node = getDocumentFactory().createNamespace(prefix, uri);
 
-            if (object instanceof Element) {
-                Element element = (Element) object;
+		addNewNode(node);
 
-                if (name.equals(element.getName())) {
-                    answer.addLocal(element);
-                }
-            }
-        }
+		return this;
+	}
 
-        return answer;
-    }
+	public Element addProcessingInstruction(String target, String data) {
+		ProcessingInstruction node = getDocumentFactory().createProcessingInstruction(target, data);
 
-    public List elements(QName qName) {
-        List list = contentList();
+		addNewNode(node);
 
-        BackedList answer = createResultList();
+		return this;
+	}
 
-        int size = list.size();
+	public Element addProcessingInstruction(String target, Map data) {
+		ProcessingInstruction node = getDocumentFactory().createProcessingInstruction(target, data);
 
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
+		addNewNode(node);
 
-            if (object instanceof Element) {
-                Element element = (Element) object;
+		return this;
+	}
 
-                if (qName.equals(element.getQName())) {
-                    answer.addLocal(element);
-                }
-            }
-        }
-
-        return answer;
-    }
-
-    public List elements(String name, Namespace namespace) {
-        return elements(getDocumentFactory().createQName(name, namespace));
-    }
-
-    public Iterator elementIterator() {
-        List list = elements();
+	public Element addText(String text) {
+		Text node = getDocumentFactory().createText(text);
 
-        return list.iterator();
-    }
+		addNewNode(node);
 
-    public Iterator elementIterator(String name) {
-        List list = elements(name);
+		return this;
+	}
 
-        return list.iterator();
-    }
+	// polymorphic node methods
+	@Override
+	public void add(Node node) {
+		switch (node.getNodeTypeEnum()) {
+			case ELEMENT_NODE:
+				add((Element) node);
 
-    public Iterator elementIterator(QName qName) {
-        List list = elements(qName);
+				break;
 
-        return list.iterator();
-    }
+			case ATTRIBUTE_NODE:
+				add((Attribute) node);
 
-    public Iterator elementIterator(String name, Namespace ns) {
-        return elementIterator(getDocumentFactory().createQName(name, ns));
-    }
+				break;
 
-    // Attribute methods
-    // -------------------------------------------------------------------------
-    public List attributes() {
-        return new ContentListFacade(this, attributeList());
-    }
+			case TEXT_NODE:
+				add((Text) node);
 
-    public Iterator attributeIterator() {
-        return attributeList().iterator();
-    }
+				break;
 
-    public Attribute attribute(int index) {
-        return (Attribute) attributeList().get(index);
-    }
+			case CDATA_SECTION_NODE:
+				add((CDATA) node);
 
-    public int attributeCount() {
-        return attributeList().size();
-    }
+				break;
 
-    public Attribute attribute(String name) {
-        List list = attributeList();
+			case ENTITY_REFERENCE_NODE:
+				add((Entity) node);
 
-        int size = list.size();
+				break;
 
-        for (int i = 0; i < size; i++) {
-            Attribute attribute = (Attribute) list.get(i);
+			case PROCESSING_INSTRUCTION_NODE:
+				add((ProcessingInstruction) node);
 
-            if (name.equals(attribute.getName())) {
-                return attribute;
-            }
-        }
+				break;
 
-        return null;
-    }
+			case COMMENT_NODE:
+				add((Comment) node);
 
-    public Attribute attribute(QName qName) {
-        List list = attributeList();
+				break;
 
-        int size = list.size();
+			/*
+			 * XXXX: to do! case DOCUMENT_TYPE_NODE: add((DocumentType) node);
+			 * break;
+			 */
+			case NAMESPACE_NODE:
+				add((Namespace) node);
 
-        for (int i = 0; i < size; i++) {
-            Attribute attribute = (Attribute) list.get(i);
+				break;
 
-            if (qName.equals(attribute.getQName())) {
-                return attribute;
-            }
-        }
+			default:
+				invalidNodeTypeAddException(node);
+		}
+	}
 
-        return null;
-    }
+	@Override
+	public boolean remove(Node node) {
+		switch (node.getNodeTypeEnum()) {
+			case ELEMENT_NODE:
+				return remove((Element) node);
 
-    public Attribute attribute(String name, Namespace namespace) {
-        return attribute(getDocumentFactory().createQName(name, namespace));
-    }
+			case ATTRIBUTE_NODE:
+				return remove((Attribute) node);
 
-    /**
-     * This method provides a more optimal way of setting all the attributes on
-     * an Element particularly for use in {@link org.dom4j.io.SAXReader}.
-     * 
-     * @param attributes
-     *            DOCUMENT ME!
-     * @param namespaceStack
-     *            DOCUMENT ME!
-     * @param noNamespaceAttributes
-     *            DOCUMENT ME!
-     */
-    public void setAttributes(Attributes attributes,
-            NamespaceStack namespaceStack, boolean noNamespaceAttributes) {
-        // now lets add all attribute values
-        int size = attributes.getLength();
-
-        if (size > 0) {
-            DocumentFactory factory = getDocumentFactory();
-
-            if (size == 1) {
-                // allow lazy construction of the List of Attributes
-                String name = attributes.getQName(0);
-
-                if (noNamespaceAttributes || !name.startsWith("xmlns")) {
-                    String attributeURI = attributes.getURI(0);
-
-                    String attributeLocalName = attributes.getLocalName(0);
-
-                    String attributeValue = attributes.getValue(0);
-
-                    QName attributeQName = namespaceStack.getAttributeQName(
-                            attributeURI, attributeLocalName, name);
-
-                    add(factory.createAttribute(this, attributeQName,
-                            attributeValue));
-                }
-            } else {
-                List list = attributeList(size);
-
-                list.clear();
-
-                for (int i = 0; i < size; i++) {
-                    // optimised to avoid the call to attribute(QName) to
-                    // lookup an attribute for a given QName
-                    String attributeName = attributes.getQName(i);
-
-                    if (noNamespaceAttributes
-                            || !attributeName.startsWith("xmlns")) {
-                        String attributeURI = attributes.getURI(i);
-
-                        String attributeLocalName = attributes.getLocalName(i);
-
-                        String attributeValue = attributes.getValue(i);
-
-                        QName attributeQName = namespaceStack
-                                .getAttributeQName(attributeURI,
-                                        attributeLocalName, attributeName);
-
-                        Attribute attribute = factory.createAttribute(this,
-                                attributeQName, attributeValue);
-
-                        list.add(attribute);
-
-                        childAdded(attribute);
-                    }
-                }
-            }
-        }
-    }
-
-    public String attributeValue(String name) {
-        Attribute attrib = attribute(name);
-
-        if (attrib == null) {
-            return null;
-        } else {
-            return attrib.getValue();
-        }
-    }
-
-    public String attributeValue(QName qName) {
-        Attribute attrib = attribute(qName);
-
-        if (attrib == null) {
-            return null;
-        } else {
-            return attrib.getValue();
-        }
-    }
-
-    public String attributeValue(String name, String defaultValue) {
-        String answer = attributeValue(name);
-
-        return (answer != null) ? answer : defaultValue;
-    }
-
-    public String attributeValue(QName qName, String defaultValue) {
-        String answer = attributeValue(qName);
-
-        return (answer != null) ? answer : defaultValue;
-    }
-
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param name
-     *            DOCUMENT ME!
-     * @param value
-     *            DOCUMENT ME!
-     * 
-     * @deprecated As of version 0.5. Please use {@link
-     *             #addAttribute(String,String)} instead. WILL BE REMOVED IN
-     *             dom4j-1.6 !!
-     */
-    public void setAttributeValue(String name, String value) {
-        addAttribute(name, value);
-    }
-
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param qName
-     *            DOCUMENT ME!
-     * @param value
-     *            DOCUMENT ME!
-     * 
-     * @deprecated As of version 0.5. Please use {@link
-     *             #addAttribute(String,String)} instead. WILL BE REMOVED IN
-     *             dom4j-1.6 !!
-     */
-    public void setAttributeValue(QName qName, String value) {
-        addAttribute(qName, value);
-    }
-
-    public void add(Attribute attribute) {
-        if (attribute.getParent() != null) {
-            String message = "The Attribute already has an existing parent \""
-                    + attribute.getParent().getQualifiedName() + "\"";
-
-            throw new IllegalAddException(this, attribute, message);
-        }
-
-        if (attribute.getValue() == null) {
-            // try remove a previous attribute with the same
-            // name since adding an attribute with a null value
-            // is equivalent to removing it.
-            Attribute oldAttribute = attribute(attribute.getQName());
-
-            if (oldAttribute != null) {
-                remove(oldAttribute);
-            }
-        } else {
-            attributeList().add(attribute);
+			case TEXT_NODE:
+				return remove((Text) node);
 
-            childAdded(attribute);
-        }
-    }
-
-    public boolean remove(Attribute attribute) {
-        List list = attributeList();
-
-        boolean answer = list.remove(attribute);
+			case CDATA_SECTION_NODE:
+				return remove((CDATA) node);
 
-        if (answer) {
-            childRemoved(attribute);
-        } else {
-            // we may have a copy of the attribute
-            Attribute copy = attribute(attribute.getQName());
-
-            if (copy != null) {
-                list.remove(copy);
-
-                answer = true;
-            }
-        }
-
-        return answer;
-    }
+			case ENTITY_REFERENCE_NODE:
+				return remove((Entity) node);
 
-    // Processing instruction API
-    // -------------------------------------------------------------------------
-    public List processingInstructions() {
-        List list = contentList();
-
-        BackedList answer = createResultList();
-
-        int size = list.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
-
-            if (object instanceof ProcessingInstruction) {
-                answer.addLocal(object);
-            }
-        }
-
-        return answer;
-    }
-
-    public List processingInstructions(String target) {
-        List list = contentList();
-
-        BackedList answer = createResultList();
-
-        int size = list.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
-
-            if (object instanceof ProcessingInstruction) {
-                ProcessingInstruction pi = (ProcessingInstruction) object;
-
-                if (target.equals(pi.getName())) {
-                    answer.addLocal(pi);
-                }
-            }
-        }
-
-        return answer;
-    }
-
-    public ProcessingInstruction processingInstruction(String target) {
-        List list = contentList();
-
-        int size = list.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
-
-            if (object instanceof ProcessingInstruction) {
-                ProcessingInstruction pi = (ProcessingInstruction) object;
-
-                if (target.equals(pi.getName())) {
-                    return pi;
-                }
-            }
-        }
+			case PROCESSING_INSTRUCTION_NODE:
+				return remove((ProcessingInstruction) node);
 
-        return null;
-    }
+			case COMMENT_NODE:
+				return remove((Comment) node);
 
-    public boolean removeProcessingInstruction(String target) {
-        List list = contentList();
+			/*
+			 * case DOCUMENT_TYPE_NODE: return remove((DocumentType) node);
+			 */
+			case NAMESPACE_NODE:
+				return remove((Namespace) node);
 
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            Object object = iter.next();
+			default:
+				return false;
+		}
+	}
 
-            if (object instanceof ProcessingInstruction) {
-                ProcessingInstruction pi = (ProcessingInstruction) object;
+	// typesafe versions using node classes
+	public void add(CDATA cdata) {
+		addNode(cdata);
+	}
 
-                if (target.equals(pi.getName())) {
-                    iter.remove();
+	@Override
+	public void add(Comment comment) {
+		addNode(comment);
+	}
 
-                    return true;
-                }
-            }
-        }
+	@Override
+	public void add(Element element) {
+		addNode(element);
+	}
 
-        return false;
-    }
+	public void add(Entity entity) {
+		addNode(entity);
+	}
 
-    // Content Model methods
-    // -------------------------------------------------------------------------
-    public Node getXPathResult(int index) {
-        Node answer = node(index);
+	public void add(Namespace namespace) {
+		addNode(namespace);
+	}
 
-        if ((answer != null) && !answer.supportsParent()) {
-            return answer.asXPathResult(this);
-        }
+	@Override
+	public void add(ProcessingInstruction pi) {
+		addNode(pi);
+	}
 
-        return answer;
-    }
+	public void add(Text text) {
+		addNode(text);
+	}
 
-    public Element addAttribute(String name, String value) {
-        // adding a null value is equivalent to removing the attribute
-        Attribute attribute = attribute(name);
+	public boolean remove(CDATA cdata) {
+		return removeNode(cdata);
+	}
 
-        if (value != null) {
-            if (attribute == null) {
-                add(getDocumentFactory().createAttribute(this, name, value));
-            } else if (attribute.isReadOnly()) {
-                remove(attribute);
+	@Override
+	public boolean remove(Comment comment) {
+		return removeNode(comment);
+	}
 
-                add(getDocumentFactory().createAttribute(this, name, value));
-            } else {
-                attribute.setValue(value);
-            }
-        } else if (attribute != null) {
-            remove(attribute);
-        }
+	@Override
+	public boolean remove(Element element) {
+		return removeNode(element);
+	}
 
-        return this;
-    }
+	public boolean remove(Entity entity) {
+		return removeNode(entity);
+	}
 
-    public Element addAttribute(QName qName, String value) {
-        // adding a null value is equivalent to removing the attribute
-        Attribute attribute = attribute(qName);
+	public boolean remove(Namespace namespace) {
+		return removeNode(namespace);
+	}
 
-        if (value != null) {
-            if (attribute == null) {
-                add(getDocumentFactory().createAttribute(this, qName, value));
-            } else if (attribute.isReadOnly()) {
-                remove(attribute);
+	@Override
+	public boolean remove(ProcessingInstruction pi) {
+		return removeNode(pi);
+	}
 
-                add(getDocumentFactory().createAttribute(this, qName, value));
-            } else {
-                attribute.setValue(value);
-            }
-        } else if (attribute != null) {
-            remove(attribute);
-        }
+	public boolean remove(Text text) {
+		return removeNode(text);
+	}
 
-        return this;
-    }
+	// Helper methods
+	// -------------------------------------------------------------------------
+	public boolean hasMixedContent() {
+		List<? extends Node> content = contentList();
 
-    public Element addCDATA(String cdata) {
-        CDATA node = getDocumentFactory().createCDATA(cdata);
+		if ((content == null) || content.isEmpty() || (content.size() < 2)) {
+			return false;
+		}
 
-        addNewNode(node);
+		Class prevClass = null;
 
-        return this;
-    }
+		for (Iterator<? extends Node> iter = content.iterator(); iter.hasNext();) {
+			Node node = iter.next();
 
-    public Element addComment(String comment) {
-        Comment node = getDocumentFactory().createComment(comment);
+			Class newClass = node.getClass();
 
-        addNewNode(node);
+			if (newClass != prevClass) {
+				if (prevClass != null) {
+					return true;
+				}
 
-        return this;
-    }
+				prevClass = newClass;
+			}
+		}
 
-    public Element addElement(String name) {
-        DocumentFactory factory = getDocumentFactory();
+		return false;
+	}
 
-        int index = name.indexOf(":");
+	public boolean isTextOnly() {
+		List<? extends Node> content = contentList();
 
-        String prefix = "";
+		if ((content == null) || content.isEmpty()) {
+			return true;
+		}
 
-        String localName = name;
+		for (Iterator<? extends Node> iter = content.iterator(); iter.hasNext();) {
+			Node node = iter.next();
 
-        Namespace namespace = null;
+			if (!(node instanceof CharacterData)) {
+				return false;
+			}
+		}
 
-        if (index > 0) {
-            prefix = name.substring(0, index);
+		return true;
+	}
 
-            localName = name.substring(index + 1);
+	@Override
+	public void setText(String text) {
+		/* remove all text nodes */
+		List allContent = contentList();
 
-            namespace = getNamespaceForPrefix(prefix);
+		if (allContent != null) {
+			Iterator it = allContent.iterator();
 
-            if (namespace == null) {
-                throw new IllegalAddException("No such namespace prefix: "
-                        + prefix + " is in scope on: " + this
-                        + " so cannot add element: " + name);
-            }
-        } else {
-            namespace = getNamespaceForPrefix("");
-        }
+			while (it.hasNext()) {
+				Node node = (Node) it.next();
 
-        Element node;
+				switch (node.getNodeTypeEnum()) {
+					case CDATA_SECTION_NODE:
 
-        if (namespace != null) {
-            QName qname = factory.createQName(localName, namespace);
+					// case ENTITY_NODE:
+					case ENTITY_REFERENCE_NODE:
+					case TEXT_NODE:
+						it.remove();
 
-            node = factory.createElement(qname);
-        } else {
-            node = factory.createElement(name);
-        }
+					default:
+						break;
+				}
+			}
+		}
 
-        addNewNode(node);
+		addText(text);
+	}
 
-        return node;
-    }
+	@Override
+	public String getStringValue() {
+		List<Node> list = contentList();
 
-    public Element addEntity(String name, String text) {
-        Entity node = getDocumentFactory().createEntity(name, text);
+		int size = list.size();
 
-        addNewNode(node);
+		if (size > 0) {
+			if (size == 1) {
+				// optimised to avoid StringBuffer creation
+				return getContentAsStringValue(list.get(0));
+			} else {
+				StringBuffer buffer = new StringBuffer();
 
-        return this;
-    }
+				for (int i = 0; i < size; i++) {
+					Node node = list.get(i);
 
-    public Element addNamespace(String prefix, String uri) {
-        Namespace node = getDocumentFactory().createNamespace(prefix, uri);
+					String string = getContentAsStringValue(node);
 
-        addNewNode(node);
+					if (string.length() > 0) {
+						if (USE_STRINGVALUE_SEPARATOR) {
+							if (buffer.length() > 0) {
+								buffer.append(' ');
+							}
+						}
 
-        return this;
-    }
+						buffer.append(string);
+					}
+				}
 
-    public Element addProcessingInstruction(String target, String data) {
-        ProcessingInstruction node = getDocumentFactory()
-                .createProcessingInstruction(target, data);
+				return buffer.toString();
+			}
+		}
 
-        addNewNode(node);
+		return "";
+	}
 
-        return this;
-    }
+	/**
+	 * Puts all <code>Text</code> nodes in the full depth of the sub-tree
+	 * underneath this <code>Node</code>, including attribute nodes, into a
+	 * "normal" form where only structure (e.g., elements, comments, processing
+	 * instructions, CDATA sections, and entity references) separates
+	 * <code>Text</code> nodes, i.e., there are neither adjacent
+	 * <code>Text</code> nodes nor empty <code>Text</code> nodes. This can
+	 * be used to ensure that the DOM view of a document is the same as if it
+	 * were saved and re-loaded, and is useful when operations (such as XPointer
+	 * lookups) that depend on a particular document tree structure are to be
+	 * used.In cases where the document contains <code>CDATASections</code>,
+	 * the normalize operation alone may not be sufficient, since XPointers do
+	 * not differentiate between <code>Text</code> nodes and
+	 * <code>CDATASection</code> nodes.
+	 * 
+	 * @since DOM Level 2
+	 */
+	public void normalize() {
+		List<Node> content = contentList();
 
-    public Element addProcessingInstruction(String target, Map data) {
-        ProcessingInstruction node = getDocumentFactory()
-                .createProcessingInstruction(target, data);
+		Text previousText = null;
 
-        addNewNode(node);
+		int i = 0;
 
-        return this;
-    }
+		while (i < content.size()) {
+			Node node = content.get(i);
 
-    public Element addText(String text) {
-        Text node = getDocumentFactory().createText(text);
+			if (node instanceof Text) {
+				Text text = (Text) node;
 
-        addNewNode(node);
+				if (previousText != null) {
+					previousText.appendText(text.getText());
 
-        return this;
-    }
+					remove(text);
+				} else {
+					String value = text.getText();
 
-    // polymorphic node methods
-    public void add(Node node) {
-        switch (node.getNodeType()) {
-            case ELEMENT_NODE:
-                add((Element) node);
+					// only remove empty Text nodes, not whitespace nodes
+					// if ( value == null || value.trim().length() <= 0 ) {
+					if ((value == null) || (value.length() <= 0)) {
+						remove(text);
+					} else {
+						previousText = text;
 
-                break;
+						i++;
+					}
+				}
+			} else {
+				if (node instanceof Element) {
+					Element element = (Element) node;
 
-            case ATTRIBUTE_NODE:
-                add((Attribute) node);
+					element.normalize();
+				}
 
-                break;
+				previousText = null;
 
-            case TEXT_NODE:
-                add((Text) node);
+				i++;
+			}
+		}
+	}
 
-                break;
+	public String elementText(String name) {
+		Element element = element(name);
 
-            case CDATA_SECTION_NODE:
-                add((CDATA) node);
+		return (element != null) ? element.getText() : null;
+	}
 
-                break;
+	public String elementText(QName qName) {
+		Element element = element(qName);
 
-            case ENTITY_REFERENCE_NODE:
-                add((Entity) node);
+		return (element != null) ? element.getText() : null;
+	}
 
-                break;
+	public String elementTextTrim(String name) {
+		Element element = element(name);
 
-            case PROCESSING_INSTRUCTION_NODE:
-                add((ProcessingInstruction) node);
+		return (element != null) ? element.getTextTrim() : null;
+	}
 
-                break;
+	public String elementTextTrim(QName qName) {
+		Element element = element(qName);
 
-            case COMMENT_NODE:
-                add((Comment) node);
+		return (element != null) ? element.getTextTrim() : null;
+	}
 
-                break;
+	// add to me content from another element
+	// analagous to the addAll(collection) methods in Java 2 collections
+	public void appendAttributes(Element element) {
+		for (int i = 0, size = element.attributeCount(); i < size; i++) {
+			Attribute attribute = element.attribute(i);
 
-            /*
-             * XXXX: to do! case DOCUMENT_TYPE_NODE: add((DocumentType) node);
-             * break;
-             */
-            case NAMESPACE_NODE:
-                add((Namespace) node);
+			if (attribute.supportsParent()) {
+				addAttribute(attribute.getQName(), attribute.getValue());
+			} else {
+				add(attribute);
+			}
+		}
+	}
 
-                break;
+	/**
+	 * <p>
+	 * This returns a deep clone of this element. The new element is detached
+	 * from its parent, and getParent() on the clone will return null.
+	 * </p>
+	 * 
+	 * @return the clone of this element
+	 */
 
-            default:
-                invalidNodeTypeAddException(node);
-        }
-    }
+	/*
+	 * public Object clone() { Element clone = createElement(getQName());
+	 * clone.appendAttributes(this); clone.appendContent(this); return clone; }
+	 */
+	public Element createCopy() {
+		Element clone = createElement(getQName());
 
-    public boolean remove(Node node) {
-        switch (node.getNodeType()) {
-            case ELEMENT_NODE:
-                return remove((Element) node);
+		clone.appendAttributes(this);
 
-            case ATTRIBUTE_NODE:
-                return remove((Attribute) node);
+		clone.appendContent(this);
 
-            case TEXT_NODE:
-                return remove((Text) node);
+		return clone;
+	}
 
-            case CDATA_SECTION_NODE:
-                return remove((CDATA) node);
+	public Element createCopy(String name) {
+		Element clone = createElement(name);
 
-            case ENTITY_REFERENCE_NODE:
-                return remove((Entity) node);
+		clone.appendAttributes(this);
 
-            case PROCESSING_INSTRUCTION_NODE:
-                return remove((ProcessingInstruction) node);
+		clone.appendContent(this);
 
-            case COMMENT_NODE:
-                return remove((Comment) node);
+		return clone;
+	}
 
-            /*
-             * case DOCUMENT_TYPE_NODE: return remove((DocumentType) node);
-             */
-            case NAMESPACE_NODE:
-                return remove((Namespace) node);
+	public Element createCopy(QName qName) {
+		Element clone = createElement(qName);
 
-            default:
-                return false;
-        }
-    }
+		clone.appendAttributes(this);
 
-    // typesafe versions using node classes
-    public void add(CDATA cdata) {
-        addNode(cdata);
-    }
+		clone.appendContent(this);
 
-    public void add(Comment comment) {
-        addNode(comment);
-    }
+		return clone;
+	}
 
-    public void add(Element element) {
-        addNode(element);
-    }
+	public QName getQName(String qualifiedName) {
+		String prefix = "";
 
-    public void add(Entity entity) {
-        addNode(entity);
-    }
+		String localName = qualifiedName;
 
-    public void add(Namespace namespace) {
-        addNode(namespace);
-    }
+		int index = qualifiedName.indexOf(":");
 
-    public void add(ProcessingInstruction pi) {
-        addNode(pi);
-    }
+		if (index > 0) {
+			prefix = qualifiedName.substring(0, index);
 
-    public void add(Text text) {
-        addNode(text);
-    }
+			localName = qualifiedName.substring(index + 1);
+		}
 
-    public boolean remove(CDATA cdata) {
-        return removeNode(cdata);
-    }
+		Namespace namespace = getNamespaceForPrefix(prefix);
 
-    public boolean remove(Comment comment) {
-        return removeNode(comment);
-    }
+		if (namespace != null) {
+			return getDocumentFactory().createQName(localName, namespace);
+		} else {
+			return getDocumentFactory().createQName(localName);
+		}
+	}
 
-    public boolean remove(Element element) {
-        return removeNode(element);
-    }
+	public Namespace getNamespaceForPrefix(String prefix) {
+		if (prefix == null) {
+			prefix = "";
+		}
 
-    public boolean remove(Entity entity) {
-        return removeNode(entity);
-    }
+		if (prefix.equals(getNamespacePrefix())) {
+			return getNamespace();
+		} else if (prefix.equals("xml")) {
+			return Namespace.XML_NAMESPACE;
+		} else {
+			List list = contentList();
 
-    public boolean remove(Namespace namespace) {
-        return removeNode(namespace);
-    }
+			int size = list.size();
 
-    public boolean remove(ProcessingInstruction pi) {
-        return removeNode(pi);
-    }
+			for (int i = 0; i < size; i++) {
+				Object object = list.get(i);
 
-    public boolean remove(Text text) {
-        return removeNode(text);
-    }
+				if (object instanceof Namespace) {
+					Namespace namespace = (Namespace) object;
 
-    // Helper methods
-    // -------------------------------------------------------------------------
-    public boolean hasMixedContent() {
-        List content = contentList();
+					if (prefix.equals(namespace.getPrefix())) {
+						return namespace;
+					}
+				}
+			}
+		}
 
-        if ((content == null) || content.isEmpty() || (content.size() < 2)) {
-            return false;
-        }
+		Element parent = getParent();
 
-        Class prevClass = null;
+		if (parent != null) {
+			Namespace answer = parent.getNamespaceForPrefix(prefix);
 
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            Object object = iter.next();
+			if (answer != null) {
+				return answer;
+			}
+		}
 
-            Class newClass = object.getClass();
+		if ((prefix == null) || (prefix.length() <= 0)) {
+			return Namespace.NO_NAMESPACE;
+		}
 
-            if (newClass != prevClass) {
-                if (prevClass != null) {
-                    return true;
-                }
+		return null;
+	}
 
-                prevClass = newClass;
-            }
-        }
+	public Namespace getNamespaceForURI(String uri) {
+		if ((uri == null) || (uri.length() <= 0)) {
+			return Namespace.NO_NAMESPACE;
+		} else if (uri.equals(getNamespaceURI())) {
+			return getNamespace();
+		} else {
+			List list = contentList();
 
-        return false;
-    }
+			int size = list.size();
 
-    public boolean isTextOnly() {
-        List content = contentList();
+			for (int i = 0; i < size; i++) {
+				Object object = list.get(i);
 
-        if ((content == null) || content.isEmpty()) {
-            return true;
-        }
+				if (object instanceof Namespace) {
+					Namespace namespace = (Namespace) object;
 
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            Object object = iter.next();
+					if (uri.equals(namespace.getURI())) {
+						return namespace;
+					}
+				}
+			}
 
-            if (!(object instanceof CharacterData)
-                    && !(object instanceof String)) {
-                return false;
-            }
-        }
+			return null;
+		}
+	}
 
-        return true;
-    }
+	public List<Namespace> getNamespacesForURI(String uri) {
+		BackedList<Namespace> answer = createResultList();
 
-    public void setText(String text) {
-        /* remove all text nodes */
-        List allContent = contentList();
+		// if (getNamespaceURI().equals(uri)) {
+		//
+		// answer.addLocal(getNamespace());
+		//
+		// }
+		List<? extends Node> list = contentList();
 
-        if (allContent != null) {
-            Iterator it = allContent.iterator();
+		int size = list.size();
 
-            while (it.hasNext()) {
-                Node node = (Node) it.next();
+		for (int i = 0; i < size; i++) {
+			Node node = list.get(i);
 
-                switch (node.getNodeType()) {
-                    case CDATA_SECTION_NODE:
+			if ((node instanceof Namespace) && ((Namespace) node).getURI().equals(uri)) {
+				answer.addLocal((Namespace) node);
+			}
+		}
 
-                    // case ENTITY_NODE:
-                    case ENTITY_REFERENCE_NODE:
-                    case TEXT_NODE:
-                        it.remove();
+		return answer;
+	}
 
-                    default:
-                        break;
-                }
-            }
-        }
+	public List<Namespace> declaredNamespaces() {
+		BackedList<Namespace> answer = createResultList();
 
-        addText(text);
-    }
+		// if (getNamespaceURI().length() > 0) {
+		//
+		// answer.addLocal(getNamespace());
+		//
+		// }
+		//
+		List<? extends Node> list = contentList();
 
-    public String getStringValue() {
-        List list = contentList();
+		int size = list.size();
 
-        int size = list.size();
+		for (int i = 0; i < size; i++) {
+			Node node = list.get(i);
 
-        if (size > 0) {
-            if (size == 1) {
-                // optimised to avoid StringBuffer creation
-                return getContentAsStringValue(list.get(0));
-            } else {
-                StringBuffer buffer = new StringBuffer();
+			if (node instanceof Namespace) {
+				answer.addLocal((Namespace) node);
+			}
+		}
 
-                for (int i = 0; i < size; i++) {
-                    Object node = list.get(i);
+		return answer;
+	}
 
-                    String string = getContentAsStringValue(node);
+	public List<Namespace> additionalNamespaces() {
+		List<? extends Node> list = contentList();
 
-                    if (string.length() > 0) {
-                        if (USE_STRINGVALUE_SEPARATOR) {
-                            if (buffer.length() > 0) {
-                                buffer.append(' ');
-                            }
-                        }
+		int size = list.size();
 
-                        buffer.append(string);
-                    }
-                }
+		BackedList<Namespace> answer = createResultList();
 
-                return buffer.toString();
-            }
-        }
+		for (int i = 0; i < size; i++) {
+			Node node = list.get(i);
 
-        return "";
-    }
+			if (node instanceof Namespace) {
+				Namespace namespace = (Namespace) node;
 
-    /**
-     * Puts all <code>Text</code> nodes in the full depth of the sub-tree
-     * underneath this <code>Node</code>, including attribute nodes, into a
-     * "normal" form where only structure (e.g., elements, comments, processing
-     * instructions, CDATA sections, and entity references) separates
-     * <code>Text</code> nodes, i.e., there are neither adjacent
-     * <code>Text</code> nodes nor empty <code>Text</code> nodes. This can
-     * be used to ensure that the DOM view of a document is the same as if it
-     * were saved and re-loaded, and is useful when operations (such as XPointer
-     * lookups) that depend on a particular document tree structure are to be
-     * used.In cases where the document contains <code>CDATASections</code>,
-     * the normalize operation alone may not be sufficient, since XPointers do
-     * not differentiate between <code>Text</code> nodes and
-     * <code>CDATASection</code> nodes.
-     * 
-     * @since DOM Level 2
-     */
-    public void normalize() {
-        List content = contentList();
+				if (!namespace.equals(getNamespace())) {
+					answer.addLocal(namespace);
+				}
+			}
+		}
 
-        Text previousText = null;
+		return answer;
+	}
 
-        int i = 0;
+	public List<Namespace> additionalNamespaces(String defaultNamespaceURI) {
+		List<? extends Node> list = contentList();
 
-        while (i < content.size()) {
-            Node node = (Node) content.get(i);
+		BackedList<Namespace> answer = createResultList();
 
-            if (node instanceof Text) {
-                Text text = (Text) node;
+		int size = list.size();
 
-                if (previousText != null) {
-                    previousText.appendText(text.getText());
+		for (int i = 0; i < size; i++) {
+			Node node = list.get(i);
 
-                    remove(text);
-                } else {
-                    String value = text.getText();
+			if (node instanceof Namespace) {
+				Namespace namespace = (Namespace) node;
 
-                    // only remove empty Text nodes, not whitespace nodes
-                    // if ( value == null || value.trim().length() <= 0 ) {
-                    if ((value == null) || (value.length() <= 0)) {
-                        remove(text);
-                    } else {
-                        previousText = text;
+				if (!defaultNamespaceURI.equals(namespace.getURI())) {
+					answer.addLocal(namespace);
+				}
+			}
+		}
 
-                        i++;
-                    }
-                }
-            } else {
-                if (node instanceof Element) {
-                    Element element = (Element) node;
+		return answer;
+	}
 
-                    element.normalize();
-                }
+	// Implementation helper methods
+	// -------------------------------------------------------------------------
+	/**
+	 * Ensures that the list of attributes has the given size
+	 * 
+	 * @param minCapacity
+	 *            DOCUMENT ME!
+	 */
+	public void ensureAttributesCapacity(int minCapacity) {
+		if (minCapacity > 1) {
+			List<Attribute> list = attributeList();
 
-                previousText = null;
+			if (list instanceof ArrayList) {
+				ArrayList arrayList = (ArrayList) list;
 
-                i++;
-            }
-        }
-    }
+				arrayList.ensureCapacity(minCapacity);
+			}
+		}
+	}
 
-    public String elementText(String name) {
-        Element element = element(name);
+	// Implementation methods
+	// -------------------------------------------------------------------------
+	protected Element createElement(String name) {
+		return getDocumentFactory().createElement(name);
+	}
 
-        return (element != null) ? element.getText() : null;
-    }
+	protected Element createElement(QName qName) {
+		return getDocumentFactory().createElement(qName);
+	}
 
-    public String elementText(QName qName) {
-        Element element = element(qName);
+	protected void addNode(Node node) {
+		if (node.getParent() != null) {
+			// XXX: could clone here
+			String message = "The Node already has an existing parent of \"" + node.getParent().getQualifiedName() + "\"";
 
-        return (element != null) ? element.getText() : null;
-    }
+			throw new IllegalAddException(this, node, message);
+		}
 
-    public String elementTextTrim(String name) {
-        Element element = element(name);
+		addNewNode(node);
+	}
 
-        return (element != null) ? element.getTextTrim() : null;
-    }
+	protected void addNode(int index, Node node) {
+		if (node.getParent() != null) {
+			// XXX: could clone here
+			String message = "The Node already has an existing parent of \"" + node.getParent().getQualifiedName() + "\"";
 
-    public String elementTextTrim(QName qName) {
-        Element element = element(qName);
+			throw new IllegalAddException(this, node, message);
+		}
 
-        return (element != null) ? element.getTextTrim() : null;
-    }
-
-    // add to me content from another element
-    // analagous to the addAll(collection) methods in Java 2 collections
-    public void appendAttributes(Element element) {
-        for (int i = 0, size = element.attributeCount(); i < size; i++) {
-            Attribute attribute = element.attribute(i);
-
-            if (attribute.supportsParent()) {
-                addAttribute(attribute.getQName(), attribute.getValue());
-            } else {
-                add(attribute);
-            }
-        }
-    }
-
-    /**
-     * <p>
-     * This returns a deep clone of this element. The new element is detached
-     * from its parent, and getParent() on the clone will return null.
-     * </p>
-     * 
-     * @return the clone of this element
-     */
-
-    /*
-     * public Object clone() { Element clone = createElement(getQName());
-     * clone.appendAttributes(this); clone.appendContent(this); return clone; }
-     */
-    public Element createCopy() {
-        Element clone = createElement(getQName());
-
-        clone.appendAttributes(this);
-
-        clone.appendContent(this);
-
-        return clone;
-    }
-
-    public Element createCopy(String name) {
-        Element clone = createElement(name);
-
-        clone.appendAttributes(this);
-
-        clone.appendContent(this);
-
-        return clone;
-    }
-
-    public Element createCopy(QName qName) {
-        Element clone = createElement(qName);
-
-        clone.appendAttributes(this);
-
-        clone.appendContent(this);
-
-        return clone;
-    }
-
-    public QName getQName(String qualifiedName) {
-        String prefix = "";
-
-        String localName = qualifiedName;
-
-        int index = qualifiedName.indexOf(":");
-
-        if (index > 0) {
-            prefix = qualifiedName.substring(0, index);
-
-            localName = qualifiedName.substring(index + 1);
-        }
-
-        Namespace namespace = getNamespaceForPrefix(prefix);
-
-        if (namespace != null) {
-            return getDocumentFactory().createQName(localName, namespace);
-        } else {
-            return getDocumentFactory().createQName(localName);
-        }
-    }
-
-    public Namespace getNamespaceForPrefix(String prefix) {
-        if (prefix == null) {
-            prefix = "";
-        }
-
-        if (prefix.equals(getNamespacePrefix())) {
-            return getNamespace();
-        } else if (prefix.equals("xml")) {
-            return Namespace.XML_NAMESPACE;
-        } else {
-            List list = contentList();
-
-            int size = list.size();
-
-            for (int i = 0; i < size; i++) {
-                Object object = list.get(i);
-
-                if (object instanceof Namespace) {
-                    Namespace namespace = (Namespace) object;
-
-                    if (prefix.equals(namespace.getPrefix())) {
-                        return namespace;
-                    }
-                }
-            }
-        }
-
-        Element parent = getParent();
-
-        if (parent != null) {
-            Namespace answer = parent.getNamespaceForPrefix(prefix);
-
-            if (answer != null) {
-                return answer;
-            }
-        }
-
-        if ((prefix == null) || (prefix.length() <= 0)) {
-            return Namespace.NO_NAMESPACE;
-        }
-
-        return null;
-    }
-
-    public Namespace getNamespaceForURI(String uri) {
-        if ((uri == null) || (uri.length() <= 0)) {
-            return Namespace.NO_NAMESPACE;
-        } else if (uri.equals(getNamespaceURI())) {
-            return getNamespace();
-        } else {
-            List list = contentList();
-
-            int size = list.size();
-
-            for (int i = 0; i < size; i++) {
-                Object object = list.get(i);
-
-                if (object instanceof Namespace) {
-                    Namespace namespace = (Namespace) object;
-
-                    if (uri.equals(namespace.getURI())) {
-                        return namespace;
-                    }
-                }
-            }
-
-            return null;
-        }
-    }
-
-    public List getNamespacesForURI(String uri) {
-        BackedList answer = createResultList();
-
-        // if (getNamespaceURI().equals(uri)) {
-        //
-        // answer.addLocal(getNamespace());
-        //
-        // }
-        List list = contentList();
-
-        int size = list.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
-
-            if ((object instanceof Namespace)
-                    && ((Namespace) object).getURI().equals(uri)) {
-                answer.addLocal(object);
-            }
-        }
-
-        return answer;
-    }
-
-    public List declaredNamespaces() {
-        BackedList answer = createResultList();
-
-        // if (getNamespaceURI().length() > 0) {
-        //
-        // answer.addLocal(getNamespace());
-        //
-        // }
-        //
-        List list = contentList();
-
-        int size = list.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
-
-            if (object instanceof Namespace) {
-                answer.addLocal(object);
-            }
-        }
-
-        return answer;
-    }
-
-    public List additionalNamespaces() {
-        List list = contentList();
-
-        int size = list.size();
-
-        BackedList answer = createResultList();
-
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
-
-            if (object instanceof Namespace) {
-                Namespace namespace = (Namespace) object;
-
-                if (!namespace.equals(getNamespace())) {
-                    answer.addLocal(namespace);
-                }
-            }
-        }
-
-        return answer;
-    }
-
-    public List additionalNamespaces(String defaultNamespaceURI) {
-        List list = contentList();
-
-        BackedList answer = createResultList();
-
-        int size = list.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = list.get(i);
-
-            if (object instanceof Namespace) {
-                Namespace namespace = (Namespace) object;
-
-                if (!defaultNamespaceURI.equals(namespace.getURI())) {
-                    answer.addLocal(namespace);
-                }
-            }
-        }
-
-        return answer;
-    }
-
-    // Implementation helper methods
-    // -------------------------------------------------------------------------
-
-    /**
-     * Ensures that the list of attributes has the given size
-     * 
-     * @param minCapacity
-     *            DOCUMENT ME!
-     */
-    public void ensureAttributesCapacity(int minCapacity) {
-        if (minCapacity > 1) {
-            List list = attributeList();
-
-            if (list instanceof ArrayList) {
-                ArrayList arrayList = (ArrayList) list;
-
-                arrayList.ensureCapacity(minCapacity);
-            }
-        }
-    }
-
-    // Implementation methods
-    // -------------------------------------------------------------------------
-    protected Element createElement(String name) {
-        return getDocumentFactory().createElement(name);
-    }
-
-    protected Element createElement(QName qName) {
-        return getDocumentFactory().createElement(qName);
-    }
-
-    protected void addNode(Node node) {
-        if (node.getParent() != null) {
-            // XXX: could clone here
-            String message = "The Node already has an existing parent of \""
-                    + node.getParent().getQualifiedName() + "\"";
-
-            throw new IllegalAddException(this, node, message);
-        }
-
-        addNewNode(node);
-    }
-
-    protected void addNode(int index, Node node) {
-        if (node.getParent() != null) {
-            // XXX: could clone here
-            String message = "The Node already has an existing parent of \""
-                    + node.getParent().getQualifiedName() + "\"";
-
-            throw new IllegalAddException(this, node, message);
-        }
-
-        addNewNode(index, node);
-    }
-
-    /**
-     * Like addNode() but does not require a parent check
-     * 
-     * @param node
-     *            DOCUMENT ME!
-     */
-    protected void addNewNode(Node node) {
-        contentList().add(node);
-
-        childAdded(node);
-    }
-
-    protected void addNewNode(int index, Node node) {
-        contentList().add(index, node);
-
-        childAdded(node);
-    }
-
-    protected boolean removeNode(Node node) {
-        boolean answer = contentList().remove(node);
-
-        if (answer) {
-            childRemoved(node);
-        }
-
-        return answer;
-    }
-
-    /**
-     * Called when a new child node is added to create any parent relationships
-     * 
-     * @param node
-     *            DOCUMENT ME!
-     */
-    protected void childAdded(Node node) {
-        if (node != null) {
-            node.setParent(this);
-        }
-    }
-
-    protected void childRemoved(Node node) {
-        if (node != null) {
-            node.setParent(null);
-
-            node.setDocument(null);
-        }
-    }
-
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the internal List used to store attributes or creates one if one
-     *         is not available
-     */
-    protected abstract List attributeList();
-
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param attributeCount
-     *            DOCUMENT ME!
-     * 
-     * @return the internal List used to store attributes or creates one with
-     *         the specified size if one is not available
-     */
-    protected abstract List attributeList(int attributeCount);
-
-    protected DocumentFactory getDocumentFactory() {
-        QName qName = getQName();
-
-        // QName might be null as we might not have been constructed yet
-        if (qName != null) {
-            DocumentFactory factory = qName.getDocumentFactory();
-
-            if (factory != null) {
-                return factory;
-            }
-        }
-
-        return DOCUMENT_FACTORY;
-    }
-
-    /**
-     * A Factory Method pattern which creates a List implementation used to
-     * store attributes
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected List createAttributeList() {
-        return createAttributeList(DEFAULT_CONTENT_LIST_SIZE);
-    }
-
-    /**
-     * A Factory Method pattern which creates a List implementation used to
-     * store attributes
-     * 
-     * @param size
-     *            DOCUMENT ME!
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected List createAttributeList(int size) {
-        return new ArrayList(size);
-    }
-
-    protected Iterator createSingleIterator(Object result) {
-        return new SingleIterator(result);
-    }
+		addNewNode(index, node);
+	}
+
+	/**
+	 * Like addNode() but does not require a parent check
+	 * 
+	 * @param node
+	 *            DOCUMENT ME!
+	 */
+	protected void addNewNode(Node node) {
+		contentList().add(node);
+
+		childAdded(node);
+	}
+
+	protected void addNewNode(int index, Node node) {
+		contentList().add(index, node);
+
+		childAdded(node);
+	}
+
+	protected boolean removeNode(Node node) {
+		boolean answer = contentList().remove(node);
+
+		if (answer) {
+			childRemoved(node);
+		}
+
+		return answer;
+	}
+
+	/**
+	 * Called when a new child node is added to create any parent relationships
+	 * 
+	 * @param node
+	 *            DOCUMENT ME!
+	 */
+	protected void childAdded(Node node) {
+		if (node != null) {
+			node.setParent(this);
+		}
+	}
+
+	protected void childRemoved(Node node) {
+		if (node != null) {
+			node.setParent(null);
+
+			node.setDocument(null);
+		}
+	}
+
+	/**
+	 * DOCUMENT ME!
+	 * 
+	 * @return the internal List used to store attributes or creates one if one
+	 *         is not available
+	 */
+	protected abstract List<Attribute> attributeList();
+
+	/**
+	 * DOCUMENT ME!
+	 * 
+	 * @param attributeCount
+	 *            DOCUMENT ME!
+	 * 
+	 * @return the internal List used to store attributes or creates one with
+	 *         the specified size if one is not available
+	 */
+	protected abstract List<Attribute> attributeList(int attributeCount);
+
+	@Override
+	protected DocumentFactory getDocumentFactory() {
+		QName qName = getQName();
+
+		// QName might be null as we might not have been constructed yet
+		if (qName != null) {
+			DocumentFactory factory = qName.getDocumentFactory();
+
+			if (factory != null) {
+				return factory;
+			}
+		}
+
+		return DOCUMENT_FACTORY;
+	}
+
+	/**
+	 * A Factory Method pattern which creates a List implementation used to
+	 * store attributes
+	 * 
+	 * @return DOCUMENT ME!
+	 */
+	protected List<Attribute> createAttributeList() {
+		return createAttributeList(DEFAULT_CONTENT_LIST_SIZE);
+	}
+
+	/**
+	 * A Factory Method pattern which creates a List implementation used to
+	 * store attributes
+	 * 
+	 * @param size
+	 *            DOCUMENT ME!
+	 * 
+	 * @return DOCUMENT ME!
+	 */
+	protected List<Attribute> createAttributeList(int size) {
+		return new ArrayList<Attribute>(size);
+	}
+
+	@Deprecated
+	protected <T extends Object> Iterator<T> createSingleIterator(T result) {
+		return new SingleIterator<T>(result);
+	}
 }
 
 /*

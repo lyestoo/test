@@ -4,13 +4,11 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.datatype;
 
 import com.sun.msv.datatype.xsd.XSDatatype;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.dom4j.DocumentFactory;
@@ -26,72 +24,64 @@ import org.dom4j.QName;
  * @version $Revision: 1.8 $
  */
 class NamedTypeResolver {
-    protected Map complexTypeMap = new HashMap();
 
-    protected Map simpleTypeMap = new HashMap();
+	protected Map<QName, DocumentFactory> complexTypeMap = new HashMap<QName, DocumentFactory>();
+	protected Map<QName, XSDatatype> simpleTypeMap = new HashMap<QName, XSDatatype>();
+	protected Map<Element, QName> typedElementMap = new HashMap<Element, QName>();
+	protected Map<Element, DocumentFactory> elementFactoryMap = new HashMap<Element, DocumentFactory>();
+	protected DocumentFactory documentFactory;
 
-    protected Map typedElementMap = new HashMap();
+	NamedTypeResolver(DocumentFactory documentFactory) {
+		this.documentFactory = documentFactory;
+	}
 
-    protected Map elementFactoryMap = new HashMap();
+	void registerComplexType(QName type, DocumentFactory factory) {
+		complexTypeMap.put(type, factory);
+	}
 
-    protected DocumentFactory documentFactory;
+	void registerSimpleType(QName type, XSDatatype datatype) {
+		simpleTypeMap.put(type, datatype);
+	}
 
-    NamedTypeResolver(DocumentFactory documentFactory) {
-        this.documentFactory = documentFactory;
-    }
+	void registerTypedElement(Element element, QName type,
+					DocumentFactory parentFactory) {
+		typedElementMap.put(element, type);
+		elementFactoryMap.put(element, parentFactory);
+	}
 
-    void registerComplexType(QName type, DocumentFactory factory) {
-        complexTypeMap.put(type, factory);
-    }
+	void resolveElementTypes() {
+		for (Map.Entry<Element, QName> entry : typedElementMap.entrySet()) {
+			Element element = entry.getKey();
+			QName elementQName = getQNameOfSchemaElement(element);
+			QName type = entry.getValue();
 
-    void registerSimpleType(QName type, XSDatatype datatype) {
-        simpleTypeMap.put(type, datatype);
-    }
+			if (complexTypeMap.containsKey(type)) {
+				DocumentFactory factory = (DocumentFactory) complexTypeMap.get(type);
+				elementQName.setDocumentFactory(factory);
+			} else if (simpleTypeMap.containsKey(type)) {
+				XSDatatype datatype = (XSDatatype) simpleTypeMap.get(type);
+				DocumentFactory factory = (DocumentFactory) elementFactoryMap.get(element);
 
-    void registerTypedElement(Element element, QName type,
-            DocumentFactory parentFactory) {
-        typedElementMap.put(element, type);
-        elementFactoryMap.put(element, parentFactory);
-    }
+				if (factory instanceof DatatypeElementFactory) {
+					((DatatypeElementFactory) factory).setChildElementXSDatatype(elementQName, datatype);
+				}
+			}
+		}
+	}
 
-    void resolveElementTypes() {
-        Iterator iterator = typedElementMap.keySet().iterator();
+	void resolveNamedTypes() {
+		resolveElementTypes();
+	}
 
-        while (iterator.hasNext()) {
-            Element element = (Element) iterator.next();
-            QName elementQName = getQNameOfSchemaElement(element);
-            QName type = (QName) typedElementMap.get(element);
+	private QName getQNameOfSchemaElement(Element element) {
+		String name = element.attributeValue("name");
 
-            if (complexTypeMap.containsKey(type)) {
-                DocumentFactory factory = (DocumentFactory) complexTypeMap
-                        .get(type);
-                elementQName.setDocumentFactory(factory);
-            } else if (simpleTypeMap.containsKey(type)) {
-                XSDatatype datatype = (XSDatatype) simpleTypeMap.get(type);
-                DocumentFactory factory = (DocumentFactory) elementFactoryMap
-                        .get(element);
+		return getQName(name);
+	}
 
-                if (factory instanceof DatatypeElementFactory) {
-                    ((DatatypeElementFactory) factory)
-                            .setChildElementXSDatatype(elementQName, datatype);
-                }
-            }
-        }
-    }
-
-    void resolveNamedTypes() {
-        resolveElementTypes();
-    }
-
-    private QName getQNameOfSchemaElement(Element element) {
-        String name = element.attributeValue("name");
-
-        return getQName(name);
-    }
-
-    private QName getQName(String name) {
-        return documentFactory.createQName(name);
-    }
+	private QName getQName(String name) {
+		return documentFactory.createQName(name);
+	}
 }
 
 /*

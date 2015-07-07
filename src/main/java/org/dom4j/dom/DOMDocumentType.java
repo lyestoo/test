@@ -4,7 +4,6 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.dom;
 
 import org.dom4j.tree.DefaultDocumentType;
@@ -12,7 +11,9 @@ import org.dom4j.tree.DefaultDocumentType;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.UserDataHandler;
 
 /**
  * <p>
@@ -24,159 +25,225 @@ import org.w3c.dom.NodeList;
  * @version $Revision: 1.11 $
  */
 public class DOMDocumentType extends DefaultDocumentType implements
-        org.w3c.dom.DocumentType {
-    public DOMDocumentType() {
-    }
+				org.w3c.dom.DocumentType {
 
-    public DOMDocumentType(String elementName, String systemID) {
-        super(elementName, systemID);
-    }
+	public DOMDocumentType() {
+	}
 
-    public DOMDocumentType(String name, String publicID, String systemID) {
-        super(name, publicID, systemID);
-    }
+	public DOMDocumentType(String elementName, String systemID) {
+		super(elementName, systemID);
+	}
 
-    // org.w3c.dom.Node interface
-    // -------------------------------------------------------------------------
-    public boolean supports(String feature, String version) {
-        return DOMNodeHelper.supports(this, feature, version);
-    }
+	public DOMDocumentType(String name, String publicID, String systemID) {
+		super(name, publicID, systemID);
+	}
 
-    public String getNamespaceURI() {
-        return DOMNodeHelper.getNamespaceURI(this);
-    }
+	// org.w3c.dom.Node interface
+	// -------------------------------------------------------------------------
+	public boolean supports(String feature, String version) {
+		return DOMNodeHelper.supports(this, feature, version);
+	}
 
-    public String getPrefix() {
-        return DOMNodeHelper.getPrefix(this);
-    }
+	public String getNamespaceURI() {
+		return DOMNodeHelper.getNamespaceURI(this);
+	}
 
-    public void setPrefix(String prefix) throws DOMException {
-        DOMNodeHelper.setPrefix(this, prefix);
-    }
+	public String getPrefix() {
+		return DOMNodeHelper.getPrefix(this);
+	}
 
-    public String getLocalName() {
-        return DOMNodeHelper.getLocalName(this);
-    }
+	public void setPrefix(String prefix) throws DOMException {
+		DOMNodeHelper.setPrefix(this, prefix);
+	}
 
-    public String getNodeName() {
-        return getName();
-    }
+	public String getLocalName() {
+		return DOMNodeHelper.getLocalName(this);
+	}
 
-    // already part of API
-    //
-    // public short getNodeType();
-    public String getNodeValue() throws DOMException {
-        return null;
-    }
+	public String getNodeName() {
+		return getName();
+	}
 
-    public void setNodeValue(String nodeValue) throws DOMException {
-    }
+	// already part of API
+	//
+	// public short getNodeType();
+	public String getNodeValue() throws DOMException {
+		return null;
+	}
 
-    public org.w3c.dom.Node getParentNode() {
-        return DOMNodeHelper.getParentNode(this);
-    }
+	public void setNodeValue(String nodeValue) throws DOMException {
+	}
 
-    public NodeList getChildNodes() {
-        return DOMNodeHelper.getChildNodes(this);
-    }
+	public org.w3c.dom.Node getParentNode() {
+		return DOMNodeHelper.getParentNode(this);
+	}
 
-    public org.w3c.dom.Node getFirstChild() {
-        return DOMNodeHelper.getFirstChild(this);
-    }
+	public NodeList getChildNodes() {
+		return DOMNodeHelper.getChildNodes(this);
+	}
 
-    public org.w3c.dom.Node getLastChild() {
-        return DOMNodeHelper.getLastChild(this);
-    }
+	public org.w3c.dom.Node getFirstChild() {
+		return DOMNodeHelper.getFirstChild(this);
+	}
 
-    public org.w3c.dom.Node getPreviousSibling() {
-        return DOMNodeHelper.getPreviousSibling(this);
-    }
+	public org.w3c.dom.Node getLastChild() {
+		return DOMNodeHelper.getLastChild(this);
+	}
 
-    public org.w3c.dom.Node getNextSibling() {
-        return DOMNodeHelper.getNextSibling(this);
-    }
+	public org.w3c.dom.Node getPreviousSibling() {
+		return DOMNodeHelper.getPreviousSibling(this);
+	}
 
-    public NamedNodeMap getAttributes() {
-        return null;
-    }
+	public org.w3c.dom.Node getNextSibling() {
+		return DOMNodeHelper.getNextSibling(this);
+	}
 
-    public Document getOwnerDocument() {
-        return DOMNodeHelper.getOwnerDocument(this);
-    }
+	public NamedNodeMap getAttributes() {
+		return null;
+	}
 
-    public org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild,
-            org.w3c.dom.Node refChild) throws DOMException {
-        checkNewChildNode(newChild);
+	public Document getOwnerDocument() {
+		return DOMNodeHelper.getOwnerDocument(this);
+	}
 
-        return DOMNodeHelper.insertBefore(this, newChild, refChild);
-    }
+	public org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild,
+					org.w3c.dom.Node refChild) throws DOMException {
+		checkNewChildNode(newChild);
 
-    public org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild,
-            org.w3c.dom.Node oldChild) throws DOMException {
-        checkNewChildNode(newChild);
+		return DOMNodeHelper.insertBefore(this, newChild, refChild);
+	}
 
-        return DOMNodeHelper.replaceChild(this, newChild, oldChild);
-    }
+	public org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild,
+					org.w3c.dom.Node oldChild) throws DOMException {
+		checkNewChildNode(newChild);
 
-    public org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild)
-            throws DOMException {
-        return DOMNodeHelper.removeChild(this, oldChild);
-    }
+		return DOMNodeHelper.replaceChild(this, newChild, oldChild);
+	}
 
-    public org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild)
-            throws DOMException {
-        checkNewChildNode(newChild);
+	public org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild)
+					throws DOMException {
+		return DOMNodeHelper.removeChild(this, oldChild);
+	}
 
-        return DOMNodeHelper.appendChild(this, newChild);
-    }
+	public org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild)
+					throws DOMException {
+		checkNewChildNode(newChild);
 
-    private void checkNewChildNode(org.w3c.dom.Node newChild)
-            throws DOMException {
-        throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                "DocumentType nodes cannot have children");
-    }
+		return DOMNodeHelper.appendChild(this, newChild);
+	}
 
-    public boolean hasChildNodes() {
-        return DOMNodeHelper.hasChildNodes(this);
-    }
+	private void checkNewChildNode(org.w3c.dom.Node newChild)
+					throws DOMException {
+		throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
+						"DocumentType nodes cannot have children");
+	}
 
-    public org.w3c.dom.Node cloneNode(boolean deep) {
-        return DOMNodeHelper.cloneNode(this, deep);
-    }
+	public boolean hasChildNodes() {
+		return DOMNodeHelper.hasChildNodes(this);
+	}
 
-    public void normalize() {
-        DOMNodeHelper.normalize(this);
-    }
+	public org.w3c.dom.Node cloneNode(boolean deep) {
+		return DOMNodeHelper.cloneNode(this, deep);
+	}
 
-    public boolean isSupported(String feature, String version) {
-        return DOMNodeHelper.isSupported(this, feature, version);
-    }
+	public void normalize() {
+		DOMNodeHelper.normalize(this);
+	}
 
-    public boolean hasAttributes() {
-        return DOMNodeHelper.hasAttributes(this);
-    }
+	public boolean isSupported(String feature, String version) {
+		return DOMNodeHelper.isSupported(this, feature, version);
+	}
 
-    // org.w3c.dom.DocumentType interface
-    // -------------------------------------------------------------------------
-    public NamedNodeMap getEntities() {
-        return null;
-    }
+	public boolean hasAttributes() {
+		return DOMNodeHelper.hasAttributes(this);
+	}
 
-    public NamedNodeMap getNotations() {
-        return null;
-    }
+	// org.w3c.dom.DocumentType interface
+	// -------------------------------------------------------------------------
+	public NamedNodeMap getEntities() {
+		return null;
+	}
 
-    public String getPublicId() {
-        return getPublicID();
-    }
+	public NamedNodeMap getNotations() {
+		return null;
+	}
 
-    public String getSystemId() {
-        return getSystemID();
-    }
+	public String getPublicId() {
+		return getPublicID();
+	}
 
-    public String getInternalSubset() {
-        return getElementName();
-    }
+	public String getSystemId() {
+		return getSystemID();
+	}
+
+	public String getInternalSubset() {
+		return getElementName();
+	}
+
+	public String getBaseURI() {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public short compareDocumentPosition(Node other) throws DOMException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String getTextContent() throws DOMException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void setTextContent(String textContent) throws DOMException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public boolean isSameNode(Node other) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String lookupPrefix(String namespaceURI) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public boolean isDefaultNamespace(String namespaceURI) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String lookupNamespaceURI(String prefix) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public boolean isEqualNode(Node arg) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Object getFeature(String feature, String version) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Object setUserData(String key, Object data, UserDataHandler handler) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Object getUserData(String key) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public short getNodeType() {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }
 
 /*

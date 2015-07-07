@@ -4,10 +4,12 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j;
 
 import java.util.List;
+import org.dom4j.dtd.Declaration;
+import org.dom4j.dtd.ExternalDeclaration;
+import org.dom4j.dtd.InternalDeclaration;
 
 /**
  * <p>
@@ -18,6 +20,7 @@ import java.util.List;
  * @version $Revision: 1.10 $
  */
 public interface DocumentType extends Node {
+
     /**
      * This method is the equivalent to the {@link #getName}method. It is added
      * for clarity.
@@ -49,7 +52,7 @@ public interface DocumentType extends Node {
      * 
      * @return DOCUMENT ME!
      */
-    List getInternalDeclarations();
+    List<InternalDeclaration> getInternalDeclarations();
 
     /**
      * Sets the list of internal DTD declaration objects, defined in the
@@ -58,7 +61,7 @@ public interface DocumentType extends Node {
      * @param declarations
      *            DOCUMENT ME!
      */
-    void setInternalDeclarations(List declarations);
+    void setInternalDeclarations(List<InternalDeclaration> declarations);
 
     /**
      * Returns a list of internal DTD declaration objects, defined in the
@@ -66,7 +69,7 @@ public interface DocumentType extends Node {
      * 
      * @return DOCUMENT ME!
      */
-    List getExternalDeclarations();
+    List<ExternalDeclaration> getExternalDeclarations();
 
     /**
      * Sets the list of internal DTD declaration objects, defined in the
@@ -75,7 +78,7 @@ public interface DocumentType extends Node {
      * @param declarations
      *            DOCUMENT ME!
      */
-    void setExternalDeclarations(List declarations);
+    void setExternalDeclarations(List<ExternalDeclaration> declarations);
 }
 
 /*

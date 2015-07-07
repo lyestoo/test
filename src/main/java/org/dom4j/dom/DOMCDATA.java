@@ -4,7 +4,6 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.dom;
 
 import org.dom4j.CDATA;
@@ -14,7 +13,10 @@ import org.dom4j.tree.DefaultCDATA;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.w3c.dom.UserDataHandler;
 
 /**
  * <p>
@@ -26,205 +28,281 @@ import org.w3c.dom.NodeList;
  * @version $Revision: 1.12 $
  */
 public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
-    public DOMCDATA(String text) {
-        super(text);
-    }
 
-    public DOMCDATA(Element parent, String text) {
-        super(parent, text);
-    }
+	public DOMCDATA(String text) {
+		super(text);
+	}
 
-    // org.w3c.dom.Node interface
-    // -------------------------------------------------------------------------
-    public boolean supports(String feature, String version) {
-        return DOMNodeHelper.supports(this, feature, version);
-    }
+	public DOMCDATA(Element parent, String text) {
+		super(parent, text);
+	}
 
-    public String getNamespaceURI() {
-        return DOMNodeHelper.getNamespaceURI(this);
-    }
+	// org.w3c.dom.Node interface
+	// -------------------------------------------------------------------------
+	public boolean supports(String feature, String version) {
+		return DOMNodeHelper.supports(this, feature, version);
+	}
 
-    public String getPrefix() {
-        return DOMNodeHelper.getPrefix(this);
-    }
+	public String getNamespaceURI() {
+		return DOMNodeHelper.getNamespaceURI(this);
+	}
 
-    public void setPrefix(String prefix) throws DOMException {
-        DOMNodeHelper.setPrefix(this, prefix);
-    }
+	public String getPrefix() {
+		return DOMNodeHelper.getPrefix(this);
+	}
 
-    public String getLocalName() {
-        return DOMNodeHelper.getLocalName(this);
-    }
+	public void setPrefix(String prefix) throws DOMException {
+		DOMNodeHelper.setPrefix(this, prefix);
+	}
 
-    public String getNodeName() {
-        return "#cdata-section";
-    }
+	public String getLocalName() {
+		return DOMNodeHelper.getLocalName(this);
+	}
 
-    // already part of API
-    //
-    // public short getNodeType();
-    public String getNodeValue() throws DOMException {
-        return DOMNodeHelper.getNodeValue(this);
-    }
+	public String getNodeName() {
+		return "#cdata-section";
+	}
 
-    public void setNodeValue(String nodeValue) throws DOMException {
-        DOMNodeHelper.setNodeValue(this, nodeValue);
-    }
+	// already part of API
+	//
+	// public short getNodeType();
+	public String getNodeValue() throws DOMException {
+		return DOMNodeHelper.getNodeValue(this);
+	}
 
-    public org.w3c.dom.Node getParentNode() {
-        return DOMNodeHelper.getParentNode(this);
-    }
+	public void setNodeValue(String nodeValue) throws DOMException {
+		DOMNodeHelper.setNodeValue(this, nodeValue);
+	}
 
-    public NodeList getChildNodes() {
-        return DOMNodeHelper.getChildNodes(this);
-    }
+	public org.w3c.dom.Node getParentNode() {
+		return DOMNodeHelper.getParentNode(this);
+	}
 
-    public org.w3c.dom.Node getFirstChild() {
-        return DOMNodeHelper.getFirstChild(this);
-    }
+	public NodeList getChildNodes() {
+		return DOMNodeHelper.getChildNodes(this);
+	}
 
-    public org.w3c.dom.Node getLastChild() {
-        return DOMNodeHelper.getLastChild(this);
-    }
+	public org.w3c.dom.Node getFirstChild() {
+		return DOMNodeHelper.getFirstChild(this);
+	}
 
-    public org.w3c.dom.Node getPreviousSibling() {
-        return DOMNodeHelper.getPreviousSibling(this);
-    }
+	public org.w3c.dom.Node getLastChild() {
+		return DOMNodeHelper.getLastChild(this);
+	}
 
-    public org.w3c.dom.Node getNextSibling() {
-        return DOMNodeHelper.getNextSibling(this);
-    }
+	public org.w3c.dom.Node getPreviousSibling() {
+		return DOMNodeHelper.getPreviousSibling(this);
+	}
 
-    public NamedNodeMap getAttributes() {
-        return null;
-    }
+	public org.w3c.dom.Node getNextSibling() {
+		return DOMNodeHelper.getNextSibling(this);
+	}
 
-    public Document getOwnerDocument() {
-        return DOMNodeHelper.getOwnerDocument(this);
-    }
+	public NamedNodeMap getAttributes() {
+		return null;
+	}
 
-    public org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild,
-            org.w3c.dom.Node refChild) throws DOMException {
-        checkNewChildNode(newChild);
+	public Document getOwnerDocument() {
+		return DOMNodeHelper.getOwnerDocument(this);
+	}
 
-        return DOMNodeHelper.insertBefore(this, newChild, refChild);
-    }
+	public org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild,
+					org.w3c.dom.Node refChild) throws DOMException {
+		checkNewChildNode(newChild);
 
-    public org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild,
-            org.w3c.dom.Node oldChild) throws DOMException {
-        checkNewChildNode(newChild);
+		return DOMNodeHelper.insertBefore(this, newChild, refChild);
+	}
 
-        return DOMNodeHelper.replaceChild(this, newChild, oldChild);
-    }
+	public org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild,
+					org.w3c.dom.Node oldChild) throws DOMException {
+		checkNewChildNode(newChild);
 
-    public org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild)
-            throws DOMException {
-        return DOMNodeHelper.removeChild(this, oldChild);
-    }
+		return DOMNodeHelper.replaceChild(this, newChild, oldChild);
+	}
 
-    public org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild)
-            throws DOMException {
-        checkNewChildNode(newChild);
+	public org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild)
+					throws DOMException {
+		return DOMNodeHelper.removeChild(this, oldChild);
+	}
 
-        return DOMNodeHelper.appendChild(this, newChild);
-    }
+	public org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild)
+					throws DOMException {
+		checkNewChildNode(newChild);
 
-    private void checkNewChildNode(org.w3c.dom.Node newChild)
-            throws DOMException {
-        throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                "CDATASection nodes cannot have children");
-    }
+		return DOMNodeHelper.appendChild(this, newChild);
+	}
 
-    public boolean hasChildNodes() {
-        return DOMNodeHelper.hasChildNodes(this);
-    }
+	private void checkNewChildNode(org.w3c.dom.Node newChild)
+					throws DOMException {
+		throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
+						"CDATASection nodes cannot have children");
+	}
 
-    public org.w3c.dom.Node cloneNode(boolean deep) {
-        return DOMNodeHelper.cloneNode(this, deep);
-    }
+	public boolean hasChildNodes() {
+		return DOMNodeHelper.hasChildNodes(this);
+	}
 
-    public void normalize() {
-        DOMNodeHelper.normalize(this);
-    }
+	public org.w3c.dom.Node cloneNode(boolean deep) {
+		return DOMNodeHelper.cloneNode(this, deep);
+	}
 
-    public boolean isSupported(String feature, String version) {
-        return DOMNodeHelper.isSupported(this, feature, version);
-    }
+	public void normalize() {
+		DOMNodeHelper.normalize(this);
+	}
 
-    public boolean hasAttributes() {
-        return DOMNodeHelper.hasAttributes(this);
-    }
+	public boolean isSupported(String feature, String version) {
+		return DOMNodeHelper.isSupported(this, feature, version);
+	}
 
-    // org.w3c.dom.CharacterData interface
-    // -------------------------------------------------------------------------
-    public String getData() throws DOMException {
-        return DOMNodeHelper.getData(this);
-    }
+	public boolean hasAttributes() {
+		return DOMNodeHelper.hasAttributes(this);
+	}
 
-    public void setData(String data) throws DOMException {
-        DOMNodeHelper.setData(this, data);
-    }
+	// org.w3c.dom.CharacterData interface
+	// -------------------------------------------------------------------------
+	public String getData() throws DOMException {
+		return DOMNodeHelper.getData(this);
+	}
 
-    public int getLength() {
-        return DOMNodeHelper.getLength(this);
-    }
+	public void setData(String data) throws DOMException {
+		DOMNodeHelper.setData(this, data);
+	}
 
-    public String substringData(int offset, int count) throws DOMException {
-        return DOMNodeHelper.substringData(this, offset, count);
-    }
+	public int getLength() {
+		return DOMNodeHelper.getLength(this);
+	}
 
-    public void appendData(String arg) throws DOMException {
-        DOMNodeHelper.appendData(this, arg);
-    }
+	public String substringData(int offset, int count) throws DOMException {
+		return DOMNodeHelper.substringData(this, offset, count);
+	}
 
-    public void insertData(int offset, String arg) throws DOMException {
-        DOMNodeHelper.insertData(this, offset, arg);
-    }
+	public void appendData(String arg) throws DOMException {
+		DOMNodeHelper.appendData(this, arg);
+	}
 
-    public void deleteData(int offset, int count) throws DOMException {
-        DOMNodeHelper.deleteData(this, offset, count);
-    }
+	public void insertData(int offset, String arg) throws DOMException {
+		DOMNodeHelper.insertData(this, offset, arg);
+	}
 
-    public void replaceData(int offset, int count, String arg)
-            throws DOMException {
-        DOMNodeHelper.replaceData(this, offset, count, arg);
-    }
+	public void deleteData(int offset, int count) throws DOMException {
+		DOMNodeHelper.deleteData(this, offset, count);
+	}
 
-    // org.w3c.dom.Text interface
-    // -------------------------------------------------------------------------
-    public org.w3c.dom.Text splitText(int offset) throws DOMException {
-        if (isReadOnly()) {
-            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-                    "CharacterData node is read only: " + this);
-        } else {
-            String text = getText();
-            int length = (text != null) ? text.length() : 0;
+	public void replaceData(int offset, int count, String arg)
+					throws DOMException {
+		DOMNodeHelper.replaceData(this, offset, count, arg);
+	}
 
-            if ((offset < 0) || (offset >= length)) {
-                throw new DOMException(DOMException.INDEX_SIZE_ERR,
-                        "No text at offset: " + offset);
-            } else {
-                String start = text.substring(0, offset);
-                String rest = text.substring(offset);
-                setText(start);
+	// org.w3c.dom.Text interface
+	// -------------------------------------------------------------------------
+	public org.w3c.dom.Text splitText(int offset) throws DOMException {
+		if (isReadOnly()) {
+			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+							"CharacterData node is read only: " + this);
+		} else {
+			String text = getText();
+			int length = (text != null) ? text.length() : 0;
 
-                Element parent = getParent();
-                CDATA newText = createCDATA(rest);
+			if ((offset < 0) || (offset >= length)) {
+				throw new DOMException(DOMException.INDEX_SIZE_ERR,
+								"No text at offset: " + offset);
+			} else {
+				String start = text.substring(0, offset);
+				String rest = text.substring(offset);
+				setText(start);
 
-                if (parent != null) {
-                    parent.add(newText);
-                }
+				Element parent = getParent();
+				CDATA newText = createCDATA(rest);
 
-                return DOMNodeHelper.asDOMText(newText);
-            }
-        }
-    }
+				if (parent != null) {
+					parent.add(newText);
+				}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-    protected CDATA createCDATA(String text) {
-        return new DOMCDATA(text);
-    }
+				return DOMNodeHelper.asDOMText(newText);
+			}
+		}
+	}
+
+	// Implementation methods
+	// -------------------------------------------------------------------------
+	protected CDATA createCDATA(String text) {
+		return new DOMCDATA(text);
+	}
+
+	public boolean isElementContentWhitespace() {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String getWholeText() {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Text replaceWholeText(String content) throws DOMException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String getBaseURI() {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public short compareDocumentPosition(Node other) throws DOMException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String getTextContent() throws DOMException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void setTextContent(String textContent) throws DOMException {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public boolean isSameNode(Node other) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String lookupPrefix(String namespaceURI) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public boolean isDefaultNamespace(String namespaceURI) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String lookupNamespaceURI(String prefix) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public boolean isEqualNode(Node arg) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Object getFeature(String feature, String version) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Object setUserData(String key, Object data, UserDataHandler handler) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Object getUserData(String key) {
+		//TODO
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }
 
 /*

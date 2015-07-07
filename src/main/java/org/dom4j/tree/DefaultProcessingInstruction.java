@@ -36,7 +36,7 @@ public class DefaultProcessingInstruction extends
      * @param values
      *            is the <code>Map</code> values for the PI
      */
-    public DefaultProcessingInstruction(String target, Map values) {
+    public DefaultProcessingInstruction(String target, Map<String, String> values) {
         super(target, values);
     }
 
@@ -72,36 +72,44 @@ public class DefaultProcessingInstruction extends
         this.parent = parent;
     }
 
+    @Override
     public void setTarget(String target) {
         this.target = target;
     }
 
+    @Override
     public void setText(String text) {
         this.text = text;
         this.values = parseValues(text);
     }
 
-    public void setValues(Map values) {
+    @Override
+    public void setValues(Map<String, String> values) {
         this.values = values;
         this.text = toString(values);
     }
 
+    @Override
     public void setValue(String name, String value) {
         values.put(name, value);
     }
 
+    @Override
     public Element getParent() {
         return parent;
     }
 
+    @Override
     public void setParent(Element parent) {
         this.parent = parent;
     }
 
+    @Override
     public boolean supportsParent() {
         return true;
     }
 
+    @Override
     public boolean isReadOnly() {
         return false;
     }

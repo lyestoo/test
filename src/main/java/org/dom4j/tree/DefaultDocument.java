@@ -4,10 +4,8 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.tree;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +15,7 @@ import org.dom4j.DocumentType;
 import org.dom4j.Element;
 import org.dom4j.IllegalAddException;
 import org.dom4j.Node;
+import org.dom4j.NodeHelper;
 import org.dom4j.ProcessingInstruction;
 
 import org.xml.sax.EntityResolver;
@@ -31,304 +30,250 @@ import org.xml.sax.EntityResolver;
  * @version $Revision: 1.34 $
  */
 public class DefaultDocument extends AbstractDocument {
-    protected static final List EMPTY_LIST = Collections.EMPTY_LIST;
 
-    protected static final Iterator EMPTY_ITERATOR = EMPTY_LIST.iterator();
-
-    /** The name of the document */
-    private String name;
-
-    /** The root element of this document */
-    private Element rootElement;
-
-    /**
-     * Store the contents of the document as a lazily created <code>List</code>
-     */
-    private List content;
-
-    /** The document type for this document */
-    private DocumentType docType;
-
-    /** The document factory used by default */
-    private DocumentFactory documentFactory = DocumentFactory.getInstance();
-
-    /** The resolver of URIs */
-    private transient EntityResolver entityResolver;
-
-    public DefaultDocument() {
-    }
-
-    public DefaultDocument(String name) {
-        this.name = name;
-    }
-
-    public DefaultDocument(Element rootElement) {
-        this.rootElement = rootElement;
-    }
-
-    public DefaultDocument(DocumentType docType) {
-        this.docType = docType;
-    }
-
-    public DefaultDocument(Element rootElement, DocumentType docType) {
-        this.rootElement = rootElement;
-        this.docType = docType;
-    }
-
-    public DefaultDocument(String name, Element rootElement,
-            DocumentType docType) {
-        this.name = name;
-        this.rootElement = rootElement;
-        this.docType = docType;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Element getRootElement() {
-        return rootElement;
-    }
-
-    public DocumentType getDocType() {
-        return docType;
-    }
-
-    public void setDocType(DocumentType docType) {
-        this.docType = docType;
-    }
-
-    public Document addDocType(String docTypeName, String publicId,
-            String systemId) {
-        setDocType(getDocumentFactory().createDocType(docTypeName, publicId,
-                systemId));
-
-        return this;
-    }
-
-    public String getXMLEncoding() {
-        return encoding;
-    }
-
-    public EntityResolver getEntityResolver() {
-        return entityResolver;
-    }
-
-    public void setEntityResolver(EntityResolver entityResolver) {
-        this.entityResolver = entityResolver;
-    }
-
-    public Object clone() {
-        DefaultDocument document = (DefaultDocument) super.clone();
-        document.rootElement = null;
-        document.content = null;
-        document.appendContent(this);
-
-        return document;
-    }
-
-    public List processingInstructions() {
-        List source = contentList();
-        List answer = createResultList();
-        int size = source.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = source.get(i);
-
-            if (object instanceof ProcessingInstruction) {
-                answer.add(object);
-            }
-        }
-
-        return answer;
-    }
-
-    public List processingInstructions(String target) {
-        List source = contentList();
-        List answer = createResultList();
-        int size = source.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = source.get(i);
-
-            if (object instanceof ProcessingInstruction) {
-                ProcessingInstruction pi = (ProcessingInstruction) object;
-
-                if (target.equals(pi.getName())) {
-                    answer.add(pi);
-                }
-            }
-        }
-
-        return answer;
-    }
-
-    public ProcessingInstruction processingInstruction(String target) {
-        List source = contentList();
-        int size = source.size();
-
-        for (int i = 0; i < size; i++) {
-            Object object = source.get(i);
-
-            if (object instanceof ProcessingInstruction) {
-                ProcessingInstruction pi = (ProcessingInstruction) object;
-
-                if (target.equals(pi.getName())) {
-                    return pi;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public boolean removeProcessingInstruction(String target) {
-        List source = contentList();
-
-        for (Iterator iter = source.iterator(); iter.hasNext();) {
-            Object object = iter.next();
-
-            if (object instanceof ProcessingInstruction) {
-                ProcessingInstruction pi = (ProcessingInstruction) object;
-
-                if (target.equals(pi.getName())) {
-                    iter.remove();
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public void setContent(List content) {
-        rootElement = null;
-        contentRemoved();
-
-        if (content instanceof ContentListFacade) {
-            content = ((ContentListFacade) content).getBackingList();
-        }
-
-        if (content == null) {
-            this.content = null;
-        } else {
-            int size = content.size();
-            List newContent = createContentList(size);
-
-            for (int i = 0; i < size; i++) {
-                Object object = content.get(i);
-
-                if (object instanceof Node) {
-                    Node node = (Node) object;
-                    Document doc = node.getDocument();
-
-                    if ((doc != null) && (doc != this)) {
-                        node = (Node) node.clone();
-                    }
-
-                    if (node instanceof Element) {
-                        if (rootElement == null) {
-                            rootElement = (Element) node;
-                        } else {
-                            throw new IllegalAddException(
-                                    "A document may only "
-                                            + "contain one root " + "element: "
-                                            + content);
-                        }
-                    }
-
-                    newContent.add(node);
-                    childAdded(node);
-                }
-            }
-
-            this.content = newContent;
-        }
-    }
-
-    public void clearContent() {
-        contentRemoved();
-        content = null;
-        rootElement = null;
-    }
-
-    public void setDocumentFactory(DocumentFactory documentFactory) {
-        this.documentFactory = documentFactory;
-    }
-
-    // Implementation methods
-    // -------------------------------------------------------------------------
-    protected List contentList() {
-        if (content == null) {
-            content = createContentList();
-
-            if (rootElement != null) {
-                content.add(rootElement);
-            }
-        }
-
-        return content;
-    }
-
-    protected void addNode(Node node) {
-        if (node != null) {
-            Document document = node.getDocument();
-
-            if ((document != null) && (document != this)) {
-                // XXX: could clone here
-                String message = "The Node already has an existing document: "
-                        + document;
-                throw new IllegalAddException(this, node, message);
-            }
-
-            contentList().add(node);
-            childAdded(node);
-        }
-    }
-
-    protected void addNode(int index, Node node) {
-        if (node != null) {
-            Document document = node.getDocument();
-
-            if ((document != null) && (document != this)) {
-                // XXX: could clone here
-                String message = "The Node already has an existing document: "
-                        + document;
-                throw new IllegalAddException(this, node, message);
-            }
-
-            contentList().add(index, node);
-            childAdded(node);
-        }
-    }
-
-    protected boolean removeNode(Node node) {
-        if (node == rootElement) {
-            rootElement = null;
-        }
-
-        if (contentList().remove(node)) {
-            childRemoved(node);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    protected void rootElementAdded(Element element) {
-        this.rootElement = element;
-        element.setDocument(this);
-    }
-
-    protected DocumentFactory getDocumentFactory() {
-        return documentFactory;
-    }
+	/** The name of the document */
+	private String name;
+	/** The root element of this document */
+	private Element rootElement;
+	/**
+	 * Store the contents of the document as a lazily created <code>List</code>
+	 */
+	private final List<Node> content = new LazyList<Node>();
+	/** The document type for this document */
+	private DocumentType docType;
+	/** The document factory used by default */
+	private DocumentFactory documentFactory = DocumentFactory.getInstance();
+	/** The resolver of URIs */
+	private transient EntityResolver entityResolver;
+
+	public DefaultDocument() {
+		this(null, null, null);
+	}
+
+	public DefaultDocument(String name) {
+		this(name, null, null);
+	}
+
+	public DefaultDocument(Element rootElement) {
+		this(null, rootElement, null);
+	}
+
+	public DefaultDocument(DocumentType docType) {
+		this(null, null, docType);
+	}
+
+	public DefaultDocument(Element rootElement, DocumentType docType) {
+		this(null, rootElement, docType);
+	}
+
+	public DefaultDocument(String name, Element rootElement, DocumentType docType) {
+		this.name = name;
+		this.setRootElement(rootElement);
+		this.docType = docType;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Element getRootElement() {
+		return rootElement;
+	}
+
+	public DocumentType getDocType() {
+		return docType;
+	}
+
+	public void setDocType(DocumentType docType) {
+		this.docType = docType;
+	}
+
+	public Document addDocType(String docTypeName, String publicId, String systemId) {
+		setDocType(getDocumentFactory().createDocType(docTypeName, publicId, systemId));
+
+		return this;
+	}
+
+	@Override
+	public String getXMLEncoding() {
+		return encoding;
+	}
+
+	public EntityResolver getEntityResolver() {
+		return entityResolver;
+	}
+
+	public void setEntityResolver(EntityResolver entityResolver) {
+		this.entityResolver = entityResolver;
+	}
+
+	@Override
+	public Object clone() {
+		DefaultDocument document = (DefaultDocument) super.clone();
+		document.rootElement = null;
+		document.content.clear();
+		document.appendContent(this);
+
+		return document;
+	}
+
+	public List<ProcessingInstruction> processingInstructions() {
+		List<ProcessingInstruction> answer = createResultList();
+		for (Node node : contentList()) {
+			ProcessingInstruction pi = NodeHelper.nodeAsProcessingInstruction(node);
+			if (pi != null) {
+				answer.add(pi);
+			}
+		}
+
+		return answer;
+	}
+
+	public List<ProcessingInstruction> processingInstructions(String target) {
+		List<ProcessingInstruction> answer = createResultList();
+		for (Node node : contentList()) {
+			ProcessingInstruction pi = NodeHelper.nodeAsProcessingInstruction(node);
+			if (pi != null && target.equals(pi.getName())) {
+				answer.add(pi);
+			}
+		}
+
+		return answer;
+	}
+
+	public ProcessingInstruction processingInstruction(String target) {
+		for (Node node : contentList()) {
+			ProcessingInstruction pi = NodeHelper.nodeAsProcessingInstruction(node);
+			if (pi != null && target.equals(pi.getName())) {
+				return pi;
+			}
+		}
+
+		return null;
+	}
+
+	public boolean removeProcessingInstruction(String target) {
+		for (Iterator<Node> iter = contentList().iterator(); iter.hasNext();) {
+			Node node = iter.next();
+			ProcessingInstruction pi = NodeHelper.nodeAsProcessingInstruction(node);
+			if (pi != null && target.equals(pi.getName())) {
+				iter.remove();
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void setContent(List<Node> content) {
+		rootElement = null;
+		contentRemoved();
+
+		if (content instanceof ContentListFacade) {
+			content = ((ContentListFacade<Node>) content).getBackingList();
+		}
+
+		contentList().clear();
+		if (content == null) {
+			return;
+		}
+
+		List<Node> newContent = createContentList(contentList().size());
+		for (Node node : contentList()) {
+			Document doc = node.getDocument();
+			if ((doc != null) && (doc != this)) {
+				node = (Node) node.clone();
+			}
+
+			Element element = NodeHelper.nodeAsElement(node);
+			if (element == null) {
+				if (rootElement == null) {
+					rootElement = element;
+				} else {
+					throw new IllegalAddException(
+									"A document may only " + "contain one root " + "element: " + content);
+				}
+			}
+
+			newContent.add(node);
+			childAdded(node);
+		}
+		contentList().addAll(newContent);
+	}
+
+	public void clearContent() {
+		contentRemoved();
+		contentList().clear();
+		rootElement = null;
+	}
+
+	public void setDocumentFactory(DocumentFactory documentFactory) {
+		this.documentFactory = documentFactory;
+	}
+
+	protected List<Node> contentList() {
+		assert this.content != null;
+		return this.content;
+	}
+
+	protected void addNode(Node node) {
+		if (node != null) {
+			Document document = node.getDocument();
+
+			if ((document != null) && (document != this)) {
+				// XXX: could clone here
+				String message = "The Node already has an existing document: " + document;
+				throw new IllegalAddException(this, node, message);
+			}
+
+			contentList().add(node);
+			childAdded(node);
+		}
+	}
+
+	protected void addNode(int index, Node node) {
+		if (node != null) {
+			Document document = node.getDocument();
+
+			if ((document != null) && (document != this)) {
+				// XXX: could clone here
+				String message = "The Node already has an existing document: " + document;
+				throw new IllegalAddException(this, node, message);
+			}
+
+			contentList().add(index, node);
+			childAdded(node);
+		}
+	}
+
+	protected boolean removeNode(Node node) {
+		if (node == rootElement) {
+			rootElement = null;
+		}
+
+		if (contentList().remove(node)) {
+			childRemoved(node);
+			return true;
+		}
+
+		return false;
+	}
+
+	protected void rootElementAdded(Element element) {
+		this.rootElement = element;
+		element.setDocument(this);
+	}
+
+	@Override
+	protected DocumentFactory getDocumentFactory() {
+		return documentFactory;
+	}
 }
 
 /*

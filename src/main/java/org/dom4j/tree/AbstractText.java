@@ -10,6 +10,7 @@ package org.dom4j.tree;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.dom4j.NodeType;
 import org.dom4j.Visitor;
 
 /**
@@ -26,8 +27,9 @@ public abstract class AbstractText extends AbstractCharacterData implements
     public AbstractText() {
     }
 
-    public short getNodeType() {
-        return TEXT_NODE;
+	@Override
+    public NodeType getNodeTypeEnum() {
+        return NodeType.TEXT_NODE;
     }
 
     public String toString() {
