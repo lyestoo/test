@@ -7,61 +7,61 @@
 
 package org.dom4j.io;
 
-import javax.xml.transform.sax.SAXResult;
-
 import org.w3c.dom.Document;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ext.LexicalHandler;
+
+import javax.xml.transform.sax.SAXResult;
 
 /**
  * <p>
  * <code>DOMDocumentResult</code> implements a JAXP {@link SAXResult} for a
  * {@link org.w3c.dom.Document}.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @author Todd Wolff
  * @version $Revision: 1.1 $
  */
 public class DOMDocumentResult extends SAXResult {
-    private DOMSAXContentHandler contentHandler;
+	private DOMSAXContentHandler contentHandler;
 
-    public DOMDocumentResult() {
-        this(new DOMSAXContentHandler());
-    }
+	public DOMDocumentResult() {
+		this(new DOMSAXContentHandler());
+	}
 
-    public DOMDocumentResult(DOMSAXContentHandler contentHandler) {
-        this.contentHandler = contentHandler;
-        super.setHandler(this.contentHandler);
-        super.setLexicalHandler(this.contentHandler);
-    }
+	public DOMDocumentResult(DOMSAXContentHandler contentHandler) {
+		this.contentHandler = contentHandler;
+		super.setHandler(this.contentHandler);
+		super.setLexicalHandler(this.contentHandler);
+	}
 
-    /**
-     * Retrieves w3c dom object generated via transformation
-     * 
-     * @return the Document created by the transformation
-     */
-    public Document getDocument() {
-        return contentHandler.getDocument();
-    }
+	/**
+	 * Retrieves w3c dom object generated via transformation
+	 *
+	 * @return the Document created by the transformation
+	 */
+	public Document getDocument() {
+		return contentHandler.getDocument();
+	}
 
-    // Overloaded methods
-    // -------------------------------------------------------------------------
-    public void setHandler(ContentHandler handler) {
-        if (handler instanceof DOMSAXContentHandler) {
-            this.contentHandler = (DOMSAXContentHandler) handler;
-            super.setHandler(this.contentHandler);
-        }
-    }
+	// Overloaded methods
+	// -------------------------------------------------------------------------
 
-    public void setLexicalHandler(LexicalHandler handler) {
-        if (handler instanceof DOMSAXContentHandler) {
-            this.contentHandler = (DOMSAXContentHandler) handler;
-            super.setLexicalHandler(this.contentHandler);
-        }
-    }
-    
+	public void setHandler(ContentHandler handler) {
+		if (handler instanceof DOMSAXContentHandler) {
+			this.contentHandler = (DOMSAXContentHandler) handler;
+			super.setHandler(this.contentHandler);
+		}
+	}
+
+	public void setLexicalHandler(LexicalHandler handler) {
+		if (handler instanceof DOMSAXContentHandler) {
+			this.contentHandler = (DOMSAXContentHandler) handler;
+			super.setLexicalHandler(this.contentHandler);
+		}
+	}
+
 }
 
 /*
@@ -84,7 +84,7 @@ public class DOMDocumentResult extends SAXResult {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

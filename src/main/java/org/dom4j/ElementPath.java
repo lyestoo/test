@@ -11,66 +11,61 @@ package org.dom4j;
  * This interface is used by {@link ElementHandler}instances to retrieve
  * information about the current path hierarchy they are to process. It's
  * primary use is to retrieve the current {@link Element}being processed.
- * 
+ *
  * @author <a href="mailto:dwhite@equipecom.com">Dave White </a>
  * @version $Revision: 1.6 $
  */
 public interface ElementPath {
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the number of elements in the path
-     */
-    int size();
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the number of elements in the path
+	 */
+	int size();
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param depth
-     *            DOCUMENT ME!
-     * 
-     * @return the element at the specified depth index, 0 = root element
-     */
-    Element getElement(int depth);
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param depth DOCUMENT ME!
+	 * @return the element at the specified depth index, 0 = root element
+	 */
+	Element getElement(int depth);
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the path as a string
-     */
-    String getPath();
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the path as a string
+	 */
+	String getPath();
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the current element
-     */
-    Element getCurrent();
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the current element
+	 */
+	Element getCurrent();
 
-    /**
-     * Adds the <code>ElementHandler</code> to be called when the specified
-     * path is encounted. The path can be either an absolute path (i.e. prefixed
-     * with "/") or a relative path (i.e. assummed to be a child of the current
-     * path as retrieved by <b>getPath </b>.
-     * 
-     * @param path
-     *            is the path to be handled
-     * @param handler
-     *            is the <code>ElementHandler</code> to be called by the event
-     *            based processor.
-     */
-    void addHandler(String path, ElementHandler handler);
+	/**
+	 * Adds the <code>ElementHandler</code> to be called when the specified
+	 * path is encounted. The path can be either an absolute path (i.e. prefixed
+	 * with "/") or a relative path (i.e. assummed to be a child of the current
+	 * path as retrieved by <b>getPath </b>.
+	 *
+	 * @param path    is the path to be handled
+	 * @param handler is the <code>ElementHandler</code> to be called by the event
+	 *                based processor.
+	 */
+	void addHandler(String path, ElementHandler handler);
 
-    /**
-     * Removes the <code>ElementHandler</code> from the event based processor,
-     * for the specified path. The path can be either an absolute path (i.e.
-     * prefixed with "/") or a relative path (i.e. assummed to be a child of the
-     * current path as retrieved by <b>getPath </b>.
-     * 
-     * @param path
-     *            is the path to remove the <code>ElementHandler</code> for.
-     */
-    void removeHandler(String path);
+	/**
+	 * Removes the <code>ElementHandler</code> from the event based processor,
+	 * for the specified path. The path can be either an absolute path (i.e.
+	 * prefixed with "/") or a relative path (i.e. assummed to be a child of the
+	 * current path as retrieved by <b>getPath </b>.
+	 *
+	 * @param path is the path to remove the <code>ElementHandler</code> for.
+	 */
+	void removeHandler(String path);
 }
 
 /*
@@ -93,7 +88,7 @@ public interface ElementPath {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

@@ -6,161 +6,157 @@
  */
 package org.dom4j.tree;
 
+import org.dom4j.*;
+
 import java.io.IOException;
 import java.io.Writer;
-
-import org.dom4j.Attribute;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.Node;
-import org.dom4j.NodeType;
-import org.dom4j.Visitor;
 
 /**
  * <p>
  * <code>AbstractNamespace</code> is an abstract base class for tree
  * implementors to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.21 $
  */
 public abstract class AbstractAttribute extends AbstractNode implements
-        Attribute {
+		Attribute {
 
-    @Override
-    public NodeType getNodeTypeEnum() {
-        return NodeType.ATTRIBUTE_NODE;
-    }
+	@Override
+	public NodeType getNodeTypeEnum() {
+		return NodeType.ATTRIBUTE_NODE;
+	}
 
-    public void setNamespace(Namespace namespace) {
-        String msg = "This Attribute is read only and cannot be changed";
-        throw new UnsupportedOperationException(msg);
-    }
+	public void setNamespace(Namespace namespace) {
+		String msg = "This Attribute is read only and cannot be changed";
+		throw new UnsupportedOperationException(msg);
+	}
 
-    @Override
-    public String getText() {
-        return getValue();
-    }
+	@Override
+	public String getText() {
+		return getValue();
+	}
 
-    @Override
-    public void setText(String text) {
-        setValue(text);
-    }
+	@Override
+	public void setText(String text) {
+		setValue(text);
+	}
 
-    public void setValue(String value) {
-        String msg = "This Attribute is read only and cannot be changed";
-        throw new UnsupportedOperationException(msg);
-    }
+	public void setValue(String value) {
+		String msg = "This Attribute is read only and cannot be changed";
+		throw new UnsupportedOperationException(msg);
+	}
 
-    public Object getData() {
-        return getValue();
-    }
+	public Object getData() {
+		return getValue();
+	}
 
-    public void setData(Object data) {
-        setValue((data == null) ? null : data.toString());
-    }
+	public void setData(Object data) {
+		setValue((data == null) ? null : data.toString());
+	}
 
-    @Override
-    protected  void toString(StringBuilder builder) {
-        super.toString(builder);
-        builder.append(" [Attribute: name ");
-        builder.append(getQualifiedName());
-        builder.append(" value \"");
-        builder.append(getValue());
-        builder.append("\"]");
-    }
+	@Override
+	protected void toString(StringBuilder builder) {
+		super.toString(builder);
+		builder.append(" [Attribute: name ");
+		builder.append(getQualifiedName());
+		builder.append(" value \"");
+		builder.append(getValue());
+		builder.append("\"]");
+	}
 
-    public String asXML() {
-        return getQualifiedName() + "=\"" + getValue() + "\"";
-    }
+	public String asXML() {
+		return getQualifiedName() + "=\"" + getValue() + "\"";
+	}
 
-    @Override
-    public void write(Writer writer) throws IOException {
-        writer.write(getQualifiedName());
-        writer.write("=\"");
-        writer.write(getValue());
-        writer.write("\"");
-    }
+	@Override
+	public void write(Writer writer) throws IOException {
+		writer.write(getQualifiedName());
+		writer.write("=\"");
+		writer.write(getValue());
+		writer.write("\"");
+	}
 
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
 
-    // QName methods
-    public Namespace getNamespace() {
-        return getQName().getNamespace();
-    }
+	// QName methods
 
-    @Override
-    public String getName() {
-        return getQName().getName();
-    }
+	public Namespace getNamespace() {
+		return getQName().getNamespace();
+	}
 
-    public String getNamespacePrefix() {
-        return getQName().getNamespacePrefix();
-    }
+	@Override
+	public String getName() {
+		return getQName().getName();
+	}
 
-    public String getNamespaceURI() {
-        return getQName().getNamespaceURI();
-    }
+	public String getNamespacePrefix() {
+		return getQName().getNamespacePrefix();
+	}
 
-    public String getQualifiedName() {
-        return getQName().getQualifiedName();
-    }
+	public String getNamespaceURI() {
+		return getQName().getNamespaceURI();
+	}
 
-    public String getPath(Element context) {
-        StringBuffer result = new StringBuffer();
+	public String getQualifiedName() {
+		return getQName().getQualifiedName();
+	}
 
-        Element parent = getParent();
+	public String getPath(Element context) {
+		StringBuffer result = new StringBuffer();
 
-        if ((parent != null) && (parent != context)) {
-            result.append(parent.getPath(context));
-            result.append("/");
-        }
+		Element parent = getParent();
 
-        result.append("@");
+		if ((parent != null) && (parent != context)) {
+			result.append(parent.getPath(context));
+			result.append("/");
+		}
 
-        String uri = getNamespaceURI();
-        String prefix = getNamespacePrefix();
+		result.append("@");
 
-        if ((uri == null) || (uri.length() == 0) || (prefix == null) || (prefix.length() == 0)) {
-            result.append(getName());
-        } else {
-            result.append(getQualifiedName());
-        }
+		String uri = getNamespaceURI();
+		String prefix = getNamespacePrefix();
 
-        return result.toString();
-    }
+		if ((uri == null) || (uri.length() == 0) || (prefix == null) || (prefix.length() == 0)) {
+			result.append(getName());
+		} else {
+			result.append(getQualifiedName());
+		}
 
-    public String getUniquePath(Element context) {
-        StringBuffer result = new StringBuffer();
+		return result.toString();
+	}
 
-        Element parent = getParent();
+	public String getUniquePath(Element context) {
+		StringBuffer result = new StringBuffer();
 
-        if ((parent != null) && (parent != context)) {
-            result.append(parent.getUniquePath(context));
-            result.append("/");
-        }
+		Element parent = getParent();
 
-        result.append("@");
+		if ((parent != null) && (parent != context)) {
+			result.append(parent.getUniquePath(context));
+			result.append("/");
+		}
 
-        String uri = getNamespaceURI();
-        String prefix = getNamespacePrefix();
+		result.append("@");
 
-        if ((uri == null) || (uri.length() == 0) || (prefix == null) || (prefix.length() == 0)) {
-            result.append(getName());
-        } else {
-            result.append(getQualifiedName());
-        }
+		String uri = getNamespaceURI();
+		String prefix = getNamespacePrefix();
 
-        return result.toString();
-    }
+		if ((uri == null) || (uri.length() == 0) || (prefix == null) || (prefix.length() == 0)) {
+			result.append(getName());
+		} else {
+			result.append(getQualifiedName());
+		}
 
-    @Override
-    protected Node createXPathResult(Element parent) {
-        return new DefaultAttribute(parent, getQName(), getValue());
-    }
+		return result.toString();
+	}
+
+	@Override
+	protected Node createXPathResult(Element parent) {
+		return new DefaultAttribute(parent, getQName(), getValue());
+	}
 }
 
 /*
@@ -183,7 +179,7 @@ public abstract class AbstractAttribute extends AbstractNode implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

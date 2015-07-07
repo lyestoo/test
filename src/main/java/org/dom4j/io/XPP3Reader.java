@@ -7,26 +7,13 @@
 
 package org.dom4j.io;
 
-import java.io.BufferedReader;
-import java.io.CharArrayReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.ElementHandler;
-import org.dom4j.QName;
-
+import org.dom4j.*;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.*;
+import java.net.URL;
 
 /**
  * <p>
@@ -34,473 +21,424 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * <a href="http://www.extreme.indiana.edu/soap/xpp/">XML Pull Parser 3.x </a>.
  * It is very fast for use in SOAP style environments.
  * </p>
- * 
+ *
  * @author <a href="mailto:pelle@neubia.com">Pelle Braendgaard </a>
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.3 $
  */
 public class XPP3Reader {
-    /** <code>DocumentFactory</code> used to create new document objects */
-    private DocumentFactory factory;
+	/**
+	 * <code>DefaultDocumentFactory</code> used to create new document objects
+	 */
+	private DocumentFactory factory;
 
-    /** <code>XmlPullParser</code> used to parse XML */
-    private XmlPullParser xppParser;
+	/**
+	 * <code>XmlPullParser</code> used to parse XML
+	 */
+	private XmlPullParser xppParser;
 
-    /** <code>XmlPullParser</code> used to parse XML */
-    private XmlPullParserFactory xppFactory;
+	/**
+	 * <code>XmlPullParser</code> used to parse XML
+	 */
+	private XmlPullParserFactory xppFactory;
 
-    /** DispatchHandler to call when each <code>Element</code> is encountered */
-    private DispatchHandler dispatchHandler;
+	/**
+	 * DispatchHandler to call when each <code>Element</code> is encountered
+	 */
+	private DispatchHandler dispatchHandler;
 
-    public XPP3Reader() {
-    }
+	public XPP3Reader() {
+	}
 
-    public XPP3Reader(DocumentFactory factory) {
-        this.factory = factory;
-    }
+	public XPP3Reader(DocumentFactory factory) {
+		this.factory = factory;
+	}
 
-    /**
-     * <p>
-     * Reads a Document from the given <code>File</code>
-     * </p>
-     * 
-     * @param file
-     *            is the <code>File</code> to read from.
-     * 
-     * @return the newly created Document instance
-     * 
-     * @throws DocumentException
-     *             if an error occurs during parsing.
-     * @throws IOException
-     *             if a URL could not be made for the given File
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public Document read(File file) throws DocumentException, IOException,
-            XmlPullParserException {
-        String systemID = file.getAbsolutePath();
+	/**
+	 * <p>
+	 * Reads a Document from the given <code>File</code>
+	 * </p>
+	 *
+	 * @param file is the <code>File</code> to read from.
+	 * @return the newly created Document instance
+	 * @throws DocumentException      if an error occurs during parsing.
+	 * @throws IOException            if a URL could not be made for the given File
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public Document read(File file) throws DocumentException, IOException,
+			XmlPullParserException {
+		String systemID = file.getAbsolutePath();
 
-        return read(new BufferedReader(new FileReader(file)), systemID);
-    }
+		return read(new BufferedReader(new FileReader(file)), systemID);
+	}
 
-    /**
-     * <p>
-     * Reads a Document from the given <code>URL</code>
-     * </p>
-     * 
-     * @param url
-     *            <code>URL</code> to read from.
-     * 
-     * @return the newly created Document instance
-     * 
-     * @throws DocumentException
-     *             if an error occurs during parsing.
-     * @throws IOException
-     *             DOCUMENT ME!
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public Document read(URL url) throws DocumentException, IOException,
-            XmlPullParserException {
-        String systemID = url.toExternalForm();
+	/**
+	 * <p>
+	 * Reads a Document from the given <code>URL</code>
+	 * </p>
+	 *
+	 * @param url <code>URL</code> to read from.
+	 * @return the newly created Document instance
+	 * @throws DocumentException      if an error occurs during parsing.
+	 * @throws IOException            DOCUMENT ME!
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public Document read(URL url) throws DocumentException, IOException,
+			XmlPullParserException {
+		String systemID = url.toExternalForm();
 
-        return read(createReader(url.openStream()), systemID);
-    }
+		return read(createReader(url.openStream()), systemID);
+	}
 
-    /**
-     * <p>
-     * Reads a Document from the given URL or filename.
-     * </p>
-     * 
-     * <p>
-     * If the systemID contains a <code>':'</code> character then it is
-     * assumed to be a URL otherwise its assumed to be a file name. If you want
-     * finer grained control over this mechansim then please explicitly pass in
-     * either a {@link URL}or a {@link File}instance instead of a {@link
-     * String} to denote the source of the document.
-     * </p>
-     * 
-     * @param systemID
-     *            is a URL for a document or a file name.
-     * 
-     * @return the newly created Document instance
-     * 
-     * @throws DocumentException
-     *             if an error occurs during parsing.
-     * @throws IOException
-     *             if a URL could not be made for the given File
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public Document read(String systemID) throws DocumentException,
-            IOException, XmlPullParserException {
-        if (systemID.indexOf(':') >= 0) {
-            // lets assume its a URL
-            return read(new URL(systemID));
-        } else {
-            // lets assume that we are given a file name
-            return read(new File(systemID));
-        }
-    }
+	/**
+	 * <p>
+	 * Reads a Document from the given URL or filename.
+	 * </p>
+	 * <p/>
+	 * <p>
+	 * If the systemID contains a <code>':'</code> character then it is
+	 * assumed to be a URL otherwise its assumed to be a file name. If you want
+	 * finer grained control over this mechansim then please explicitly pass in
+	 * either a {@link URL}or a {@link File}instance instead of a {@link
+	 * String} to denote the source of the document.
+	 * </p>
+	 *
+	 * @param systemID is a URL for a document or a file name.
+	 * @return the newly created Document instance
+	 * @throws DocumentException      if an error occurs during parsing.
+	 * @throws IOException            if a URL could not be made for the given File
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public Document read(String systemID) throws DocumentException,
+			IOException, XmlPullParserException {
+		if (systemID.indexOf(':') >= 0) {
+			// lets assume its a URL
+			return read(new URL(systemID));
+		} else {
+			// lets assume that we are given a file name
+			return read(new File(systemID));
+		}
+	}
 
-    /**
-     * <p>
-     * Reads a Document from the given stream
-     * </p>
-     * 
-     * @param in
-     *            <code>InputStream</code> to read from.
-     * 
-     * @return the newly created Document instance
-     * 
-     * @throws DocumentException
-     *             if an error occurs during parsing.
-     * @throws IOException
-     *             DOCUMENT ME!
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public Document read(InputStream in) throws DocumentException, IOException,
-            XmlPullParserException {
-        return read(createReader(in));
-    }
+	/**
+	 * <p>
+	 * Reads a Document from the given stream
+	 * </p>
+	 *
+	 * @param in <code>InputStream</code> to read from.
+	 * @return the newly created Document instance
+	 * @throws DocumentException      if an error occurs during parsing.
+	 * @throws IOException            DOCUMENT ME!
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public Document read(InputStream in) throws DocumentException, IOException,
+			XmlPullParserException {
+		return read(createReader(in));
+	}
 
-    /**
-     * <p>
-     * Reads a Document from the given <code>Reader</code>
-     * </p>
-     * 
-     * @param reader
-     *            is the reader for the input
-     * 
-     * @return the newly created Document instance
-     * 
-     * @throws DocumentException
-     *             if an error occurs during parsing.
-     * @throws IOException
-     *             DOCUMENT ME!
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public Document read(Reader reader) throws DocumentException, IOException,
-            XmlPullParserException {
-        getXPPParser().setInput(reader);
+	/**
+	 * <p>
+	 * Reads a Document from the given <code>Reader</code>
+	 * </p>
+	 *
+	 * @param reader is the reader for the input
+	 * @return the newly created Document instance
+	 * @throws DocumentException      if an error occurs during parsing.
+	 * @throws IOException            DOCUMENT ME!
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public Document read(Reader reader) throws DocumentException, IOException,
+			XmlPullParserException {
+		getXPPParser().setInput(reader);
 
-        return parseDocument();
-    }
+		return parseDocument();
+	}
 
-    /**
-     * <p>
-     * Reads a Document from the given array of characters
-     * </p>
-     * 
-     * @param text
-     *            is the text to parse
-     * 
-     * @return the newly created Document instance
-     * 
-     * @throws DocumentException
-     *             if an error occurs during parsing.
-     * @throws IOException
-     *             DOCUMENT ME!
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public Document read(char[] text) throws DocumentException, IOException,
-            XmlPullParserException {
-        getXPPParser().setInput(new CharArrayReader(text));
+	/**
+	 * <p>
+	 * Reads a Document from the given array of characters
+	 * </p>
+	 *
+	 * @param text is the text to parse
+	 * @return the newly created Document instance
+	 * @throws DocumentException      if an error occurs during parsing.
+	 * @throws IOException            DOCUMENT ME!
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public Document read(char[] text) throws DocumentException, IOException,
+			XmlPullParserException {
+		getXPPParser().setInput(new CharArrayReader(text));
 
-        return parseDocument();
-    }
+		return parseDocument();
+	}
 
-    /**
-     * <p>
-     * Reads a Document from the given stream
-     * </p>
-     * 
-     * @param in
-     *            <code>InputStream</code> to read from.
-     * @param systemID
-     *            is the URI for the input
-     * 
-     * @return the newly created Document instance
-     * 
-     * @throws DocumentException
-     *             if an error occurs during parsing.
-     * @throws IOException
-     *             DOCUMENT ME!
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public Document read(InputStream in, String systemID)
-            throws DocumentException, IOException, XmlPullParserException {
-        return read(createReader(in), systemID);
-    }
+	/**
+	 * <p>
+	 * Reads a Document from the given stream
+	 * </p>
+	 *
+	 * @param in       <code>InputStream</code> to read from.
+	 * @param systemID is the URI for the input
+	 * @return the newly created Document instance
+	 * @throws DocumentException      if an error occurs during parsing.
+	 * @throws IOException            DOCUMENT ME!
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public Document read(InputStream in, String systemID)
+			throws DocumentException, IOException, XmlPullParserException {
+		return read(createReader(in), systemID);
+	}
 
-    /**
-     * <p>
-     * Reads a Document from the given <code>Reader</code>
-     * </p>
-     * 
-     * @param reader
-     *            is the reader for the input
-     * @param systemID
-     *            is the URI for the input
-     * 
-     * @return the newly created Document instance
-     * 
-     * @throws DocumentException
-     *             if an error occurs during parsing.
-     * @throws IOException
-     *             DOCUMENT ME!
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public Document read(Reader reader, String systemID)
-            throws DocumentException, IOException, XmlPullParserException {
-        Document document = read(reader);
-        document.setName(systemID);
+	/**
+	 * <p>
+	 * Reads a Document from the given <code>Reader</code>
+	 * </p>
+	 *
+	 * @param reader   is the reader for the input
+	 * @param systemID is the URI for the input
+	 * @return the newly created Document instance
+	 * @throws DocumentException      if an error occurs during parsing.
+	 * @throws IOException            DOCUMENT ME!
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public Document read(Reader reader, String systemID)
+			throws DocumentException, IOException, XmlPullParserException {
+		Document document = read(reader);
+		document.setName(systemID);
 
-        return document;
-    }
+		return document;
+	}
 
-    // Properties
-    // -------------------------------------------------------------------------
-    public XmlPullParser getXPPParser() throws XmlPullParserException {
-        if (xppParser == null) {
-            xppParser = getXPPFactory().newPullParser();
-        }
+	// Properties
+	// -------------------------------------------------------------------------
 
-        return xppParser;
-    }
+	public XmlPullParser getXPPParser() throws XmlPullParserException {
+		if (xppParser == null) {
+			xppParser = getXPPFactory().newPullParser();
+		}
 
-    public XmlPullParserFactory getXPPFactory() throws XmlPullParserException {
-        if (xppFactory == null) {
-            xppFactory = XmlPullParserFactory.newInstance();
-        }
+		return xppParser;
+	}
 
-        xppFactory.setNamespaceAware(true);
+	public XmlPullParserFactory getXPPFactory() throws XmlPullParserException {
+		if (xppFactory == null) {
+			xppFactory = XmlPullParserFactory.newInstance();
+		}
 
-        return xppFactory;
-    }
+		xppFactory.setNamespaceAware(true);
 
-    public void setXPPFactory(XmlPullParserFactory xPPfactory) {
-        this.xppFactory = xPPfactory;
-    }
+		return xppFactory;
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the <code>DocumentFactory</code> used to create document
-     *         objects
-     */
-    public DocumentFactory getDocumentFactory() {
-        if (factory == null) {
-            factory = DocumentFactory.getInstance();
-        }
+	public void setXPPFactory(XmlPullParserFactory xPPfactory) {
+		this.xppFactory = xPPfactory;
+	}
 
-        return factory;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the <code>DefaultDocumentFactory</code> used to create document
+	 *         objects
+	 */
+	public DocumentFactory getDocumentFactory() {
+		if (factory == null) {
+			factory = DefaultDocumentFactory.getInstance();
+		}
 
-    /**
-     * <p>
-     * This sets the <code>DocumentFactory</code> used to create new
-     * documents. This method allows the building of custom DOM4J tree objects
-     * to be implemented easily using a custom derivation of
-     * {@link DocumentFactory}
-     * </p>
-     * 
-     * @param documentFactory
-     *            <code>DocumentFactory</code> used to create DOM4J objects
-     */
-    public void setDocumentFactory(DocumentFactory documentFactory) {
-        this.factory = documentFactory;
-    }
+		return factory;
+	}
 
-    /**
-     * Adds the <code>ElementHandler</code> to be called when the specified
-     * path is encounted.
-     * 
-     * @param path
-     *            is the path to be handled
-     * @param handler
-     *            is the <code>ElementHandler</code> to be called by the event
-     *            based processor.
-     */
-    public void addHandler(String path, ElementHandler handler) {
-        getDispatchHandler().addHandler(path, handler);
-    }
+	/**
+	 * <p>
+	 * This sets the <code>DefaultDocumentFactory</code> used to create new
+	 * documents. This method allows the building of custom DOM4J tree objects
+	 * to be implemented easily using a custom derivation of
+	 * {@link org.dom4j.DefaultDocumentFactory}
+	 * </p>
+	 *
+	 * @param documentFactory <code>DefaultDocumentFactory</code> used to create DOM4J objects
+	 */
+	public void setDocumentFactory(DocumentFactory documentFactory) {
+		this.factory = documentFactory;
+	}
 
-    /**
-     * Removes the <code>ElementHandler</code> from the event based processor,
-     * for the specified path.
-     * 
-     * @param path
-     *            is the path to remove the <code>ElementHandler</code> for.
-     */
-    public void removeHandler(String path) {
-        getDispatchHandler().removeHandler(path);
-    }
+	/**
+	 * Adds the <code>ElementHandler</code> to be called when the specified
+	 * path is encounted.
+	 *
+	 * @param path    is the path to be handled
+	 * @param handler is the <code>ElementHandler</code> to be called by the event
+	 *                based processor.
+	 */
+	public void addHandler(String path, ElementHandler handler) {
+		getDispatchHandler().addHandler(path, handler);
+	}
 
-    /**
-     * When multiple <code>ElementHandler</code> instances have been
-     * registered, this will set a default <code>ElementHandler</code> to be
-     * called for any path which does <b>NOT </b> have a handler registered.
-     * 
-     * @param handler
-     *            is the <code>ElementHandler</code> to be called by the event
-     *            based processor.
-     */
-    public void setDefaultHandler(ElementHandler handler) {
-        getDispatchHandler().setDefaultHandler(handler);
-    }
+	/**
+	 * Removes the <code>ElementHandler</code> from the event based processor,
+	 * for the specified path.
+	 *
+	 * @param path is the path to remove the <code>ElementHandler</code> for.
+	 */
+	public void removeHandler(String path) {
+		getDispatchHandler().removeHandler(path);
+	}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-    protected Document parseDocument() throws DocumentException, IOException,
-            XmlPullParserException {
-        DocumentFactory df = getDocumentFactory();
-        Document document = df.createDocument();
-        Element parent = null;
-        XmlPullParser pp = getXPPParser();
-        pp.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+	/**
+	 * When multiple <code>ElementHandler</code> instances have been
+	 * registered, this will set a default <code>ElementHandler</code> to be
+	 * called for any path which does <b>NOT </b> have a handler registered.
+	 *
+	 * @param handler is the <code>ElementHandler</code> to be called by the event
+	 *                based processor.
+	 */
+	public void setDefaultHandler(ElementHandler handler) {
+		getDispatchHandler().setDefaultHandler(handler);
+	}
 
-        while (true) {
-            int type = pp.nextToken();
+	// Implementation methods
+	// -------------------------------------------------------------------------
 
-            switch (type) {
-                case XmlPullParser.PROCESSING_INSTRUCTION: {
-                    String text = pp.getText();
-                    int loc = text.indexOf(" ");
+	protected Document parseDocument() throws DocumentException, IOException,
+			XmlPullParserException {
+		DocumentFactory df = getDocumentFactory();
+		Document document = df.createDocument();
+		Element parent = null;
+		XmlPullParser pp = getXPPParser();
+		pp.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
 
-                    if (loc >= 0) {
-                        String target = text.substring(0, loc);
-                        String txt = text.substring(loc + 1);
-                        document.addProcessingInstruction(target, txt);
-                    } else {
-                        document.addProcessingInstruction(text, "");
-                    }
+		while (true) {
+			int type = pp.nextToken();
 
-                    break;
-                }
+			switch (type) {
+				case XmlPullParser.PROCESSING_INSTRUCTION: {
+					String text = pp.getText();
+					int loc = text.indexOf(" ");
 
-                case XmlPullParser.COMMENT: {
-                    if (parent != null) {
-                        parent.addComment(pp.getText());
-                    } else {
-                        document.addComment(pp.getText());
-                    }
+					if (loc >= 0) {
+						String target = text.substring(0, loc);
+						String txt = text.substring(loc + 1);
+						document.addProcessingInstruction(target, txt);
+					} else {
+						document.addProcessingInstruction(text, "");
+					}
 
-                    break;
-                }
+					break;
+				}
 
-                case XmlPullParser.CDSECT: {
-                    if (parent != null) {
-                        parent.addCDATA(pp.getText());
-                    } else {
-                        String msg = "Cannot have text content outside of the "
-                                + "root document";
-                        throw new DocumentException(msg);
-                    }
+				case XmlPullParser.COMMENT: {
+					if (parent != null) {
+						parent.addComment(pp.getText());
+					} else {
+						document.addComment(pp.getText());
+					}
 
-                    break;
-                }
+					break;
+				}
 
-                case XmlPullParser.ENTITY_REF:
-                    break;
+				case XmlPullParser.CDSECT: {
+					if (parent != null) {
+						parent.addCDATA(pp.getText());
+					} else {
+						String msg = "Cannot have text content outside of the "
+								+ "root document";
+						throw new DocumentException(msg);
+					}
 
-                case XmlPullParser.END_DOCUMENT:
-                    return document;
+					break;
+				}
 
-                case XmlPullParser.START_TAG: {
-                    QName qname = (pp.getPrefix() == null) ? df.createQName(pp
-                            .getName(), pp.getNamespace()) : df.createQName(pp
-                            .getName(), pp.getPrefix(), pp.getNamespace());
-                    Element newElement = df.createElement(qname);
-                    int nsStart = pp.getNamespaceCount(pp.getDepth() - 1);
-                    int nsEnd = pp.getNamespaceCount(pp.getDepth());
+				case XmlPullParser.ENTITY_REF:
+					break;
 
-                    for (int i = nsStart; i < nsEnd; i++) {
-                        if (pp.getNamespacePrefix(i) != null) {
-                            newElement.addNamespace(pp.getNamespacePrefix(i),
-                                    pp.getNamespaceUri(i));
-                        }
-                    }
+				case XmlPullParser.END_DOCUMENT:
+					return document;
 
-                    for (int i = 0; i < pp.getAttributeCount(); i++) {
-                        QName qa = (pp.getAttributePrefix(i) == null) ? df
-                                .createQName(pp.getAttributeName(i)) : df
-                                .createQName(pp.getAttributeName(i), pp
-                                        .getAttributePrefix(i), pp
-                                        .getAttributeNamespace(i));
-                        newElement.addAttribute(qa, pp.getAttributeValue(i));
-                    }
+				case XmlPullParser.START_TAG: {
+					QName qname = (pp.getPrefix() == null) ? df.createQName(pp
+							.getName(), pp.getNamespace()) : df.createQName(pp
+							.getName(), pp.getPrefix(), pp.getNamespace());
+					Element newElement = df.createElement(qname);
+					int nsStart = pp.getNamespaceCount(pp.getDepth() - 1);
+					int nsEnd = pp.getNamespaceCount(pp.getDepth());
 
-                    if (parent != null) {
-                        parent.add(newElement);
-                    } else {
-                        document.add(newElement);
-                    }
+					for (int i = nsStart; i < nsEnd; i++) {
+						if (pp.getNamespacePrefix(i) != null) {
+							newElement.addNamespace(pp.getNamespacePrefix(i),
+									pp.getNamespaceUri(i));
+						}
+					}
 
-                    parent = newElement;
+					for (int i = 0; i < pp.getAttributeCount(); i++) {
+						QName qa = (pp.getAttributePrefix(i) == null) ? df
+								.createQName(pp.getAttributeName(i)) : df
+								.createQName(pp.getAttributeName(i), pp
+										.getAttributePrefix(i), pp
+										.getAttributeNamespace(i));
+						newElement.addAttribute(qa, pp.getAttributeValue(i));
+					}
 
-                    break;
-                }
+					if (parent != null) {
+						parent.add(newElement);
+					} else {
+						document.add(newElement);
+					}
 
-                case XmlPullParser.END_TAG: {
-                    if (parent != null) {
-                        parent = parent.getParent();
-                    }
+					parent = newElement;
 
-                    break;
-                }
+					break;
+				}
 
-                case XmlPullParser.TEXT: {
-                    String text = pp.getText();
+				case XmlPullParser.END_TAG: {
+					if (parent != null) {
+						parent = parent.getParent();
+					}
 
-                    if (parent != null) {
-                        parent.addText(text);
-                    } else {
-                        String msg = "Cannot have text content outside of the "
-                                + "root document";
-                        throw new DocumentException(msg);
-                    }
+					break;
+				}
 
-                    break;
-                }
+				case XmlPullParser.TEXT: {
+					String text = pp.getText();
 
-                default:
-                    break;
-            }
-        }
-    }
+					if (parent != null) {
+						parent.addText(text);
+					} else {
+						String msg = "Cannot have text content outside of the "
+								+ "root document";
+						throw new DocumentException(msg);
+					}
 
-    protected DispatchHandler getDispatchHandler() {
-        if (dispatchHandler == null) {
-            dispatchHandler = new DispatchHandler();
-        }
+					break;
+				}
 
-        return dispatchHandler;
-    }
+				default:
+					break;
+			}
+		}
+	}
 
-    protected void setDispatchHandler(DispatchHandler dispatchHandler) {
-        this.dispatchHandler = dispatchHandler;
-    }
+	protected DispatchHandler getDispatchHandler() {
+		if (dispatchHandler == null) {
+			dispatchHandler = new DispatchHandler();
+		}
 
-    /**
-     * Factory method to create a Reader from the given InputStream.
-     * 
-     * @param in
-     *            DOCUMENT ME!
-     * 
-     * @return DOCUMENT ME!
-     * 
-     * @throws IOException
-     *             DOCUMENT ME!
-     */
-    protected Reader createReader(InputStream in) throws IOException {
-        return new BufferedReader(new InputStreamReader(in));
-    }
+		return dispatchHandler;
+	}
+
+	protected void setDispatchHandler(DispatchHandler dispatchHandler) {
+		this.dispatchHandler = dispatchHandler;
+	}
+
+	/**
+	 * Factory method to create a Reader from the given InputStream.
+	 *
+	 * @param in DOCUMENT ME!
+	 * @return DOCUMENT ME!
+	 * @throws IOException DOCUMENT ME!
+	 */
+	protected Reader createReader(InputStream in) throws IOException {
+		return new BufferedReader(new InputStreamReader(in));
+	}
 }
 
 /*
@@ -523,7 +461,7 @@ public class XPP3Reader {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

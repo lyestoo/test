@@ -16,38 +16,39 @@ import org.dom4j.Node;
  * <code>FlyweightComment</code> is a Flyweight pattern implementation of a
  * singly linked, read-only XML Comment.
  * </p>
- * 
+ * <p/>
  * <p>
  * This node could be shared across documents and elements though it does not
  * support the parent relationship.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.7 $
  */
 public class FlyweightComment extends AbstractComment implements Comment {
-    /** Text of the <code>Comment</code> node */
-    protected String text;
+	/**
+	 * Text of the <code>Comment</code> node
+	 */
+	protected String text;
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param text
-     *            is the Comment text
-     */
-    public FlyweightComment(String text) {
-        this.text = text;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param text is the Comment text
+	 */
+	public FlyweightComment(String text) {
+		this.text = text;
+	}
 
-    @Override
-    public String getText() {
-        return text;
-    }
+	@Override
+	public String getText() {
+		return text;
+	}
 
-    @Override
-    protected Node createXPathResult(Element parent) {
-        return new DefaultComment(parent, getText());
-    }
+	@Override
+	protected Node createXPathResult(Element parent) {
+		return new DefaultComment(parent, getText());
+	}
 }
 
 /*
@@ -70,7 +71,7 @@ public class FlyweightComment extends AbstractComment implements Comment {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

@@ -10,13 +10,11 @@ package org.dom4j.datatype;
 import com.sun.msv.datatype.DatabindableDatatype;
 import com.sun.msv.datatype.SerializationContext;
 import com.sun.msv.datatype.xsd.XSDatatype;
-
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.QName;
 import org.dom4j.tree.DefaultElement;
-
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 
@@ -26,147 +24,152 @@ import org.relaxng.datatype.ValidationContext;
  * href="http://www.w3.org/TR/xmlschema-2/">XML Schema Data Types </a>
  * specification.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.9 $
  */
 public class DatatypeElement extends DefaultElement implements
-        SerializationContext, ValidationContext {
-    /** The <code>XSDatatype</code> of the <code>Attribute</code> */
-    private XSDatatype datatype;
+		SerializationContext, ValidationContext {
+	/**
+	 * The <code>XSDatatype</code> of the <code>Attribute</code>
+	 */
+	private XSDatatype datatype;
 
-    /** The data (Object) value of the <code>Attribute</code> */
-    private Object data;
+	/**
+	 * The data (Object) value of the <code>Attribute</code>
+	 */
+	private Object data;
 
-    public DatatypeElement(QName qname, XSDatatype datatype) {
-        super(qname);
-        this.datatype = datatype;
-    }
+	public DatatypeElement(QName qname, XSDatatype datatype) {
+		super(qname);
+		this.datatype = datatype;
+	}
 
-    public DatatypeElement(QName qname, int attributeCount, XSDatatype type) {
-        super(qname, attributeCount);
-        this.datatype = type;
-    }
+	public DatatypeElement(QName qname, int attributeCount, XSDatatype type) {
+		super(qname, attributeCount);
+		this.datatype = type;
+	}
 
-    public String toString() {
-        return getClass().getName() + hashCode() + " [Element: <"
-                + getQualifiedName() + " attributes: " + attributeList()
-                + " data: " + getData() + " />]";
-    }
+	public String toString() {
+		return getClass().getName() + hashCode() + " [Element: <"
+				+ getQualifiedName() + " attributes: " + attributeList()
+				+ " data: " + getData() + " />]";
+	}
 
-    /**
-     * Returns the MSV XSDatatype for this node
-     * 
-     * @return DOCUMENT ME!
-     */
-    public XSDatatype getXSDatatype() {
-        return datatype;
-    }
+	/**
+	 * Returns the MSV XSDatatype for this node
+	 *
+	 * @return DOCUMENT ME!
+	 */
+	public XSDatatype getXSDatatype() {
+		return datatype;
+	}
 
-    // SerializationContext interface
-    // -------------------------------------------------------------------------
-    public String getNamespacePrefix(String uri) {
-        Namespace namespace = getNamespaceForURI(uri);
+	// SerializationContext interface
+	// -------------------------------------------------------------------------
 
-        return (namespace != null) ? namespace.getPrefix() : null;
-    }
+	public String getNamespacePrefix(String uri) {
+		Namespace namespace = getNamespaceForURI(uri);
 
-    // ValidationContext interface
-    // -------------------------------------------------------------------------
-    public String getBaseUri() {
-        // XXXX: could we use a Document for this?
-        return null;
-    }
+		return (namespace != null) ? namespace.getPrefix() : null;
+	}
 
-    public boolean isNotation(String notationName) {
-        // XXXX: no way to do this yet in dom4j so assume false
-        return false;
-    }
+	// ValidationContext interface
+	// -------------------------------------------------------------------------
 
-    public boolean isUnparsedEntity(String entityName) {
-        // XXXX: no way to do this yet in dom4j so assume valid
-        return true;
-    }
+	public String getBaseUri() {
+		// XXXX: could we use a Document for this?
+		return null;
+	}
 
-    public String resolveNamespacePrefix(String prefix) {
-        Namespace namespace = getNamespaceForPrefix(prefix);
+	public boolean isNotation(String notationName) {
+		// XXXX: no way to do this yet in dom4j so assume false
+		return false;
+	}
 
-        if (namespace != null) {
-            return namespace.getURI();
-        }
+	public boolean isUnparsedEntity(String entityName) {
+		// XXXX: no way to do this yet in dom4j so assume valid
+		return true;
+	}
 
-        return null;
-    }
+	public String resolveNamespacePrefix(String prefix) {
+		Namespace namespace = getNamespaceForPrefix(prefix);
 
-    // Element interface
-    // -------------------------------------------------------------------------
-    public Object getData() {
-        if (data == null) {
-            String text = getTextTrim();
+		if (namespace != null) {
+			return namespace.getURI();
+		}
 
-            if ((text != null) && (text.length() > 0)) {
-                if (datatype instanceof DatabindableDatatype) {
-                    DatabindableDatatype bind = (DatabindableDatatype) datatype;
-                    data = bind.createJavaObject(text, this);
-                } else {
-                    data = datatype.createValue(text, this);
-                }
-            }
-        }
+		return null;
+	}
 
-        return data;
-    }
+	// Element interface
+	// -------------------------------------------------------------------------
 
-    public void setData(Object data) {
-        String s = datatype.convertToLexicalValue(data, this);
-        validate(s);
-        this.data = data;
-        setText(s);
-    }
+	public Object getData() {
+		if (data == null) {
+			String text = getTextTrim();
 
-    public Element addText(String text) {
-        validate(text);
+			if ((text != null) && (text.length() > 0)) {
+				if (datatype instanceof DatabindableDatatype) {
+					DatabindableDatatype bind = (DatabindableDatatype) datatype;
+					data = bind.createJavaObject(text, this);
+				} else {
+					data = datatype.createValue(text, this);
+				}
+			}
+		}
 
-        return super.addText(text);
-    }
+		return data;
+	}
 
-    public void setText(String text) {
-        validate(text);
-        super.setText(text);
-    }
+	public void setData(Object data) {
+		String s = datatype.convertToLexicalValue(data, this);
+		validate(s);
+		this.data = data;
+		setText(s);
+	}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
+	public Element addText(String text) {
+		validate(text);
 
-    /**
-     * Override to force lazy recreation of data object
-     * 
-     * @param node
-     *            DOCUMENT ME!
-     */
-    protected void childAdded(Node node) {
-        data = null;
-        super.childAdded(node);
-    }
+		return super.addText(text);
+	}
 
-    /**
-     * Override to force lazy recreation of data object
-     * 
-     * @param node
-     *            DOCUMENT ME!
-     */
-    protected void childRemoved(Node node) {
-        data = null;
-        super.childRemoved(node);
-    }
+	public void setText(String text) {
+		validate(text);
+		super.setText(text);
+	}
 
-    protected void validate(String text) throws IllegalArgumentException {
-        try {
-            datatype.checkValid(text, this);
-        } catch (DatatypeException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
+	// Implementation methods
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Override to force lazy recreation of data object
+	 *
+	 * @param node DOCUMENT ME!
+	 */
+	protected void childAdded(Node node) {
+		data = null;
+		super.childAdded(node);
+	}
+
+	/**
+	 * Override to force lazy recreation of data object
+	 *
+	 * @param node DOCUMENT ME!
+	 */
+	protected void childRemoved(Node node) {
+		data = null;
+		super.childRemoved(node);
+	}
+
+	protected void validate(String text) throws IllegalArgumentException {
+		try {
+			datatype.checkValid(text, this);
+		} catch (DatatypeException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 }
 
 /*
@@ -189,7 +192,7 @@ public class DatatypeElement extends DefaultElement implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

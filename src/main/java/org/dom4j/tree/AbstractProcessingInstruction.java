@@ -4,8 +4,12 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  */
-
 package org.dom4j.tree;
+
+import org.dom4j.Element;
+import org.dom4j.NodeType;
+import org.dom4j.ProcessingInstruction;
+import org.dom4j.Visitor;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -13,192 +17,177 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.dom4j.Element;
-import org.dom4j.NodeType;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.Visitor;
-
 /**
  * <p>
  * <code>AbstractProcessingInstruction</code> is an abstract base class for
  * tree implementors to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.17 $
  */
-public abstract class AbstractProcessingInstruction extends AbstractNode
-        implements ProcessingInstruction {
-    public AbstractProcessingInstruction() {
-    }
+public abstract class AbstractProcessingInstruction extends AbstractNode implements ProcessingInstruction {
 
-    @Override
-    public NodeType getNodeTypeEnum() {
-        return NodeType.PROCESSING_INSTRUCTION_NODE;
-    }
+	public AbstractProcessingInstruction() {
+	}
 
-    public String getPath(Element context) {
-        Element parent = getParent();
+	@Override
+	public NodeType getNodeTypeEnum() {
+		return NodeType.PROCESSING_INSTRUCTION_NODE;
+	}
 
-        return ((parent != null) && (parent != context)) ? (parent
-                .getPath(context) + "/processing-instruction()")
-                : "processing-instruction()";
-    }
+	public String getPath(Element context) {
+		Element parent = getParent();
 
-    public String getUniquePath(Element context) {
-        Element parent = getParent();
+		return ((parent != null) && (parent != context)) ? (parent.getPath(context) + "/processing-instruction()")
+				: "processing-instruction()";
+	}
 
-        return ((parent != null) && (parent != context)) ? (parent
-                .getUniquePath(context) + "/processing-instruction()")
-                : "processing-instruction()";
-    }
+	public String getUniquePath(Element context) {
+		Element parent = getParent();
 
-    @Override
-    public String toString() {
-        return super.toString() + " [ProcessingInstruction: &" + getName()
-                + ";]";
-    }
+		return ((parent != null) && (parent != context)) ? (parent.getUniquePath(context) + "/processing-instruction()")
+				: "processing-instruction()";
+	}
 
-    public String asXML() {
-        return "<?" + getName() + " " + getText() + "?>";
-    }
+	@Override
+	public String toString() {
+		return super.toString() + " [ProcessingInstruction: &" + getName() + ";]";
+	}
 
-    @Override
-    public void write(Writer writer) throws IOException {
-        writer.write("<?");
-        writer.write(getName());
-        writer.write(" ");
-        writer.write(getText());
-        writer.write("?>");
-    }
+	public String asXML() {
+		return "<?" + getName() + " " + getText() + "?>";
+	}
 
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+	@Override
+	public void write(Writer writer) throws IOException {
+		writer.write("<?");
+		writer.write(getName());
+		writer.write(" ");
+		writer.write(getText());
+		writer.write("?>");
+	}
 
-    public void setValue(String name, String value) {
-        throw new UnsupportedOperationException("This PI is read-only and "
-                + "cannot be modified");
-    }
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
 
-    public void setValues(Map data) {
-        throw new UnsupportedOperationException("This PI is read-only and "
-                + "cannot be modified");
-    }
+	public void setValue(String name, String value) {
+		throw new UnsupportedOperationException("This PI is read-only and " + "cannot be modified");
+	}
 
-    @Override
-    public String getName() {
-        return getTarget();
-    }
+	public void setValues(Map<String, String> data) {
+		throw new UnsupportedOperationException("This PI is read-only and " + "cannot be modified");
+	}
 
-    @Override
-    public void setName(String name) {
-        setTarget(name);
-    }
+	@Override
+	public String getName() {
+		return getTarget();
+	}
 
-    public boolean removeValue(String name) {
-        return false;
-    }
+	@Override
+	public void setName(String name) {
+		setTarget(name);
+	}
 
-    // Helper methods
+	public boolean removeValue(String name) {
+		return false;
+	}
 
-    /**
-     * <p>
-     * This will convert the Map to a string representation.
-     * </p>
-     * 
-     * @param values
-     *            is a <code>Map</code> of PI data to convert
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected String toString(Map<String, String> values) {
-        StringBuilder builder = new StringBuilder();
+	// Helper methods
 
-        for (Map.Entry<String, String> entry : values.entrySet()) {
-            String name = entry.getKey();
-            String value = entry.getValue();
+	/**
+	 * <p>
+	 * This will convert the Map to a string representation.
+	 * </p>
+	 *
+	 * @param values is a <code>Map</code> of PI data to convert
+	 * @return DOCUMENT ME!
+	 */
+	protected String toString(Map<String, String> values) {
+		StringBuilder builder = new StringBuilder();
 
-            builder.append(name);
-            builder.append("=\"");
-            builder.append(value);
-            builder.append("\" ");
-        }
+		for (Map.Entry<String, String> entry : values.entrySet()) {
+			String name = entry.getKey();
+			String value = entry.getValue();
 
-        // remove the last space
-        builder.setLength(builder.length() - 1);
+			builder.append(name);
+			builder.append("=\"");
+			builder.append(value);
+			builder.append("\" ");
+		}
 
-        return builder.toString();
-    }
+		// remove the last space
+		builder.setLength(builder.length() - 1);
 
-    /**
-     * <p>
-     * Parses the raw data of PI as a <code>Map</code>.
-     * </p>
-     * 
-     * @param text
-     *            <code>String</code> PI data to parse
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected Map<String, String> parseValues(String text) {
-        Map<String, String> data = new HashMap<String, String>();
+		return builder.toString();
+	}
 
-        StringTokenizer s = new StringTokenizer(text, " =\'\"", true);
+	/**
+	 * <p>
+	 * Parses the raw data of PI as a <code>Map</code>.
+	 * </p>
+	 *
+	 * @param text <code>String</code> PI data to parse
+	 * @return DOCUMENT ME!
+	 */
+	protected Map<String, String> parseValues(String text) {
+		Map<String, String> data = new HashMap<String, String>();
 
-        while (s.hasMoreTokens()) {
-            String name = getName(s);
+		StringTokenizer s = new StringTokenizer(text, " =\'\"", true);
 
-            if (s.hasMoreTokens()) {
-                String value = getValue(s);
-                data.put(name, value);
-            }
-        }
+		while (s.hasMoreTokens()) {
+			String name = getName(s);
 
-        return data;
-    }
+			if (s.hasMoreTokens()) {
+				String value = getValue(s);
+				data.put(name, value);
+			}
+		}
 
-    private String getName(StringTokenizer tokenizer) {
-        String token = tokenizer.nextToken();
-        StringBuilder name = new StringBuilder(token);
+		return data;
+	}
 
-        while (tokenizer.hasMoreTokens()) {
-            token = tokenizer.nextToken();
+	private String getName(StringTokenizer tokenizer) {
+		String token = tokenizer.nextToken();
+		StringBuilder name = new StringBuilder(token);
 
-            if (!token.equals("=")) {
-                name.append(token);
-            } else {
-                break;
-            }
-        }
+		while (tokenizer.hasMoreTokens()) {
+			token = tokenizer.nextToken();
 
-        return name.toString().trim();
-    }
+			if (!token.equals("=")) {
+				name.append(token);
+			} else {
+				break;
+			}
+		}
 
-    private String getValue(StringTokenizer tokenizer) {
-        String token = tokenizer.nextToken();
-        StringBuilder value = new StringBuilder();
+		return name.toString().trim();
+	}
 
-        /* get the quote */
-        while (tokenizer.hasMoreTokens() && !token.equals("\'")
-                && !token.equals("\"")) {
-            token = tokenizer.nextToken();
-        }
+	private String getValue(StringTokenizer tokenizer) {
+		String token = tokenizer.nextToken();
+		StringBuilder value = new StringBuilder();
 
-        String quote = token;
+		/* get the quote */
+		while (tokenizer.hasMoreTokens() && !token.equals("\'") && !token.equals("\"")) {
+			token = tokenizer.nextToken();
+		}
 
-        while (tokenizer.hasMoreTokens()) {
-            token = tokenizer.nextToken();
+		String quote = token;
 
-            if (!quote.equals(token)) {
-                value.append(token);
-            } else {
-                break;
-            }
-        }
+		while (tokenizer.hasMoreTokens()) {
+			token = tokenizer.nextToken();
 
-        return value.toString();
-    }
+			if (!quote.equals(token)) {
+				value.append(token);
+			} else {
+				break;
+			}
+		}
+
+		return value.toString();
+	}
 }
 
 /*
@@ -221,7 +210,7 @@ public abstract class AbstractProcessingInstruction extends AbstractNode
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

@@ -14,12 +14,12 @@ import org.dom4j.Node;
  * <code>Action</code> represents some default action which should occur when
  * a rule matches a node in the XSLT processing model.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.7 $
  */
 public interface Action {
-    void run(Node node) throws Exception;
+	void run(Node node) throws Exception;
 }
 
 /*
@@ -42,7 +42,7 @@ public interface Action {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

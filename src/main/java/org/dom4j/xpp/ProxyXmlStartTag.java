@@ -7,257 +7,252 @@
 
 package org.dom4j.xpp;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.dom4j.Attribute;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.QName;
+import org.dom4j.*;
 import org.dom4j.tree.AbstractElement;
-
 import org.gjt.xpp.XmlPullParserException;
 import org.gjt.xpp.XmlStartTag;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <p>
  * <code>ProxyXmlStartTag</code> implements the XPP XmlSmartTag interface
  * while creating a dom4j Element underneath.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.8 $
  */
 public class ProxyXmlStartTag implements XmlStartTag {
-    /** The element being constructed */
-    private Element element;
+	/**
+	 * The element being constructed
+	 */
+	private Element element;
 
-    /** The factory used to create new elements */
-    private DocumentFactory factory = DocumentFactory.getInstance();
+	/**
+	 * The factory used to create new elements
+	 */
+	private DocumentFactory factory = DefaultDocumentFactory.getInstance();
 
-    public ProxyXmlStartTag() {
-    }
+	public ProxyXmlStartTag() {
+	}
 
-    public ProxyXmlStartTag(Element element) {
-        this.element = element;
-    }
+	public ProxyXmlStartTag(Element element) {
+		this.element = element;
+	}
 
-    // XmlStartTag interface
-    // -------------------------------------------------------------------------
-    public void resetStartTag() {
-        this.element = null;
-    }
+	// XmlStartTag interface
+	// -------------------------------------------------------------------------
 
-    public int getAttributeCount() {
-        return (element != null) ? element.attributeCount() : 0;
-    }
+	public void resetStartTag() {
+		this.element = null;
+	}
 
-    public String getAttributeNamespaceUri(int index) {
-        if (element != null) {
-            Attribute attribute = element.attribute(index);
+	public int getAttributeCount() {
+		return (element != null) ? element.attributeCount() : 0;
+	}
 
-            if (attribute != null) {
-                return attribute.getNamespaceURI();
-            }
-        }
+	public String getAttributeNamespaceUri(int index) {
+		if (element != null) {
+			Attribute attribute = element.attribute(index);
 
-        return null;
-    }
+			if (attribute != null) {
+				return attribute.getNamespaceURI();
+			}
+		}
 
-    public String getAttributeLocalName(int index) {
-        if (element != null) {
-            Attribute attribute = element.attribute(index);
+		return null;
+	}
 
-            if (attribute != null) {
-                return attribute.getName();
-            }
-        }
+	public String getAttributeLocalName(int index) {
+		if (element != null) {
+			Attribute attribute = element.attribute(index);
 
-        return null;
-    }
+			if (attribute != null) {
+				return attribute.getName();
+			}
+		}
 
-    public String getAttributePrefix(int index) {
-        if (element != null) {
-            Attribute attribute = element.attribute(index);
+		return null;
+	}
 
-            if (attribute != null) {
-                String prefix = attribute.getNamespacePrefix();
+	public String getAttributePrefix(int index) {
+		if (element != null) {
+			Attribute attribute = element.attribute(index);
 
-                if ((prefix != null) && (prefix.length() > 0)) {
-                    return prefix;
-                }
-            }
-        }
+			if (attribute != null) {
+				String prefix = attribute.getNamespacePrefix();
 
-        return null;
-    }
+				if ((prefix != null) && (prefix.length() > 0)) {
+					return prefix;
+				}
+			}
+		}
 
-    public String getAttributeRawName(int index) {
-        if (element != null) {
-            Attribute attribute = element.attribute(index);
+		return null;
+	}
 
-            if (attribute != null) {
-                return attribute.getQualifiedName();
-            }
-        }
+	public String getAttributeRawName(int index) {
+		if (element != null) {
+			Attribute attribute = element.attribute(index);
 
-        return null;
-    }
+			if (attribute != null) {
+				return attribute.getQualifiedName();
+			}
+		}
 
-    public String getAttributeValue(int index) {
-        if (element != null) {
-            Attribute attribute = element.attribute(index);
+		return null;
+	}
 
-            if (attribute != null) {
-                return attribute.getValue();
-            }
-        }
+	public String getAttributeValue(int index) {
+		if (element != null) {
+			Attribute attribute = element.attribute(index);
 
-        return null;
-    }
+			if (attribute != null) {
+				return attribute.getValue();
+			}
+		}
 
-    public String getAttributeValueFromRawName(String rawName) {
-        if (element != null) {
-            for (Iterator iter = element.attributeIterator(); iter.hasNext();) {
-                Attribute attribute = (Attribute) iter.next();
+		return null;
+	}
 
-                if (rawName.equals(attribute.getQualifiedName())) {
-                    return attribute.getValue();
-                }
-            }
-        }
+	public String getAttributeValueFromRawName(String rawName) {
+		if (element != null) {
+			for (Iterator iter = element.attributeIterator(); iter.hasNext();) {
+				Attribute attribute = (Attribute) iter.next();
 
-        return null;
-    }
+				if (rawName.equals(attribute.getQualifiedName())) {
+					return attribute.getValue();
+				}
+			}
+		}
 
-    public String getAttributeValueFromName(String namespaceURI,
-            String localName) {
-        if (element != null) {
-            for (Iterator iter = element.attributeIterator(); iter.hasNext();) {
-                Attribute attribute = (Attribute) iter.next();
+		return null;
+	}
 
-                if (namespaceURI.equals(attribute.getNamespaceURI())
-                        && localName.equals(attribute.getName())) {
-                    return attribute.getValue();
-                }
-            }
-        }
+	public String getAttributeValueFromName(String namespaceURI,
+	                                        String localName) {
+		if (element != null) {
+			for (Iterator iter = element.attributeIterator(); iter.hasNext();) {
+				Attribute attribute = (Attribute) iter.next();
 
-        return null;
-    }
+				if (namespaceURI.equals(attribute.getNamespaceURI())
+						&& localName.equals(attribute.getName())) {
+					return attribute.getValue();
+				}
+			}
+		}
 
-    public boolean isAttributeNamespaceDeclaration(int index) {
-        if (element != null) {
-            Attribute attribute = element.attribute(index);
+		return null;
+	}
 
-            if (attribute != null) {
-                return "xmlns".equals(attribute.getNamespacePrefix());
-            }
-        }
+	public boolean isAttributeNamespaceDeclaration(int index) {
+		if (element != null) {
+			Attribute attribute = element.attribute(index);
 
-        return false;
-    }
+			if (attribute != null) {
+				return "xmlns".equals(attribute.getNamespacePrefix());
+			}
+		}
 
-    /**
-     * parameters modeled after SAX2 attribute approach
-     * 
-     * @param namespaceURI
-     *            DOCUMENT ME!
-     * @param localName
-     *            DOCUMENT ME!
-     * @param rawName
-     *            DOCUMENT ME!
-     * @param value
-     *            DOCUMENT ME!
-     * 
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public void addAttribute(String namespaceURI, String localName,
-            String rawName, String value) throws XmlPullParserException {
-        QName qname = QName.get(rawName, namespaceURI);
-        element.addAttribute(qname, value);
-    }
+		return false;
+	}
 
-    public void addAttribute(String namespaceURI, String localName,
-            String rawName, String value, boolean isNamespaceDeclaration)
-            throws XmlPullParserException {
-        if (isNamespaceDeclaration) {
-            String prefix = "";
-            int idx = rawName.indexOf(':');
+	/**
+	 * parameters modeled after SAX2 attribute approach
+	 *
+	 * @param namespaceURI DOCUMENT ME!
+	 * @param localName    DOCUMENT ME!
+	 * @param rawName      DOCUMENT ME!
+	 * @param value        DOCUMENT ME!
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public void addAttribute(String namespaceURI, String localName,
+	                         String rawName, String value) throws XmlPullParserException {
+		QName qname = QName.get(rawName, namespaceURI);
+		element.addAttribute(qname, value);
+	}
 
-            if (idx > 0) {
-                prefix = rawName.substring(0, idx);
-            }
+	public void addAttribute(String namespaceURI, String localName,
+	                         String rawName, String value, boolean isNamespaceDeclaration)
+			throws XmlPullParserException {
+		if (isNamespaceDeclaration) {
+			String prefix = "";
+			int idx = rawName.indexOf(':');
 
-            element.addNamespace(prefix, namespaceURI);
-        } else {
-            QName qname = QName.get(rawName, namespaceURI);
-            element.addAttribute(qname, value);
-        }
-    }
+			if (idx > 0) {
+				prefix = rawName.substring(0, idx);
+			}
 
-    public void ensureAttributesCapacity(int minCapacity)
-            throws XmlPullParserException {
-        if (element instanceof AbstractElement) {
-            AbstractElement elementImpl = (AbstractElement) element;
-            elementImpl.ensureAttributesCapacity(minCapacity);
-        }
-    }
+			element.addNamespace(prefix, namespaceURI);
+		} else {
+			QName qname = QName.get(rawName, namespaceURI);
+			element.addAttribute(qname, value);
+		}
+	}
 
-    /**
-     * remove all atribute
-     * 
-     * @throws XmlPullParserException
-     *             DOCUMENT ME!
-     */
-    public void removeAttributes() throws XmlPullParserException {
-        if (element != null) {
-            element.setAttributes(new ArrayList<Attribute>());
+	public void ensureAttributesCapacity(int minCapacity)
+			throws XmlPullParserException {
+		if (element instanceof AbstractElement) {
+			AbstractElement elementImpl = (AbstractElement) element;
+			elementImpl.ensureAttributesCapacity(minCapacity);
+		}
+	}
 
-            // ##### FIXME
-            // adding this method would be nice...
-            // element.clearAttributes();
-        }
-    }
+	/**
+	 * remove all atribute
+	 *
+	 * @throws XmlPullParserException DOCUMENT ME!
+	 */
+	public void removeAttributes() throws XmlPullParserException {
+		if (element != null) {
+			element.setAttributes(new ArrayList<Attribute>());
 
-    public String getLocalName() {
-        return element.getName();
-    }
+			// ##### FIXME
+			// adding this method would be nice...
+			// element.clearAttributes();
+		}
+	}
 
-    public String getNamespaceUri() {
-        return element.getNamespaceURI();
-    }
+	public String getLocalName() {
+		return element.getName();
+	}
 
-    public String getPrefix() {
-        return element.getNamespacePrefix();
-    }
+	public String getNamespaceUri() {
+		return element.getNamespaceURI();
+	}
 
-    public String getRawName() {
-        return element.getQualifiedName();
-    }
+	public String getPrefix() {
+		return element.getNamespacePrefix();
+	}
 
-    public void modifyTag(String namespaceURI, String lName, String rawName) {
-        this.element = factory.createElement(rawName, namespaceURI);
-    }
+	public String getRawName() {
+		return element.getQualifiedName();
+	}
 
-    public void resetTag() {
-        this.element = null;
-    }
+	public void modifyTag(String namespaceURI, String lName, String rawName) {
+		this.element = factory.createElement(rawName, namespaceURI);
+	}
 
-    // Properties
-    // -------------------------------------------------------------------------
-    public DocumentFactory getDocumentFactory() {
-        return factory;
-    }
+	public void resetTag() {
+		this.element = null;
+	}
 
-    public void setDocumentFactory(DocumentFactory documentFactory) {
-        this.factory = documentFactory;
-    }
+	// Properties
+	// -------------------------------------------------------------------------
 
-    public Element getElement() {
-        return element;
-    }
+	public DocumentFactory getDocumentFactory() {
+		return factory;
+	}
+
+	public void setDocumentFactory(DocumentFactory documentFactory) {
+		this.factory = documentFactory;
+	}
+
+	public Element getElement() {
+		return element;
+	}
 
 	public boolean removeAttributeByName(String arg0, String arg1) throws XmlPullParserException {
 		//TODO
@@ -290,7 +285,7 @@ public class ProxyXmlStartTag implements XmlStartTag {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

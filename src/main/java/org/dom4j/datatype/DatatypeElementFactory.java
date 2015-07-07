@@ -8,130 +8,121 @@
 package org.dom4j.datatype;
 
 import com.sun.msv.datatype.xsd.XSDatatype;
+import org.dom4j.*;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.dom4j.Attribute;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.QName;
 
 /**
  * <p>
  * <code>DatatypeElementFactory</code> is a factory for a specific Element in
  * an XML Schema.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @author Yuxin Ruan
  * @version $Revision: 1.9 $
  */
-public class DatatypeElementFactory extends DocumentFactory {
-    private QName elementQName;
+public class DatatypeElementFactory extends DefaultDocumentFactory {
+	private QName elementQName;
 
-    /**
-     * Cache of <code>XSDatatype</code> instances per Attribute
-     * <code>QName</code>
-     */
-    private Map attributeXSDatatypes = new HashMap();
+	/**
+	 * Cache of <code>XSDatatype</code> instances per Attribute
+	 * <code>QName</code>
+	 */
+	private Map attributeXSDatatypes = new HashMap();
 
-    /**
-     * Cache of <code>XSDatatype</code> instances per child Element
-     * <code>QName</code>
-     */
-    private Map childrenXSDatatypes = new HashMap();
+	/**
+	 * Cache of <code>XSDatatype</code> instances per child Element
+	 * <code>QName</code>
+	 */
+	private Map childrenXSDatatypes = new HashMap();
 
-    public DatatypeElementFactory(QName elementQName) {
-        this.elementQName = elementQName;
-    }
+	public DatatypeElementFactory(QName elementQName) {
+		this.elementQName = elementQName;
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the QName this element factory is associated with
-     */
-    public QName getQName() {
-        return elementQName;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the QName this element factory is associated with
+	 */
+	public QName getQName() {
+		return elementQName;
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param attributeQName
-     *            DOCUMENT ME!
-     * 
-     * @return the <code>XSDatatype</code> associated with the given Attribute
-     *         QName
-     */
-    public XSDatatype getAttributeXSDatatype(QName attributeQName) {
-        return (XSDatatype) attributeXSDatatypes.get(attributeQName);
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param attributeQName DOCUMENT ME!
+	 * @return the <code>XSDatatype</code> associated with the given Attribute
+	 *         QName
+	 */
+	public XSDatatype getAttributeXSDatatype(QName attributeQName) {
+		return (XSDatatype) attributeXSDatatypes.get(attributeQName);
+	}
 
-    /**
-     * Registers the given <code>XSDatatype</code> for the given
-     * &lt;attribute&gt; QNames
-     * 
-     * @param attributeQName
-     *            DOCUMENT ME!
-     * @param type
-     *            DOCUMENT ME!
-     */
-    public void setAttributeXSDatatype(QName attributeQName, XSDatatype type) {
-        attributeXSDatatypes.put(attributeQName, type);
-    }
+	/**
+	 * Registers the given <code>XSDatatype</code> for the given
+	 * &lt;attribute&gt; QNames
+	 *
+	 * @param attributeQName DOCUMENT ME!
+	 * @param type           DOCUMENT ME!
+	 */
+	public void setAttributeXSDatatype(QName attributeQName, XSDatatype type) {
+		attributeXSDatatypes.put(attributeQName, type);
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param qname
-     *            DOCUMENT ME!
-     * 
-     * @return the <code>XSDatatype</code> associated with the given child
-     *         Element QName
-     */
-    public XSDatatype getChildElementXSDatatype(QName qname) {
-        return (XSDatatype) childrenXSDatatypes.get(qname);
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param qname DOCUMENT ME!
+	 * @return the <code>XSDatatype</code> associated with the given child
+	 *         Element QName
+	 */
+	public XSDatatype getChildElementXSDatatype(QName qname) {
+		return (XSDatatype) childrenXSDatatypes.get(qname);
+	}
 
-    public void setChildElementXSDatatype(QName qname, XSDatatype dataType) {
-        childrenXSDatatypes.put(qname, dataType);
-    }
+	public void setChildElementXSDatatype(QName qname, XSDatatype dataType) {
+		childrenXSDatatypes.put(qname, dataType);
+	}
 
-    // DocumentFactory methods
-    // -------------------------------------------------------------------------
-    public Element createElement(QName qname) {
-        // the element may have its own element factory!
-        // use factory from the qname for datatype
-        XSDatatype dataType = getChildElementXSDatatype(qname);
+	// DefaultDocumentFactory methods
+	// -------------------------------------------------------------------------
 
-        if (dataType != null) {
-            return new DatatypeElement(qname, dataType);
-        }
+	public Element createElement(QName qname) {
+		// the element may have its own element factory!
+		// use factory from the qname for datatype
+		XSDatatype dataType = getChildElementXSDatatype(qname);
 
-        DocumentFactory factory = qname.getDocumentFactory();
+		if (dataType != null) {
+			return new DatatypeElement(qname, dataType);
+		}
 
-        if (factory instanceof DatatypeElementFactory) {
-            DatatypeElementFactory dtFactory = (DatatypeElementFactory) factory;
-            dataType = dtFactory.getChildElementXSDatatype(qname);
+		DocumentFactory factory = qname.getDocumentFactory();
 
-            if (dataType != null) {
-                return new DatatypeElement(qname, dataType);
-            }
-        }
+		if (factory instanceof DatatypeElementFactory) {
+			DatatypeElementFactory dtFactory = (DatatypeElementFactory) factory;
+			dataType = dtFactory.getChildElementXSDatatype(qname);
 
-        return super.createElement(qname);
-    }
+			if (dataType != null) {
+				return new DatatypeElement(qname, dataType);
+			}
+		}
 
-    public Attribute createAttribute(Element owner, QName qname, String value) {
-        XSDatatype dataType = getAttributeXSDatatype(qname);
+		return super.createElement(qname);
+	}
 
-        if (dataType == null) {
-            return super.createAttribute(owner, qname, value);
-        } else {
-            return new DatatypeAttribute(qname, dataType, value);
-        }
-    }
+	public Attribute createAttribute(Element owner, QName qname, String value) {
+		XSDatatype dataType = getAttributeXSDatatype(qname);
+
+		if (dataType == null) {
+			return super.createAttribute(owner, qname, value);
+		} else {
+			return new DatatypeAttribute(qname, dataType, value);
+		}
+	}
 }
 
 /*
@@ -154,7 +145,7 @@ public class DatatypeElementFactory extends DocumentFactory {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

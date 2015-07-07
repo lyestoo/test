@@ -6,173 +6,173 @@
  */
 package org.dom4j.tree;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.List;
-
 import org.dom4j.DocumentType;
 import org.dom4j.Element;
 import org.dom4j.NodeType;
 import org.dom4j.Visitor;
 import org.dom4j.dtd.InternalDeclaration;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * <p>
  * <code>AbstractDocumentType</code> is an abstract base class for tree
  * implementors to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.17 $
  */
 public abstract class AbstractDocumentType extends AbstractNode implements
-        DocumentType {
+		DocumentType {
 
-    public AbstractDocumentType() {
-    }
+	public AbstractDocumentType() {
+	}
 
-    @Override
-    public NodeType getNodeTypeEnum() {
-        return NodeType.DOCUMENT_TYPE_NODE;
-    }
+	@Override
+	public NodeType getNodeTypeEnum() {
+		return NodeType.DOCUMENT_TYPE_NODE;
+	}
 
-    @Override
-    public String getName() {
-        return getElementName();
-    }
+	@Override
+	public String getName() {
+		return getElementName();
+	}
 
-    @Override
-    public void setName(String name) {
-        setElementName(name);
-    }
+	@Override
+	public void setName(String name) {
+		setElementName(name);
+	}
 
-    public String getPath(Element context) {
-        // not available in XPath
-        return "";
-    }
+	public String getPath(Element context) {
+		// not available in XPath
+		return "";
+	}
 
-    public String getUniquePath(Element context) {
-        // not available in XPath
-        return "";
-    }
+	public String getUniquePath(Element context) {
+		// not available in XPath
+		return "";
+	}
 
-    /**
-     * Returns the text format of the declarations if applicable, or the empty
-     * String
-     * 
-     * @return DOCUMENT ME!
-     */
-    @Override
-    public String getText() {
-        List<InternalDeclaration> list = getInternalDeclarations();
+	/**
+	 * Returns the text format of the declarations if applicable, or the empty
+	 * String
+	 *
+	 * @return DOCUMENT ME!
+	 */
+	@Override
+	public String getText() {
+		List<InternalDeclaration> list = getInternalDeclarations();
 
-        if ((list != null) && (list.size() > 0)) {
-            StringBuilder builder = new StringBuilder();
-            for (InternalDeclaration decl : list) {
-                builder.append(decl.toString());
-                builder.append('\n');
-            }
-            if (builder.length() > 0) {
-                builder.setLength(builder.length() - 1);
-            }
-            return builder.toString();
-        }
+		if ((list != null) && (list.size() > 0)) {
+			StringBuilder builder = new StringBuilder();
+			for (InternalDeclaration decl : list) {
+				builder.append(decl.toString());
+				builder.append('\n');
+			}
+			if (builder.length() > 0) {
+				builder.setLength(builder.length() - 1);
+			}
+			return builder.toString();
+		}
 
-        return "";
-    }
+		return "";
+	}
 
-    @Override
-    protected void toString(StringBuilder builder) {
-        super.toString(builder);
-        builder.append(" [DocumentType: ");
-        this.asXML(builder);
-        builder.append(']');
-    }
+	@Override
+	protected void toString(StringBuilder builder) {
+		super.toString(builder);
+		builder.append(" [DocumentType: ");
+		this.asXML(builder);
+		builder.append(']');
+	}
 
-    public String asXML() {
-        StringBuilder builder = new StringBuilder();
-        this.asXML(builder);
-        return builder.toString();
-    }
+	public String asXML() {
+		StringBuilder builder = new StringBuilder();
+		this.asXML(builder);
+		return builder.toString();
+	}
 
-    protected void asXML(StringBuilder builder) {
-        builder.append("<!DOCTYPE ");
-        builder.append(getElementName());
+	protected void asXML(StringBuilder builder) {
+		builder.append("<!DOCTYPE ");
+		builder.append(getElementName());
 
-        boolean hasPublicID = false;
-        String publicID = getPublicID();
+		boolean hasPublicID = false;
+		String publicID = getPublicID();
 
-        if ((publicID != null) && (publicID.length() > 0)) {
-            builder.append(" PUBLIC ");
-            builder.append('"');
-            builder.append(publicID);
-            builder.append('"');
-            hasPublicID = true;
-        }
+		if ((publicID != null) && (publicID.length() > 0)) {
+			builder.append(" PUBLIC ");
+			builder.append('"');
+			builder.append(publicID);
+			builder.append('"');
+			hasPublicID = true;
+		}
 
-        String systemID = getSystemID();
+		String systemID = getSystemID();
 
-        if ((systemID != null) && (systemID.length() > 0)) {
-            if (!hasPublicID) {
-                builder.append(" SYSTEM");
-            }
+		if ((systemID != null) && (systemID.length() > 0)) {
+			if (!hasPublicID) {
+				builder.append(" SYSTEM");
+			}
 
-            builder.append(" \"");
-            builder.append(systemID);
-            builder.append('"');
-        }
+			builder.append(" \"");
+			builder.append(systemID);
+			builder.append('"');
+		}
 
-        builder.append('>');
-    }
+		builder.append('>');
+	}
 
-    @Override
-    public void write(Writer writer) throws IOException {
-        writer.write("<!DOCTYPE ");
-        writer.write(getElementName());
+	@Override
+	public void write(Writer writer) throws IOException {
+		writer.write("<!DOCTYPE ");
+		writer.write(getElementName());
 
-        boolean hasPublicID = false;
-        String publicID = getPublicID();
+		boolean hasPublicID = false;
+		String publicID = getPublicID();
 
-        if ((publicID != null) && (publicID.length() > 0)) {
-            writer.write(" PUBLIC \"");
-            writer.write(publicID);
-            writer.write('\"');
-            hasPublicID = true;
-        }
+		if ((publicID != null) && (publicID.length() > 0)) {
+			writer.write(" PUBLIC \"");
+			writer.write(publicID);
+			writer.write('\"');
+			hasPublicID = true;
+		}
 
-        String systemID = getSystemID();
+		String systemID = getSystemID();
 
-        if ((systemID != null) && (systemID.length() > 0)) {
-            if (!hasPublicID) {
-                writer.write(" SYSTEM");
-            }
+		if ((systemID != null) && (systemID.length() > 0)) {
+			if (!hasPublicID) {
+				writer.write(" SYSTEM");
+			}
 
-            writer.write(" \"");
-            writer.write(systemID);
-            writer.write('\"');
-        }
+			writer.write(" \"");
+			writer.write(systemID);
+			writer.write('\"');
+		}
 
-        List<InternalDeclaration> list = getInternalDeclarations();
+		List<InternalDeclaration> list = getInternalDeclarations();
 
-        if ((list != null) && (list.size() > 0)) {
-            writer.write(" [");
+		if ((list != null) && (list.size() > 0)) {
+			writer.write(" [");
 
-            for (Iterator<InternalDeclaration> iter = list.iterator(); iter.hasNext();) {
-                InternalDeclaration decl = iter.next();
-                writer.write("\n  ");
-                writer.write(decl.toString());
-            }
+			for (Iterator<InternalDeclaration> iter = list.iterator(); iter.hasNext();) {
+				InternalDeclaration decl = iter.next();
+				writer.write("\n  ");
+				writer.write(decl.toString());
+			}
 
-            writer.write("\n]");
-        }
+			writer.write("\n]");
+		}
 
-        writer.write('>');
-    }
+		writer.write('>');
+	}
 
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
 }
 
 /*
@@ -195,7 +195,7 @@ public abstract class AbstractDocumentType extends AbstractNode implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

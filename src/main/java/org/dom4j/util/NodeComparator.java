@@ -6,111 +6,20 @@
  */
 package org.dom4j.util;
 
-import java.util.Comparator;
+import org.dom4j.*;
 
-import org.dom4j.Attribute;
-import org.dom4j.Branch;
-import org.dom4j.CDATA;
-import org.dom4j.CharacterData;
-import org.dom4j.Comment;
-import org.dom4j.Document;
-import org.dom4j.DocumentType;
-import org.dom4j.Element;
-import org.dom4j.Entity;
-import org.dom4j.Namespace;
-import org.dom4j.Node;
-import org.dom4j.NodeType;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.QName;
-import org.dom4j.Text;
+import java.util.Comparator;
 
 /**
  * <p>
  * <code>NodeComparator</code> is a {@link Comparator}of Node instances which
  * is capable of comparing Nodes for equality based on their values.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.10 $
  */
 public class NodeComparator implements Comparator<Node> {
-
-	/**
-	 * Compares its two arguments for order. Returns a negative integer, zero,
-	 * or a positive integer as the first argument is less than, equal to, or
-	 * greater than the second.
-	 * 
-	 * <p>
-	 * The implementor must ensure that <tt>sgn(compare(x, y)) ==
-	 * -sgn(compare(y, x))</tt>
-	 * for all <tt>x</tt> and <tt>y</tt>. (This implies that
-	 * <tt>compare(x, y)</tt> must throw an exception if and only if
-	 * <tt>compare(y, x)</tt> throws an exception.)
-	 * </p>
-	 * 
-	 * <p>
-	 * The implementor must also ensure that the relation is transitive:
-	 * <tt>((compare(x, y)&gt;0) &amp;&amp; (compare(y, z)&gt;0))</tt> implies
-	 * <tt>compare(x, z)&gt;0</tt>.
-	 * </p>
-	 * 
-	 * <p>
-	 * Finally, the implementer must ensure that <tt>compare(x, y)==0</tt>
-	 * implies that <tt>sgn(compare(x, z))==sgn(compare(y, z))</tt> for all
-	 * <tt>z</tt>.
-	 * </p>
-	 * 
-	 * <p>
-	 * It is generally the case, but <i>not </i> strictly required that
-	 * <tt>(compare(x, y)==0) == (x.equals(y))</tt>. Generally speaking, any
-	 * comparator that violates this condition should clearly indicate this
-	 * fact. The recommended language is "Note: this comparator imposes
-	 * orderings that are inconsistent with equals."
-	 * </p>
-	 * 
-	 * @param o1
-	 *            the first object to be compared.
-	 * @param o2
-	 *            the second object to be compared.
-	 * 
-	 * @return a negative integer, zero, or a positive integer as the first
-	 *         argument is less than, equal to, or greater than the second.
-	 */
-	public int compare(Object o1, Object o2) {
-		if (o1 == o2) {
-			return 0;
-		} else if (o1 == null) {
-			// null is less
-			return -1;
-		} else if (o2 == null) {
-			return 1;
-		}
-
-		if (o1 instanceof Node) {
-			if (o2 instanceof Node) {
-				return compare((Node) o1, (Node) o2);
-			} else {
-				// Node implementations are greater
-				return 1;
-			}
-		} else {
-			if (o2 instanceof Node) {
-				// Node implementations are greater
-				return -1;
-			} else {
-				if (o1 instanceof Comparable) {
-					Comparable<Object> c1 = (Comparable) o1;
-
-					return c1.compareTo(o2);
-				} else {
-					String name1 = o1.getClass().getName();
-					String name2 = o2.getClass().getName();
-
-					return name1.compareTo(name2);
-				}
-			}
-		}
-	}
 
 	public int compare(Node n1, Node n2) {
 		NodeType nodeType1 = n1.getNodeTypeEnum();
@@ -140,7 +49,7 @@ public class NodeComparator implements Comparator<Node> {
 
 			case PROCESSING_INSTRUCTION_NODE:
 				return compare((ProcessingInstruction) n1,
-								(ProcessingInstruction) n2);
+						(ProcessingInstruction) n2);
 
 			case COMMENT_NODE:
 				return compare((Comment) n1, (Comment) n2);
@@ -324,7 +233,7 @@ public class NodeComparator implements Comparator<Node> {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

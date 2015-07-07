@@ -7,15 +7,14 @@
 
 package org.dom4j.io;
 
-import java.io.IOException;
-
 import org.dom4j.Document;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.IOException;
 
 /**
  * <p>
@@ -25,144 +24,135 @@ import org.xml.sax.helpers.DefaultHandler;
  * model directly but at least allows the reuse of existing SAX based validating
  * parsers.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.10 $
  */
 public class SAXValidator {
-    /** <code>XMLReader</code> used to parse the SAX events */
-    private XMLReader xmlReader;
+	/**
+	 * <code>XMLReader</code> used to parse the SAX events
+	 */
+	private XMLReader xmlReader;
 
-    /** ErrorHandler class to use */
-    private ErrorHandler errorHandler;
+	/**
+	 * ErrorHandler class to use
+	 */
+	private ErrorHandler errorHandler;
 
-    public SAXValidator() {
-    }
+	public SAXValidator() {
+	}
 
-    public SAXValidator(XMLReader xmlReader) {
-        this.xmlReader = xmlReader;
-    }
+	public SAXValidator(XMLReader xmlReader) {
+		this.xmlReader = xmlReader;
+	}
 
-    /**
-     * Validates the given <code>Document</code> by writing it to a validating
-     * SAX Parser.
-     * 
-     * @param document
-     *            is the Document to validate
-     * 
-     * @throws SAXException
-     *             if a validation error occurs
-     * @throws RuntimeException
-     *             DOCUMENT ME!
-     */
-    public void validate(Document document) throws SAXException {
-        if (document != null) {
-            XMLReader reader = getXMLReader();
+	/**
+	 * Validates the given <code>Document</code> by writing it to a validating
+	 * SAX Parser.
+	 *
+	 * @param document is the Document to validate
+	 * @throws SAXException     if a validation error occurs
+	 * @throws RuntimeException DOCUMENT ME!
+	 */
+	public void validate(Document document) throws SAXException {
+		if (document != null) {
+			XMLReader reader = getXMLReader();
 
-            if (errorHandler != null) {
-                reader.setErrorHandler(errorHandler);
-            }
+			if (errorHandler != null) {
+				reader.setErrorHandler(errorHandler);
+			}
 
-            try {
-                reader.parse(new DocumentInputSource(document));
-            } catch (IOException e) {
-                throw new RuntimeException("Caught and exception that should "
-                        + "never happen: " + e);
-            }
-        }
-    }
+			try {
+				reader.parse(new DocumentInputSource(document));
+			} catch (IOException e) {
+				throw new RuntimeException("Caught and exception that should "
+						+ "never happen: " + e);
+			}
+		}
+	}
 
-    // Properties
-    // -------------------------------------------------------------------------
+	// Properties
+	// -------------------------------------------------------------------------
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the <code>XMLReader</code> used to parse SAX events
-     * 
-     * @throws SAXException
-     *             DOCUMENT ME!
-     */
-    public XMLReader getXMLReader() throws SAXException {
-        if (xmlReader == null) {
-            xmlReader = createXMLReader();
-            configureReader();
-        }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the <code>XMLReader</code> used to parse SAX events
+	 * @throws SAXException DOCUMENT ME!
+	 */
+	public XMLReader getXMLReader() throws SAXException {
+		if (xmlReader == null) {
+			xmlReader = createXMLReader();
+			configureReader();
+		}
 
-        return xmlReader;
-    }
+		return xmlReader;
+	}
 
-    /**
-     * Sets the <code>XMLReader</code> used to parse SAX events
-     * 
-     * @param reader
-     *            is the <code>XMLReader</code> to parse SAX events
-     * 
-     * @throws SAXException
-     *             DOCUMENT ME!
-     */
-    public void setXMLReader(XMLReader reader) throws SAXException {
-        this.xmlReader = reader;
-        configureReader();
-    }
+	/**
+	 * Sets the <code>XMLReader</code> used to parse SAX events
+	 *
+	 * @param reader is the <code>XMLReader</code> to parse SAX events
+	 * @throws SAXException DOCUMENT ME!
+	 */
+	public void setXMLReader(XMLReader reader) throws SAXException {
+		this.xmlReader = reader;
+		configureReader();
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the <code>ErrorHandler</code> used by SAX
-     */
-    public ErrorHandler getErrorHandler() {
-        return errorHandler;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the <code>ErrorHandler</code> used by SAX
+	 */
+	public ErrorHandler getErrorHandler() {
+		return errorHandler;
+	}
 
-    /**
-     * Sets the <code>ErrorHandler</code> used by the SAX
-     * <code>XMLReader</code>.
-     * 
-     * @param errorHandler
-     *            is the <code>ErrorHandler</code> used by SAX
-     */
-    public void setErrorHandler(ErrorHandler errorHandler) {
-        this.errorHandler = errorHandler;
-    }
+	/**
+	 * Sets the <code>ErrorHandler</code> used by the SAX
+	 * <code>XMLReader</code>.
+	 *
+	 * @param errorHandler is the <code>ErrorHandler</code> used by SAX
+	 */
+	public void setErrorHandler(ErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
+	}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
+	// Implementation methods
+	// -------------------------------------------------------------------------
 
-    /**
-     * Factory Method to allow alternate methods of creating and configuring
-     * XMLReader objects
-     * 
-     * @return DOCUMENT ME!
-     * 
-     * @throws SAXException
-     *             DOCUMENT ME!
-     */
-    protected XMLReader createXMLReader() throws SAXException {
-        return SAXHelper.createXMLReader(true);
-    }
+	/**
+	 * Factory Method to allow alternate methods of creating and configuring
+	 * XMLReader objects
+	 *
+	 * @return DOCUMENT ME!
+	 * @throws SAXException DOCUMENT ME!
+	 */
+	protected XMLReader createXMLReader() throws SAXException {
+		return SAXHelper.createXMLReader(true);
+	}
 
-    /**
-     * Configures the XMLReader before use
-     * 
-     * @throws SAXException
-     *             DOCUMENT ME!
-     */
-    protected void configureReader() throws SAXException {
-        ContentHandler handler = xmlReader.getContentHandler();
+	/**
+	 * Configures the XMLReader before use
+	 *
+	 * @throws SAXException DOCUMENT ME!
+	 */
+	protected void configureReader() throws SAXException {
+		ContentHandler handler = xmlReader.getContentHandler();
 
-        if (handler == null) {
-            xmlReader.setContentHandler(new DefaultHandler());
-        }
+		if (handler == null) {
+			xmlReader.setContentHandler(new DefaultHandler());
+		}
 
-        // configure validation support
-        xmlReader.setFeature("http://xml.org/sax/features/validation", true);
+		// configure validation support
+		xmlReader.setFeature("http://xml.org/sax/features/validation", true);
 
-        // configure namespace support
-        xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
-        xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes",
-                false);
-    }
+		// configure namespace support
+		xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
+		xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes",
+				false);
+	}
 }
 
 /*
@@ -185,7 +175,7 @@ public class SAXValidator {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

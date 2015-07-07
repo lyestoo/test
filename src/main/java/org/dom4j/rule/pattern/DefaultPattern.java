@@ -21,36 +21,36 @@ import org.dom4j.rule.Pattern;
  * #getPriority}, {@link #getMatchType}and {@link #getMatchesNodeName}should
  * be overloaded to allow more rule filtering to occur.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.6 $
  */
 public class DefaultPattern implements Pattern {
-    private NodeFilter filter;
+	private NodeFilter filter;
 
-    public DefaultPattern(NodeFilter filter) {
-        this.filter = filter;
-    }
+	public DefaultPattern(NodeFilter filter) {
+		this.filter = filter;
+	}
 
-    public boolean matches(Node node) {
-        return filter.matches(node);
-    }
+	public boolean matches(Node node) {
+		return filter.matches(node);
+	}
 
-    public double getPriority() {
-        return Pattern.DEFAULT_PRIORITY;
-    }
+	public double getPriority() {
+		return Pattern.DEFAULT_PRIORITY;
+	}
 
-    public Pattern[] getUnionPatterns() {
-        return null;
-    }
+	public Pattern[] getUnionPatterns() {
+		return null;
+	}
 
-    public NodeType getMatchType() {
-        return NodeType.ANY_NODE;
-    }
+	public NodeType getMatchType() {
+		return NodeType.ANY_NODE;
+	}
 
-    public String getMatchesNodeName() {
-        return null;
-    }
+	public String getMatchesNodeName() {
+		return null;
+	}
 }
 
 /*
@@ -73,7 +73,7 @@ public class DefaultPattern implements Pattern {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

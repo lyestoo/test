@@ -7,12 +7,12 @@
 
 package org.dom4j.io;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.dom4j.Element;
 import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * <p>
@@ -25,196 +25,196 @@ import org.dom4j.ElementPath;
  * <code>ElementHandler</code> instances registered with it to process the
  * elements encountered.
  * </p>
- * 
+ *
  * @author <a href="mailto:dwhite@equipecom.com">Dave White </a>
  * @version $Revision: 1.11 $
  */
 class DispatchHandler implements ElementHandler {
-    /** Whether the parser is at the root element or not */
-    private boolean atRoot;
+	/**
+	 * Whether the parser is at the root element or not
+	 */
+	private boolean atRoot;
 
-    /** The current path in the XML tree (i.e. /a/b/c) */
-    private String path;
+	/**
+	 * The current path in the XML tree (i.e. /a/b/c)
+	 */
+	private String path;
 
-    /** maintains a stack of previously encountered paths */
-    private ArrayList pathStack;
+	/**
+	 * maintains a stack of previously encountered paths
+	 */
+	private ArrayList pathStack;
 
-    /** maintains a stack of previously encountered handlers */
-    private ArrayList handlerStack;
+	/**
+	 * maintains a stack of previously encountered handlers
+	 */
+	private ArrayList handlerStack;
 
-    /**
-     * <code>HashMap</code> maintains the mapping between element paths and
-     * handlers
-     */
-    private HashMap handlers;
+	/**
+	 * <code>HashMap</code> maintains the mapping between element paths and
+	 * handlers
+	 */
+	private HashMap handlers;
 
-    /**
-     * <code>ElementHandler</code> to use by default for element paths with no
-     * handlers registered
-     */
-    private ElementHandler defaultHandler;
+	/**
+	 * <code>ElementHandler</code> to use by default for element paths with no
+	 * handlers registered
+	 */
+	private ElementHandler defaultHandler;
 
-    public DispatchHandler() {
-        atRoot = true;
-        path = "/";
-        pathStack = new ArrayList();
-        handlerStack = new ArrayList();
-        handlers = new HashMap();
-    }
+	public DispatchHandler() {
+		atRoot = true;
+		path = "/";
+		pathStack = new ArrayList();
+		handlerStack = new ArrayList();
+		handlers = new HashMap();
+	}
 
-    /**
-     * Adds the <code>ElementHandler</code> to be called when the specified
-     * path is encounted.
-     * 
-     * @param handlerPath
-     *            is the path to be handled
-     * @param handler
-     *            is the <code>ElementHandler</code> to be called by the event
-     *            based processor.
-     */
-    public void addHandler(String handlerPath, ElementHandler handler) {
-        handlers.put(handlerPath, handler);
-    }
+	/**
+	 * Adds the <code>ElementHandler</code> to be called when the specified
+	 * path is encounted.
+	 *
+	 * @param handlerPath is the path to be handled
+	 * @param handler     is the <code>ElementHandler</code> to be called by the event
+	 *                    based processor.
+	 */
+	public void addHandler(String handlerPath, ElementHandler handler) {
+		handlers.put(handlerPath, handler);
+	}
 
-    /**
-     * Removes the <code>ElementHandler</code> from the event based processor,
-     * for the specified path.
-     * 
-     * @param handlerPath
-     *            is the path to remove the <code>ElementHandler</code> for.
-     * 
-     * @return DOCUMENT ME!
-     */
-    public ElementHandler removeHandler(String handlerPath) {
-        return (ElementHandler) handlers.remove(handlerPath);
-    }
+	/**
+	 * Removes the <code>ElementHandler</code> from the event based processor,
+	 * for the specified path.
+	 *
+	 * @param handlerPath is the path to remove the <code>ElementHandler</code> for.
+	 * @return DOCUMENT ME!
+	 */
+	public ElementHandler removeHandler(String handlerPath) {
+		return (ElementHandler) handlers.remove(handlerPath);
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param handlerPath
-     *            DOCUMENT ME!
-     * 
-     * @return true when an <code>ElementHandler</code> is registered for the
-     *         specified path.
-     */
-    public boolean containsHandler(String handlerPath) {
-        return handlers.containsKey(handlerPath);
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param handlerPath DOCUMENT ME!
+	 * @return true when an <code>ElementHandler</code> is registered for the
+	 *         specified path.
+	 */
+	public boolean containsHandler(String handlerPath) {
+		return handlers.containsKey(handlerPath);
+	}
 
-    /**
-     * Get the registered {@link ElementHandler}for the specified path.
-     * 
-     * @param handlerPath
-     *            XML path to get the handler for
-     * 
-     * @return the registered handler
-     */
-    public ElementHandler getHandler(String handlerPath) {
-        return (ElementHandler) handlers.get(handlerPath);
-    }
+	/**
+	 * Get the registered {@link ElementHandler}for the specified path.
+	 *
+	 * @param handlerPath XML path to get the handler for
+	 * @return the registered handler
+	 */
+	public ElementHandler getHandler(String handlerPath) {
+		return (ElementHandler) handlers.get(handlerPath);
+	}
 
-    /**
-     * Returns the number of {@link ElementHandler}objects that are waiting for
-     * their elements closing tag.
-     * 
-     * @return number of active handlers
-     */
-    public int getActiveHandlerCount() {
-        return handlerStack.size();
-    }
+	/**
+	 * Returns the number of {@link ElementHandler}objects that are waiting for
+	 * their elements closing tag.
+	 *
+	 * @return number of active handlers
+	 */
+	public int getActiveHandlerCount() {
+		return handlerStack.size();
+	}
 
-    /**
-     * When multiple <code>ElementHandler</code> instances have been
-     * registered, this will set a default <code>ElementHandler</code> to be
-     * called for any path which does <b>NOT </b> have a handler registered.
-     * 
-     * @param handler
-     *            is the <code>ElementHandler</code> to be called by the event
-     *            based processor.
-     */
-    public void setDefaultHandler(ElementHandler handler) {
-        defaultHandler = handler;
-    }
+	/**
+	 * When multiple <code>ElementHandler</code> instances have been
+	 * registered, this will set a default <code>ElementHandler</code> to be
+	 * called for any path which does <b>NOT </b> have a handler registered.
+	 *
+	 * @param handler is the <code>ElementHandler</code> to be called by the event
+	 *                based processor.
+	 */
+	public void setDefaultHandler(ElementHandler handler) {
+		defaultHandler = handler;
+	}
 
-    /**
-     * Used to remove all the Element Handlers and return things back to the way
-     * they were when object was created.
-     */
-    public void resetHandlers() {
-        atRoot = true;
-        path = "/";
-        pathStack.clear();
-        handlerStack.clear();
-        handlers.clear();
-        defaultHandler = null;
-    }
+	/**
+	 * Used to remove all the Element Handlers and return things back to the way
+	 * they were when object was created.
+	 */
+	public void resetHandlers() {
+		atRoot = true;
+		path = "/";
+		pathStack.clear();
+		handlerStack.clear();
+		handlers.clear();
+		defaultHandler = null;
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the current path for the parse
-     */
-    public String getPath() {
-        return path;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the current path for the parse
+	 */
+	public String getPath() {
+		return path;
+	}
 
-    // The following methods implement the ElementHandler interface
-    public void onStart(ElementPath elementPath) {
-        Element element = elementPath.getCurrent();
+	// The following methods implement the ElementHandler interface
 
-        // Save the location of the last (i.e. parent) path
-        pathStack.add(path);
+	public void onStart(ElementPath elementPath) {
+		Element element = elementPath.getCurrent();
 
-        // Calculate the new path
-        if (atRoot) {
-            path = path + element.getName();
-            atRoot = false;
-        } else {
-            path = path + "/" + element.getName();
-        }
+		// Save the location of the last (i.e. parent) path
+		pathStack.add(path);
 
-        if ((handlers != null) && (handlers.containsKey(path))) {
-            // The current node has a handler associated with it.
-            // Find the handler and save it on the handler stack.
-            ElementHandler handler = (ElementHandler) handlers.get(path);
-            handlerStack.add(handler);
+		// Calculate the new path
+		if (atRoot) {
+			path = path + element.getName();
+			atRoot = false;
+		} else {
+			path = path + "/" + element.getName();
+		}
 
-            // Call the handlers onStart method.
-            handler.onStart(elementPath);
-        } else {
-            // No handler is associated with this node, so use the
-            // defaultHandler it it exists.
-            if (handlerStack.isEmpty() && (defaultHandler != null)) {
-                defaultHandler.onStart(elementPath);
-            }
-        }
-    }
+		if ((handlers != null) && (handlers.containsKey(path))) {
+			// The current node has a handler associated with it.
+			// Find the handler and save it on the handler stack.
+			ElementHandler handler = (ElementHandler) handlers.get(path);
+			handlerStack.add(handler);
 
-    public void onEnd(ElementPath elementPath) {
-        if ((handlers != null) && (handlers.containsKey(path))) {
-            // This node has a handler associated with it.
-            // Find the handler and pop it from the handler stack.
-            ElementHandler handler = (ElementHandler) handlers.get(path);
-            handlerStack.remove(handlerStack.size() - 1);
+			// Call the handlers onStart method.
+			handler.onStart(elementPath);
+		} else {
+			// No handler is associated with this node, so use the
+			// defaultHandler it it exists.
+			if (handlerStack.isEmpty() && (defaultHandler != null)) {
+				defaultHandler.onStart(elementPath);
+			}
+		}
+	}
 
-            // Call the handlers onEnd method
-            handler.onEnd(elementPath);
-        } else {
-            // No handler is associated with this node, so use the
-            // defaultHandler it it exists.
-            if (handlerStack.isEmpty() && (defaultHandler != null)) {
-                defaultHandler.onEnd(elementPath);
-            }
-        }
+	public void onEnd(ElementPath elementPath) {
+		if ((handlers != null) && (handlers.containsKey(path))) {
+			// This node has a handler associated with it.
+			// Find the handler and pop it from the handler stack.
+			ElementHandler handler = (ElementHandler) handlers.get(path);
+			handlerStack.remove(handlerStack.size() - 1);
 
-        // Set path back to its parent
-        path = (String) pathStack.remove(pathStack.size() - 1);
+			// Call the handlers onEnd method
+			handler.onEnd(elementPath);
+		} else {
+			// No handler is associated with this node, so use the
+			// defaultHandler it it exists.
+			if (handlerStack.isEmpty() && (defaultHandler != null)) {
+				defaultHandler.onEnd(elementPath);
+			}
+		}
 
-        if (pathStack.size() == 0) {
-            atRoot = true;
-        }
-    }
+		// Set path back to its parent
+		path = (String) pathStack.remove(pathStack.size() - 1);
+
+		if (pathStack.size() == 0) {
+			atRoot = true;
+		}
+	}
 }
 
 /*
@@ -237,7 +237,7 @@ class DispatchHandler implements ElementHandler {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

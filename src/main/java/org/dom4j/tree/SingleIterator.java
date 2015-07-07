@@ -14,35 +14,35 @@ import java.util.Iterator;
  * <code>SingleIterator</code> is an {@link Iterator}over a single object
  * instance.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.9 $
  */
 public class SingleIterator<T> implements Iterator<T> {
-    private boolean first = true;
+	private boolean first = true;
 
-    private T object;
+	private T object;
 
-    public SingleIterator(T object) {
-        this.object = object;
-    }
+	public SingleIterator(T object) {
+		this.object = object;
+	}
 
-    public boolean hasNext() {
-        return first;
-    }
+	public boolean hasNext() {
+		return first;
+	}
 
-    public T next() {
-        T answer = object;
-        object = null;
-        first = false;
+	public T next() {
+		T answer = object;
+		object = null;
+		first = false;
 
-        return answer;
-    }
+		return answer;
+	}
 
-    public void remove() {
-        throw new UnsupportedOperationException("remove() is not supported by "
-                + "this iterator");
-    }
+	public void remove() {
+		throw new UnsupportedOperationException("remove() is not supported by "
+				+ "this iterator");
+	}
 }
 
 /*
@@ -65,7 +65,7 @@ public class SingleIterator<T> implements Iterator<T> {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

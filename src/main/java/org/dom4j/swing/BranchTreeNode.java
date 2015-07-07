@@ -7,15 +7,14 @@
 
 package org.dom4j.swing;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
-import javax.swing.tree.TreeNode;
-
 import org.dom4j.Branch;
 import org.dom4j.CharacterData;
 import org.dom4j.Node;
+
+import javax.swing.tree.TreeNode;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * <p>
@@ -23,139 +22,140 @@ import org.dom4j.Node;
  * dom4j XML Branch nodes (i.e. Document and Element nodes) to a Swing
  * TreeModel.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @author Jakob Jenkov
  * @version $Revision: 1.10 $
  */
 public class BranchTreeNode extends LeafTreeNode {
-    /** Stores the child tree nodes */
-    protected List children;
+	/**
+	 * Stores the child tree nodes
+	 */
+	protected List children;
 
-    public BranchTreeNode() {
-    }
+	public BranchTreeNode() {
+	}
 
-    public BranchTreeNode(Branch xmlNode) {
-        super(xmlNode);
-    }
+	public BranchTreeNode(Branch xmlNode) {
+		super(xmlNode);
+	}
 
-    public BranchTreeNode(TreeNode parent, Branch xmlNode) {
-        super(parent, xmlNode);
-    }
+	public BranchTreeNode(TreeNode parent, Branch xmlNode) {
+		super(parent, xmlNode);
+	}
 
-    // TreeNode methods
-    // -------------------------------------------------------------------------
-    public Enumeration children() {
-        return new Enumeration() {
-            private int index = -1;
+	// TreeNode methods
+	// -------------------------------------------------------------------------
 
-            public boolean hasMoreElements() {
-                return (index + 1) < getChildCount();
-            }
+	public Enumeration children() {
+		return new Enumeration() {
+			private int index = -1;
 
-            public Object nextElement() {
-                return getChildAt(++index);
-            }
-        };
-    }
+			public boolean hasMoreElements() {
+				return (index + 1) < getChildCount();
+			}
 
-    public boolean getAllowsChildren() {
-        return true;
-    }
+			public Object nextElement() {
+				return getChildAt(++index);
+			}
+		};
+	}
 
-    public TreeNode getChildAt(int childIndex) {
-        return (TreeNode) getChildList().get(childIndex);
-    }
+	public boolean getAllowsChildren() {
+		return true;
+	}
 
-    public int getChildCount() {
-        return getChildList().size();
-    }
+	public TreeNode getChildAt(int childIndex) {
+		return (TreeNode) getChildList().get(childIndex);
+	}
 
-    public int getIndex(TreeNode node) {
-        return getChildList().indexOf(node);
-    }
+	public int getChildCount() {
+		return getChildList().size();
+	}
 
-    public boolean isLeaf() {
-        return getXmlBranch().nodeCount() <= 0;
-    }
+	public int getIndex(TreeNode node) {
+		return getChildList().indexOf(node);
+	}
 
-    public String toString() {
-        return xmlNode.getName();
-    }
+	public boolean isLeaf() {
+		return getXmlBranch().nodeCount() <= 0;
+	}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
+	public String toString() {
+		return xmlNode.getName();
+	}
 
-    /**
-     * Uses Lazy Initialization pattern to create a List of children
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected List getChildList() {
-        // for now lets just create the children once, the first time they
-        // are asked for.
-        // XXXX - we may wish to detect inconsistencies here....
-        if (children == null) {
-            children = createChildList();
-        }
+	// Implementation methods
+	// -------------------------------------------------------------------------
 
-        return children;
-    }
+	/**
+	 * Uses Lazy Initialization pattern to create a List of children
+	 *
+	 * @return DOCUMENT ME!
+	 */
+	protected List getChildList() {
+		// for now lets just create the children once, the first time they
+		// are asked for.
+		// XXXX - we may wish to detect inconsistencies here....
+		if (children == null) {
+			children = createChildList();
+		}
 
-    /**
-     * Factory method to create List of children TreeNodes
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected List createChildList() {
-        // add attributes and content as children?
-        Branch branch = getXmlBranch();
-        int size = branch.nodeCount();
-        List childList = new ArrayList(size);
+		return children;
+	}
 
-        for (int i = 0; i < size; i++) {
-            Node node = branch.node(i);
+	/**
+	 * Factory method to create List of children TreeNodes
+	 *
+	 * @return DOCUMENT ME!
+	 */
+	protected List createChildList() {
+		// add attributes and content as children?
+		Branch branch = getXmlBranch();
+		int size = branch.nodeCount();
+		List childList = new ArrayList(size);
 
-            // ignore whitespace text nodes
-            if (node instanceof CharacterData) {
-                String text = node.getText();
+		for (int i = 0; i < size; i++) {
+			Node node = branch.node(i);
 
-                if (text == null) {
-                    continue;
-                }
+			// ignore whitespace text nodes
+			if (node instanceof CharacterData) {
+				String text = node.getText();
 
-                text = text.trim();
+				if (text == null) {
+					continue;
+				}
 
-                if (text.length() <= 0) {
-                    continue;
-                }
-            }
+				text = text.trim();
 
-            childList.add(createChildTreeNode(node));
-        }
+				if (text.length() <= 0) {
+					continue;
+				}
+			}
 
-        return childList;
-    }
+			childList.add(createChildTreeNode(node));
+		}
 
-    /**
-     * Factory method to create child tree nodes for a given XML node type
-     * 
-     * @param xmlNode
-     *            DOCUMENT ME!
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected TreeNode createChildTreeNode(Node xmlNode) {
-        if (xmlNode instanceof Branch) {
-            return new BranchTreeNode(this, (Branch) xmlNode);
-        } else {
-            return new LeafTreeNode(this, xmlNode);
-        }
-    }
+		return childList;
+	}
 
-    protected Branch getXmlBranch() {
-        return (Branch) xmlNode;
-    }
+	/**
+	 * Factory method to create child tree nodes for a given XML node type
+	 *
+	 * @param xmlNode DOCUMENT ME!
+	 * @return DOCUMENT ME!
+	 */
+	protected TreeNode createChildTreeNode(Node xmlNode) {
+		if (xmlNode instanceof Branch) {
+			return new BranchTreeNode(this, (Branch) xmlNode);
+		} else {
+			return new LeafTreeNode(this, xmlNode);
+		}
+	}
+
+	protected Branch getXmlBranch() {
+		return (Branch) xmlNode;
+	}
 }
 
 /*
@@ -178,7 +178,7 @@ public class BranchTreeNode extends LeafTreeNode {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

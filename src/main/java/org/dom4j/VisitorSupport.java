@@ -13,43 +13,43 @@ package org.dom4j;
  * implementation inheritence or when using anonymous inner classes to create
  * simple <code>Visitor</code> implementations.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.6 $
  */
 public abstract class VisitorSupport implements Visitor {
-    public VisitorSupport() {
-    }
+	public VisitorSupport() {
+	}
 
-    public void visit(Document document) {
-    }
+	public void visit(Document document) {
+	}
 
-    public void visit(DocumentType documentType) {
-    }
+	public void visit(DocumentType documentType) {
+	}
 
-    public void visit(Element node) {
-    }
+	public void visit(Element node) {
+	}
 
-    public void visit(Attribute node) {
-    }
+	public void visit(Attribute node) {
+	}
 
-    public void visit(CDATA node) {
-    }
+	public void visit(CDATA node) {
+	}
 
-    public void visit(Comment node) {
-    }
+	public void visit(Comment node) {
+	}
 
-    public void visit(Entity node) {
-    }
+	public void visit(Entity node) {
+	}
 
-    public void visit(Namespace namespace) {
-    }
+	public void visit(Namespace namespace) {
+	}
 
-    public void visit(ProcessingInstruction node) {
-    }
+	public void visit(ProcessingInstruction node) {
+	}
 
-    public void visit(Text node) {
-    }
+	public void visit(Text node) {
+	}
 }
 
 /*
@@ -72,7 +72,7 @@ public abstract class VisitorSupport implements Visitor {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

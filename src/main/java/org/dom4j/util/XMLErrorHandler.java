@@ -10,7 +10,6 @@ package org.dom4j.util;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
-
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
@@ -18,116 +17,124 @@ import org.xml.sax.SAXParseException;
  * <code>XMLErrorHandler</code> is a SAX {@link ErrorHandler}which turns the
  * SAX parsing errors into XML so that the output can be formatted using XSLT or
  * the errors can be included in a SOAP message.
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.7 $
  */
 public class XMLErrorHandler implements ErrorHandler {
-    protected static final QName ERROR_QNAME = QName.get("error");
+	protected static final QName ERROR_QNAME = QName.get("error");
 
-    protected static final QName FATALERROR_QNAME = QName.get("fatalError");
+	protected static final QName FATALERROR_QNAME = QName.get("fatalError");
 
-    protected static final QName WARNING_QNAME = QName.get("warning");
+	protected static final QName WARNING_QNAME = QName.get("warning");
 
-    /** Stores the errors that occur during a SAX parse */
-    private Element errors;
+	/**
+	 * Stores the errors that occur during a SAX parse
+	 */
+	private Element errors;
 
-    /** QName used for error elements */
-    private QName errorQName = ERROR_QNAME;
+	/**
+	 * QName used for error elements
+	 */
+	private QName errorQName = ERROR_QNAME;
 
-    /** QName used for fatalerror elements */
-    private QName fatalErrorQName = FATALERROR_QNAME;
+	/**
+	 * QName used for fatalerror elements
+	 */
+	private QName fatalErrorQName = FATALERROR_QNAME;
 
-    /** QName used for warning elements */
-    private QName warningQName = WARNING_QNAME;
+	/**
+	 * QName used for warning elements
+	 */
+	private QName warningQName = WARNING_QNAME;
 
-    public XMLErrorHandler() {
-        this.errors = DocumentHelper.createElement("errors");
-    }
+	public XMLErrorHandler() {
+		this.errors = DocumentHelper.createElement("errors");
+	}
 
-    public XMLErrorHandler(Element errors) {
-        this.errors = errors;
-    }
+	public XMLErrorHandler(Element errors) {
+		this.errors = errors;
+	}
 
-    public void error(SAXParseException e) {
-        Element element = errors.addElement(errorQName);
-        addException(element, e);
-    }
+	public void error(SAXParseException e) {
+		Element element = errors.addElement(errorQName);
+		addException(element, e);
+	}
 
-    public void fatalError(SAXParseException e) {
-        Element element = errors.addElement(fatalErrorQName);
-        addException(element, e);
-    }
+	public void fatalError(SAXParseException e) {
+		Element element = errors.addElement(fatalErrorQName);
+		addException(element, e);
+	}
 
-    public void warning(SAXParseException e) {
-        Element element = errors.addElement(warningQName);
-        addException(element, e);
-    }
+	public void warning(SAXParseException e) {
+		Element element = errors.addElement(warningQName);
+		addException(element, e);
+	}
 
-    // Properties
-    // -------------------------------------------------------------------------
-    public Element getErrors() {
-        return errors;
-    }
+	// Properties
+	// -------------------------------------------------------------------------
 
-    public void setErrors(Element errors) {
-        this.errors = errors;
-    }
+	public Element getErrors() {
+		return errors;
+	}
 
-    // Allow the QNames used to create subelements to be changed
-    public QName getErrorQName() {
-        return errorQName;
-    }
+	public void setErrors(Element errors) {
+		this.errors = errors;
+	}
 
-    public void setErrorQName(QName errorQName) {
-        this.errorQName = errorQName;
-    }
+	// Allow the QNames used to create subelements to be changed
 
-    public QName getFatalErrorQName() {
-        return fatalErrorQName;
-    }
+	public QName getErrorQName() {
+		return errorQName;
+	}
 
-    public void setFatalErrorQName(QName fatalErrorQName) {
-        this.fatalErrorQName = fatalErrorQName;
-    }
+	public void setErrorQName(QName errorQName) {
+		this.errorQName = errorQName;
+	}
 
-    public QName getWarningQName() {
-        return warningQName;
-    }
+	public QName getFatalErrorQName() {
+		return fatalErrorQName;
+	}
 
-    public void setWarningQName(QName warningQName) {
-        this.warningQName = warningQName;
-    }
+	public void setFatalErrorQName(QName fatalErrorQName) {
+		this.fatalErrorQName = fatalErrorQName;
+	}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
+	public QName getWarningQName() {
+		return warningQName;
+	}
 
-    /**
-     * Adds the given parse exception information to the given element instance
-     * 
-     * @param element
-     *            DOCUMENT ME!
-     * @param e
-     *            DOCUMENT ME!
-     */
-    protected void addException(Element element, SAXParseException e) {
-        element.addAttribute("column", Integer.toString(e.getColumnNumber()));
-        element.addAttribute("line", Integer.toString(e.getLineNumber()));
+	public void setWarningQName(QName warningQName) {
+		this.warningQName = warningQName;
+	}
 
-        String publicID = e.getPublicId();
+	// Implementation methods
+	// -------------------------------------------------------------------------
 
-        if ((publicID != null) && (publicID.length() > 0)) {
-            element.addAttribute("publicID", publicID);
-        }
+	/**
+	 * Adds the given parse exception information to the given element instance
+	 *
+	 * @param element DOCUMENT ME!
+	 * @param e       DOCUMENT ME!
+	 */
+	protected void addException(Element element, SAXParseException e) {
+		element.addAttribute("column", Integer.toString(e.getColumnNumber()));
+		element.addAttribute("line", Integer.toString(e.getLineNumber()));
 
-        String systemID = e.getSystemId();
+		String publicID = e.getPublicId();
 
-        if ((systemID != null) && (systemID.length() > 0)) {
-            element.addAttribute("systemID", systemID);
-        }
+		if ((publicID != null) && (publicID.length() > 0)) {
+			element.addAttribute("publicID", publicID);
+		}
 
-        element.addText(e.getMessage());
-    }
+		String systemID = e.getSystemId();
+
+		if ((systemID != null) && (systemID.length() > 0)) {
+			element.addAttribute("systemID", systemID);
+		}
+
+		element.addText(e.getMessage());
+	}
 }
 
 /*
@@ -150,7 +157,7 @@ public class XMLErrorHandler implements ErrorHandler {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

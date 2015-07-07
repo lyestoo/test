@@ -14,45 +14,45 @@ package org.dom4j.util;
  * This implementation will create a new instance from the class specified and
  * will not create a new one unless it is reset.
  * </p>
- * 
+ *
  * @author <a href="mailto:ddlucas@users.sourceforge.net">David Lucas </a>
  * @version $Revision: 1.3 $
  */
 
 public class SimpleSingleton implements SingletonStrategy {
-    private String singletonClassName = null;
+	private String singletonClassName = null;
 
-    private Object singletonInstance = null;
+	private Object singletonInstance = null;
 
-    public SimpleSingleton() {
-    }
+	public SimpleSingleton() {
+	}
 
-    public Object instance() {
-        return singletonInstance;
-    }
+	public Object instance() {
+		return singletonInstance;
+	}
 
-    public void reset() {
-        if (singletonClassName != null) {
-            Class clazz = null;
-            try {
-                clazz = Thread.currentThread().getContextClassLoader().loadClass(
-                        singletonClassName);
-                singletonInstance = clazz.newInstance();
-            } catch (Exception ignore) {
-                try {
-                    clazz = Class.forName(singletonClassName);
-                    singletonInstance = clazz.newInstance();
-                } catch (Exception ignore2) {
-                }
-            }
+	public void reset() {
+		if (singletonClassName != null) {
+			Class clazz = null;
+			try {
+				clazz = Thread.currentThread().getContextClassLoader().loadClass(
+						singletonClassName);
+				singletonInstance = clazz.newInstance();
+			} catch (Exception ignore) {
+				try {
+					clazz = Class.forName(singletonClassName);
+					singletonInstance = clazz.newInstance();
+				} catch (Exception ignore2) {
+				}
+			}
 
-        }
-    }
+		}
+	}
 
-    public void setSingletonClassName(String singletonClassName) {
-        this.singletonClassName = singletonClassName;
-        reset();
-    }
+	public void setSingletonClassName(String singletonClassName) {
+		this.singletonClassName = singletonClassName;
+		reset();
+	}
 
 }
 
@@ -76,7 +76,7 @@ public class SimpleSingleton implements SingletonStrategy {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

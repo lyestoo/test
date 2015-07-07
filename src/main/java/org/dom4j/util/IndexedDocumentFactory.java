@@ -7,6 +7,7 @@
 
 package org.dom4j.util;
 
+import org.dom4j.DefaultDocumentFactory;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.QName;
@@ -18,35 +19,38 @@ import org.dom4j.QName;
  * Element and Attributes though at the expense of more memory used to create
  * the name indexes.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.9 $
  */
-public class IndexedDocumentFactory extends DocumentFactory {
-    /** The Singleton instance */
-    protected static transient IndexedDocumentFactory singleton
-            = new IndexedDocumentFactory();
+public class IndexedDocumentFactory extends DefaultDocumentFactory {
+	/**
+	 * The Singleton instance
+	 */
+	protected static transient IndexedDocumentFactory singleton
+			= new IndexedDocumentFactory();
 
-    /**
-     * <p>
-     * Access to the singleton instance of this factory.
-     * </p>
-     * 
-     * @return the default singleon instance
-     */
-    public static DocumentFactory getInstance() {
-        return singleton;
-    }
+	/**
+	 * <p>
+	 * Access to the singleton instance of this factory.
+	 * </p>
+	 *
+	 * @return the default singleon instance
+	 */
+	public static DocumentFactory getInstance() {
+		return singleton;
+	}
 
-    // DocumentFactory methods
-    // -------------------------------------------------------------------------
-    public Element createElement(QName qname) {
-        return new IndexedElement(qname);
-    }
+	// DefaultDocumentFactory methods
+	// -------------------------------------------------------------------------
 
-    public Element createElement(QName qname, int attributeCount) {
-        return new IndexedElement(qname, attributeCount);
-    }
+	public Element createElement(QName qname) {
+		return new IndexedElement(qname);
+	}
+
+	public Element createElement(QName qname, int attributeCount) {
+		return new IndexedElement(qname, attributeCount);
+	}
 }
 
 /*
@@ -69,7 +73,7 @@ public class IndexedDocumentFactory extends DocumentFactory {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

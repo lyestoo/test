@@ -6,44 +6,46 @@
  */
 package org.dom4j.tree;
 
+import org.dom4j.*;
+import org.xml.sax.EntityResolver;
+
 import java.util.Iterator;
 import java.util.List;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.DocumentType;
-import org.dom4j.Element;
-import org.dom4j.IllegalAddException;
-import org.dom4j.Node;
-import org.dom4j.NodeHelper;
-import org.dom4j.ProcessingInstruction;
-
-import org.xml.sax.EntityResolver;
 
 /**
  * <p>
  * <code>DefaultDocument</code> is the default DOM4J default implementation of
  * an XML document.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.34 $
  */
 public class DefaultDocument extends AbstractDocument {
 
-	/** The name of the document */
+	/**
+	 * The name of the document
+	 */
 	private String name;
-	/** The root element of this document */
+	/**
+	 * The root element of this document
+	 */
 	private Element rootElement;
 	/**
 	 * Store the contents of the document as a lazily created <code>List</code>
 	 */
 	private final List<Node> content = new LazyList<Node>();
-	/** The document type for this document */
+	/**
+	 * The document type for this document
+	 */
 	private DocumentType docType;
-	/** The document factory used by default */
-	private DocumentFactory documentFactory = DocumentFactory.getInstance();
-	/** The resolver of URIs */
+	/**
+	 * The document factory used by default
+	 */
+	private DocumentFactory documentFactory = DefaultDocumentFactory.getInstance();
+	/**
+	 * The resolver of URIs
+	 */
 	private transient EntityResolver entityResolver;
 
 	public DefaultDocument() {
@@ -114,10 +116,10 @@ public class DefaultDocument extends AbstractDocument {
 	}
 
 	@Override
-	public Object clone() {
-		DefaultDocument document = (DefaultDocument) super.clone();
+	public DefaultDocument clone() {
+		DefaultDocument document =  (DefaultDocument) super.clone();
 		document.rootElement = null;
-		document.content.clear();
+		CloneHelper.setFinalContent(DefaultDocument.class, document);
 		document.appendContent(this);
 
 		return document;
@@ -184,20 +186,19 @@ public class DefaultDocument extends AbstractDocument {
 			return;
 		}
 
-		List<Node> newContent = createContentList(contentList().size());
-		for (Node node : contentList()) {
+		List<Node> newContent = createContentList();
+		for (Node node : content) {
 			Document doc = node.getDocument();
 			if ((doc != null) && (doc != this)) {
 				node = (Node) node.clone();
 			}
 
 			Element element = NodeHelper.nodeAsElement(node);
-			if (element == null) {
+			if (element != null) {
 				if (rootElement == null) {
 					rootElement = element;
 				} else {
-					throw new IllegalAddException(
-									"A document may only " + "contain one root " + "element: " + content);
+					throw new IllegalAddException("A document may only contain one root element: " + content);
 				}
 			}
 
@@ -296,7 +297,7 @@ public class DefaultDocument extends AbstractDocument {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

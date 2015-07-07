@@ -13,17 +13,17 @@ import org.dom4j.ElementPath;
  * This extension on the {@link DispatchHandler}prunes the current {@link
  * org.dom4j.Element} when there are no {@link ElementHandler}objects active
  * the element.
- * 
+ *
  * @author Wonne keysers (Realsoftware)
  */
 class PruningDispatchHandler extends DispatchHandler {
-    public void onEnd(ElementPath elementPath) {
-        super.onEnd(elementPath);
+	public void onEnd(ElementPath elementPath) {
+		super.onEnd(elementPath);
 
-        if (getActiveHandlerCount() == 0) {
-            elementPath.getCurrent().detach();
-        }
-    }
+		if (getActiveHandlerCount() == 0) {
+			elementPath.getCurrent().detach();
+		}
+	}
 }
 
 /*
@@ -46,7 +46,7 @@ class PruningDispatchHandler extends DispatchHandler {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

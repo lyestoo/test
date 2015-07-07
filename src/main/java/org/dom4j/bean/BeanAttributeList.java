@@ -7,144 +7,152 @@
 
 package org.dom4j.bean;
 
-import java.util.AbstractList;
-
 import org.dom4j.Attribute;
 import org.dom4j.QName;
+
+import java.util.AbstractList;
 
 /**
  * <p>
  * <code>BeanAttributeList</code> implements a list of Attributes which are
  * the properties of a JavaBean.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.9 $
  */
 public class BeanAttributeList extends AbstractList {
-    /** The BeanElement that this */
-    private BeanElement parent;
+	/**
+	 * The BeanElement that this
+	 */
+	private BeanElement parent;
 
-    /** The BeanElement that this */
-    private BeanMetaData beanMetaData;
+	/**
+	 * The BeanElement that this
+	 */
+	private BeanMetaData beanMetaData;
 
-    /** The attributes */
-    private BeanAttribute[] attributes;
+	/**
+	 * The attributes
+	 */
+	private BeanAttribute[] attributes;
 
-    public BeanAttributeList(BeanElement parent, BeanMetaData beanMetaData) {
-        this.parent = parent;
-        this.beanMetaData = beanMetaData;
-        this.attributes = new BeanAttribute[beanMetaData.attributeCount()];
-    }
+	public BeanAttributeList(BeanElement parent, BeanMetaData beanMetaData) {
+		this.parent = parent;
+		this.beanMetaData = beanMetaData;
+		this.attributes = new BeanAttribute[beanMetaData.attributeCount()];
+	}
 
-    public BeanAttributeList(BeanElement parent) {
-        this.parent = parent;
+	public BeanAttributeList(BeanElement parent) {
+		this.parent = parent;
 
-        Object data = parent.getData();
-        Class beanClass = (data != null) ? data.getClass() : null;
-        this.beanMetaData = BeanMetaData.get(beanClass);
-        this.attributes = new BeanAttribute[beanMetaData.attributeCount()];
-    }
+		Object data = parent.getData();
+		Class beanClass = (data != null) ? data.getClass() : null;
+		this.beanMetaData = BeanMetaData.get(beanClass);
+		this.attributes = new BeanAttribute[beanMetaData.attributeCount()];
+	}
 
-    public Attribute attribute(String name) {
-        int index = beanMetaData.getIndex(name);
+	public Attribute attribute(String name) {
+		int index = beanMetaData.getIndex(name);
 
-        return attribute(index);
-    }
+		return attribute(index);
+	}
 
-    public Attribute attribute(QName qname) {
-        int index = beanMetaData.getIndex(qname);
+	public Attribute attribute(QName qname) {
+		int index = beanMetaData.getIndex(qname);
 
-        return attribute(index);
-    }
+		return attribute(index);
+	}
 
-    public BeanAttribute attribute(int index) {
-        if ((index >= 0) && (index <= attributes.length)) {
-            BeanAttribute attribute = attributes[index];
+	public BeanAttribute attribute(int index) {
+		if ((index >= 0) && (index <= attributes.length)) {
+			BeanAttribute attribute = attributes[index];
 
-            if (attribute == null) {
-                attribute = createAttribute(parent, index);
-                attributes[index] = attribute;
-            }
+			if (attribute == null) {
+				attribute = createAttribute(parent, index);
+				attributes[index] = attribute;
+			}
 
-            return attribute;
-        }
+			return attribute;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public BeanElement getParent() {
-        return parent;
-    }
+	public BeanElement getParent() {
+		return parent;
+	}
 
-    public QName getQName(int index) {
-        return beanMetaData.getQName(index);
-    }
+	public QName getQName(int index) {
+		return beanMetaData.getQName(index);
+	}
 
-    public Object getData(int index) {
-        return beanMetaData.getData(index, parent.getData());
-    }
+	public Object getData(int index) {
+		return beanMetaData.getData(index, parent.getData());
+	}
 
-    public void setData(int index, Object data) {
-        beanMetaData.setData(index, parent.getData(), data);
-    }
+	public void setData(int index, Object data) {
+		beanMetaData.setData(index, parent.getData(), data);
+	}
 
-    // List interface
-    // -------------------------------------------------------------------------
-    public int size() {
-        return attributes.length;
-    }
+	// List interface
+	// -------------------------------------------------------------------------
 
-    public Object get(int index) {
-        BeanAttribute attribute = attributes[index];
+	public int size() {
+		return attributes.length;
+	}
 
-        if (attribute == null) {
-            attribute = createAttribute(parent, index);
-            attributes[index] = attribute;
-        }
+	public Object get(int index) {
+		BeanAttribute attribute = attributes[index];
 
-        return attribute;
-    }
+		if (attribute == null) {
+			attribute = createAttribute(parent, index);
+			attributes[index] = attribute;
+		}
 
-    public boolean add(Object object) {
-        throw new UnsupportedOperationException("add(Object) unsupported");
-    }
+		return attribute;
+	}
 
-    public void add(int index, Object object) {
-        throw new UnsupportedOperationException("add(int,Object) unsupported");
-    }
+	public boolean add(Object object) {
+		throw new UnsupportedOperationException("add(Object) unsupported");
+	}
 
-    public Object set(int index, Object object) {
-        throw new UnsupportedOperationException("set(int,Object) unsupported");
-    }
+	public void add(int index, Object object) {
+		throw new UnsupportedOperationException("add(int,Object) unsupported");
+	}
 
-    public boolean remove(Object object) {
-        return false;
-    }
+	public Object set(int index, Object object) {
+		throw new UnsupportedOperationException("set(int,Object) unsupported");
+	}
 
-    public Object remove(int index) {
-        BeanAttribute attribute = (BeanAttribute) get(index);
-        Object oldValue = attribute.getValue();
-        attribute.setValue(null);
+	public boolean remove(Object object) {
+		return false;
+	}
 
-        return oldValue;
-    }
+	public Object remove(int index) {
+		BeanAttribute attribute = (BeanAttribute) get(index);
+		Object oldValue = attribute.getValue();
+		attribute.setValue(null);
 
-    public void clear() {
-        for (int i = 0, size = attributes.length; i < size; i++) {
-            BeanAttribute attribute = attributes[i];
+		return oldValue;
+	}
 
-            if (attribute != null) {
-                attribute.setValue(null);
-            }
-        }
-    }
+	public void clear() {
+		for (int i = 0, size = attributes.length; i < size; i++) {
+			BeanAttribute attribute = attributes[i];
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-    protected BeanAttribute createAttribute(BeanElement element, int index) {
-        return new BeanAttribute(this, index);
-    }
+			if (attribute != null) {
+				attribute.setValue(null);
+			}
+		}
+	}
+
+	// Implementation methods
+	// -------------------------------------------------------------------------
+
+	protected BeanAttribute createAttribute(BeanElement element, int index) {
+		return new BeanAttribute(this, index);
+	}
 }
 
 /*
@@ -167,7 +175,7 @@ public class BeanAttributeList extends AbstractList {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

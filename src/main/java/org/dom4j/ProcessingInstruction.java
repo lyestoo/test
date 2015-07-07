@@ -16,60 +16,57 @@ import java.util.Map;
  * {@link Node#getText}method will return the data from all of the
  * instructions.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.10 $
  */
 public interface ProcessingInstruction extends Node {
-    /**
-     * This method is the equivalent to the {@link #getName}method. It is added
-     * for clarity.
-     * 
-     * @return the target of this PI
-     */
-    String getTarget();
+	/**
+	 * This method is the equivalent to the {@link #getName}method. It is added
+	 * for clarity.
+	 *
+	 * @return the target of this PI
+	 */
+	String getTarget();
 
-    /**
-     * This method is the equivalent to the {@link #setName}method. It is added
-     * for clarity.
-     * 
-     * @param target
-     *            DOCUMENT ME!
-     */
-    void setTarget(String target);
+	/**
+	 * This method is the equivalent to the {@link #setName}method. It is added
+	 * for clarity.
+	 *
+	 * @param target DOCUMENT ME!
+	 */
+	void setTarget(String target);
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the text for all the data associated with the processing
-     *         instruction
-     */
-    String getText();
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the text for all the data associated with the processing
+	 *         instruction
+	 */
+	String getText();
 
-    /**
-     * <p>
-     * Returns the value of a specific name in the PI.
-     * </p>
-     * 
-     * @param name
-     *            is the name of the attribute to lookup.
-     * 
-     * @return the value of the named attribute
-     */
-    String getValue(String name);
+	/**
+	 * <p>
+	 * Returns the value of a specific name in the PI.
+	 * </p>
+	 *
+	 * @param name is the name of the attribute to lookup.
+	 * @return the value of the named attribute
+	 */
+	String getValue(String name);
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the values for this processing instruction as a Map
-     */
-    Map<String, String> getValues();
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the values for this processing instruction as a Map
+	 */
+	Map<String, String> getValues();
 
-    void setValue(String name, String value);
+	void setValue(String name, String value);
 
-    void setValues(Map<String, String> data);
+	void setValues(Map<String, String> data);
 
-    boolean removeValue(String name);
+	boolean removeValue(String name);
 }
 
 /*
@@ -92,7 +89,7 @@ public interface ProcessingInstruction extends Node {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

@@ -19,75 +19,78 @@ import org.dom4j.tree.DefaultElement;
  * This can be useful for developers wishing to create XML trees and adorn the
  * trees with user defined objects.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.12 $
  */
 public class UserDataElement extends DefaultElement {
-    /** The user data object */
-    private Object data;
+	/**
+	 * The user data object
+	 */
+	private Object data;
 
-    public UserDataElement(String name) {
-        super(name);
-    }
+	public UserDataElement(String name) {
+		super(name);
+	}
 
-    public UserDataElement(QName qname) {
-        super(qname);
-    }
+	public UserDataElement(QName qname) {
+		super(qname);
+	}
 
-    public Object getData() {
-        return data;
-    }
+	public Object getData() {
+		return data;
+	}
 
-    public void setData(Object data) {
-        this.data = data;
-    }
+	public void setData(Object data) {
+		this.data = data;
+	}
 
-    public String toString() {
-        return super.toString() + " userData: " + data;
-    }
+	public String toString() {
+		return super.toString() + " userData: " + data;
+	}
 
-    public Object clone() {
-        UserDataElement answer = (UserDataElement) super.clone();
+	@Override
+	public UserDataElement clone() {
+		UserDataElement answer = (UserDataElement) super.clone();
 
-        if (answer != this) {
-            answer.data = getCopyOfUserData();
-        }
+		if (answer != this) {
+			answer.data = getCopyOfUserData();
+		}
 
-        return answer;
-    }
+		return answer;
+	}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
+	// Implementation methods
+	// -------------------------------------------------------------------------
 
-    /**
-     * If a deep copy of user data is required whenever the clone() or
-     * createCopy() methods are called on this element then this method should
-     * return a clone of the user data
-     * 
-     * @return DOCUMENT ME!
-     */
-    protected Object getCopyOfUserData() {
-        return data;
-    }
+	/**
+	 * If a deep copy of user data is required whenever the clone() or
+	 * createCopy() methods are called on this element then this method should
+	 * return a clone of the user data
+	 *
+	 * @return DOCUMENT ME!
+	 */
+	protected Object getCopyOfUserData() {
+		return data;
+	}
 
-    protected Element createElement(String name) {
-        Element answer = getDocumentFactory().createElement(name);
-        answer.setData(getCopyOfUserData());
+	protected Element createElement(String name) {
+		Element answer = getDocumentFactory().createElement(name);
+		answer.setData(getCopyOfUserData());
 
-        return answer;
-    }
+		return answer;
+	}
 
-    protected Element createElement(QName qName) {
-        Element answer = getDocumentFactory().createElement(qName);
-        answer.setData(getCopyOfUserData());
+	protected Element createElement(QName qName) {
+		Element answer = getDocumentFactory().createElement(qName);
+		answer.setData(getCopyOfUserData());
 
-        return answer;
-    }
+		return answer;
+	}
 
-    // protected DocumentFactory getDocumentFactory() {
-    // return DOCUMENT_FACTORY;
-    // }
+	// protected DefaultDocumentFactory getDocumentFactory() {
+	// return DOCUMENT_FACTORY;
+	// }
 }
 
 /*
@@ -110,7 +113,7 @@ public class UserDataElement extends DefaultElement {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

@@ -12,17 +12,17 @@ package org.dom4j;
  * <code>InvalidXPathException</code> is thrown when an invalid XPath
  * expression is used to traverse an XML document
  * </p>
- * 
+ *
  * @version $Revision: 1.6 $
  */
 public class InvalidXPathException extends IllegalArgumentException {
-    public InvalidXPathException(String xpath) {
-        super("Invalid XPath expression: " + xpath);
-    }
+	public InvalidXPathException(String xpath) {
+		super("Invalid XPath expression: " + xpath);
+	}
 
-    public InvalidXPathException(String xpath, String reason) {
-        super("Invalid XPath expression: " + xpath + " " + reason);
-    }
+	public InvalidXPathException(String xpath, String reason) {
+		super("Invalid XPath expression: " + xpath + " " + reason);
+	}
 }
 
 /*
@@ -45,7 +45,7 @@ public class InvalidXPathException extends IllegalArgumentException {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

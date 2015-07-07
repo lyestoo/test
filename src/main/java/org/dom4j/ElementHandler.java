@@ -14,28 +14,26 @@ package org.dom4j;
  * processing models such as for processing large XML documents as they are
  * being parsed rather than waiting until the whole document is parsed.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.8 $
  */
 public interface ElementHandler {
-    /**
-     * Called by an event based processor when an elements openning tag is
-     * encountered.
-     * 
-     * @param elementPath
-     *            is the current <code>ElementPath</code> to process
-     */
-    void onStart(ElementPath elementPath);
+	/**
+	 * Called by an event based processor when an elements openning tag is
+	 * encountered.
+	 *
+	 * @param elementPath is the current <code>ElementPath</code> to process
+	 */
+	void onStart(ElementPath elementPath);
 
-    /**
-     * Called by an event based processor when an elements closing tag is
-     * encountered.
-     * 
-     * @param elementPath
-     *            is the current <code>ElementPath</code> to process
-     */
-    void onEnd(ElementPath elementPath);
+	/**
+	 * Called by an event based processor when an elements closing tag is
+	 * encountered.
+	 *
+	 * @param elementPath is the current <code>ElementPath</code> to process
+	 */
+	void onEnd(ElementPath elementPath);
 }
 
 /*
@@ -58,7 +56,7 @@ public interface ElementHandler {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

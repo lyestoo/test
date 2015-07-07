@@ -7,14 +7,13 @@
 
 package org.dom4j.xpath;
 
-import java.io.Serializable;
-
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.Node;
-
 import org.jaxen.NamespaceContext;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -22,46 +21,46 @@ import org.jaxen.NamespaceContext;
  * such that a context node is used to determine the current XPath namespace
  * prefixes and namespace URIs available.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  */
 public class DefaultNamespaceContext implements NamespaceContext, Serializable {
-    private final Element element;
+	private final Element element;
 
-    public DefaultNamespaceContext(Element element) {
-        this.element = element;
-    }
+	public DefaultNamespaceContext(Element element) {
+		this.element = element;
+	}
 
-    public static DefaultNamespaceContext create(Object node) {
-        Element element = null;
+	public static DefaultNamespaceContext create(Object node) {
+		Element element = null;
 
-        if (node instanceof Element) {
-            element = (Element) node;
-        } else if (node instanceof Document) {
-            Document doc = (Document) node;
-            element = doc.getRootElement();
-        } else if (node instanceof Node) {
-            element = ((Node) node).getParent();
-        }
+		if (node instanceof Element) {
+			element = (Element) node;
+		} else if (node instanceof Document) {
+			Document doc = (Document) node;
+			element = doc.getRootElement();
+		} else if (node instanceof Node) {
+			element = ((Node) node).getParent();
+		}
 
-        if (element != null) {
-            return new DefaultNamespaceContext(element);
-        }
+		if (element != null) {
+			return new DefaultNamespaceContext(element);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public String translateNamespacePrefixToUri(String prefix) {
-        if ((prefix != null) && (prefix.length() > 0)) {
-            Namespace ns = element.getNamespaceForPrefix(prefix);
+	public String translateNamespacePrefixToUri(String prefix) {
+		if ((prefix != null) && (prefix.length() > 0)) {
+			Namespace ns = element.getNamespaceForPrefix(prefix);
 
-            if (ns != null) {
-                return ns.getURI();
-            }
-        }
+			if (ns != null) {
+				return ns.getURI();
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 }
 
 /*
@@ -84,7 +83,7 @@ public class DefaultNamespaceContext implements NamespaceContext, Serializable {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

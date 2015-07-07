@@ -6,79 +6,76 @@
  */
 package org.dom4j;
 
-import java.util.List;
-import org.dom4j.dtd.Declaration;
 import org.dom4j.dtd.ExternalDeclaration;
 import org.dom4j.dtd.InternalDeclaration;
+
+import java.util.List;
 
 /**
  * <p>
  * <code>DocumentType</code> defines an XML DOCTYPE declaration.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.10 $
  */
 public interface DocumentType extends Node {
 
-    /**
-     * This method is the equivalent to the {@link #getName}method. It is added
-     * for clarity.
-     * 
-     * @return the root element name for the document type.
-     */
-    String getElementName();
+	/**
+	 * This method is the equivalent to the {@link #getName}method. It is added
+	 * for clarity.
+	 *
+	 * @return the root element name for the document type.
+	 */
+	String getElementName();
 
-    /**
-     * This method is the equivalent to the {@link #setName}method. It is added
-     * for clarity.
-     * 
-     * @param elementName
-     *            DOCUMENT ME!
-     */
-    void setElementName(String elementName);
+	/**
+	 * This method is the equivalent to the {@link #setName}method. It is added
+	 * for clarity.
+	 *
+	 * @param elementName DOCUMENT ME!
+	 */
+	void setElementName(String elementName);
 
-    String getPublicID();
+	String getPublicID();
 
-    void setPublicID(String publicID);
+	void setPublicID(String publicID);
 
-    String getSystemID();
+	String getSystemID();
 
-    void setSystemID(String systemID);
+	void setSystemID(String systemID);
 
-    /**
-     * Returns a list of internal DTD declaration objects, defined in the
-     * {@link org.dom4j.dtd}package
-     * 
-     * @return DOCUMENT ME!
-     */
-    List<InternalDeclaration> getInternalDeclarations();
+	/**
+	 * Returns a list of internal DTD declaration objects, defined in the
+	 * {@link org.dom4j.dtd}package
+	 *
+	 * @return DOCUMENT ME!
+	 */
+	List<InternalDeclaration> getInternalDeclarations();
 
-    /**
-     * Sets the list of internal DTD declaration objects, defined in the
-     * {@link org.dom4j.dtd}package
-     * 
-     * @param declarations
-     *            DOCUMENT ME!
-     */
-    void setInternalDeclarations(List<InternalDeclaration> declarations);
+	/**
+	 * Sets the list of internal DTD declaration objects, defined in the
+	 * {@link org.dom4j.dtd}package
+	 *
+	 * @param declarations DOCUMENT ME!
+	 */
+	void setInternalDeclarations(List<InternalDeclaration> declarations);
 
-    /**
-     * Returns a list of internal DTD declaration objects, defined in the
-     * {@link org.dom4j.dtd}package
-     * 
-     * @return DOCUMENT ME!
-     */
-    List<ExternalDeclaration> getExternalDeclarations();
+	/**
+	 * Returns a list of internal DTD declaration objects, defined in the
+	 * {@link org.dom4j.dtd}package
+	 *
+	 * @return DOCUMENT ME!
+	 */
+	List<ExternalDeclaration> getExternalDeclarations();
 
-    /**
-     * Sets the list of internal DTD declaration objects, defined in the
-     * {@link org.dom4j.dtd}package
-     * 
-     * @param declarations
-     *            DOCUMENT ME!
-     */
-    void setExternalDeclarations(List<ExternalDeclaration> declarations);
+	/**
+	 * Sets the list of internal DTD declaration objects, defined in the
+	 * {@link org.dom4j.dtd}package
+	 *
+	 * @param declarations DOCUMENT ME!
+	 */
+	void setExternalDeclarations(List<ExternalDeclaration> declarations);
 }
 
 /*
@@ -101,7 +98,7 @@ public interface DocumentType extends Node {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

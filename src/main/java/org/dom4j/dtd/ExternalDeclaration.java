@@ -4,7 +4,6 @@
 package org.dom4j.dtd;
 
 /**
- *
  * @author Jirsák Filip
  * @version $Revision$
  */

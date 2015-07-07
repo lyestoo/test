@@ -7,53 +7,54 @@
 
 package org.dom4j.swing;
 
-import javax.swing.tree.DefaultTreeModel;
-
 import org.dom4j.Document;
+
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  * <p>
  * <code>DocumentTreeModel</code> implements a Swing TreeModel for a dom4j XML
  * Document.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @author Jakob Jenkov
  * @version $Revision: 1.7 $
  */
 public class DocumentTreeModel extends DefaultTreeModel {
-    /** The document for this model */
-    protected Document document;
+	/**
+	 * The document for this model
+	 */
+	protected Document document;
 
-    public DocumentTreeModel(Document document) {
-        super(new BranchTreeNode(document));
-        this.document = document;
-    }
+	public DocumentTreeModel(Document document) {
+		super(new BranchTreeNode(document));
+		this.document = document;
+	}
 
-    // Properties
-    // -------------------------------------------------------------------------
+	// Properties
+	// -------------------------------------------------------------------------
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the <code>Document</code> instance that this
-     *         <code>TreeModel</code> is based on
-     */
-    public Document getDocument() {
-        return document;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the <code>Document</code> instance that this
+	 *         <code>TreeModel</code> is based on
+	 */
+	public Document getDocument() {
+		return document;
+	}
 
-    /**
-     * Sets the <code>Document</code> instance that this
-     * <code>TreeModel</code> is based on
-     * 
-     * @param document
-     *            DOCUMENT ME!
-     */
-    public void setDocument(Document document) {
-        this.document = document;
-        setRoot(new BranchTreeNode(document));
-    }
+	/**
+	 * Sets the <code>Document</code> instance that this
+	 * <code>TreeModel</code> is based on
+	 *
+	 * @param document DOCUMENT ME!
+	 */
+	public void setDocument(Document document) {
+		this.document = document;
+		setRoot(new BranchTreeNode(document));
+	}
 }
 
 /*
@@ -76,7 +77,7 @@ public class DocumentTreeModel extends DefaultTreeModel {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

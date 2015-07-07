@@ -15,33 +15,33 @@ import org.dom4j.Element;
  * <code>AbstractCharacterData</code> is an abstract base class for tree
  * implementors to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.12 $
  */
 public abstract class AbstractCharacterData extends AbstractNode implements
-        CharacterData {
-    public AbstractCharacterData() {
-    }
+		CharacterData {
+	public AbstractCharacterData() {
+	}
 
-    public String getPath(Element context) {
-        Element parent = getParent();
+	public String getPath(Element context) {
+		Element parent = getParent();
 
-        return ((parent != null) && (parent != context)) ? (parent
-                .getPath(context) + "/text()") : "text()";
-    }
+		return ((parent != null) && (parent != context)) ? (parent
+				.getPath(context) + "/text()") : "text()";
+	}
 
-    public String getUniquePath(Element context) {
-        Element parent = getParent();
+	public String getUniquePath(Element context) {
+		Element parent = getParent();
 
-        return ((parent != null) && (parent != context)) ? (parent
-                .getUniquePath(context) + "/text()") : "text()";
-    }
+		return ((parent != null) && (parent != context)) ? (parent
+				.getUniquePath(context) + "/text()") : "text()";
+	}
 
-    public void appendText(String text) {
-        //TODO inefficient implementation
-        setText(getText() + text);
-    }
+	public void appendText(String text) {
+		//TODO inefficient implementation
+		setText(getText() + text);
+	}
 }
 
 /*
@@ -64,7 +64,7 @@ public abstract class AbstractCharacterData extends AbstractNode implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

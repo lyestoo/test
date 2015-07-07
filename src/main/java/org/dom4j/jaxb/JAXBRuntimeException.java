@@ -11,19 +11,18 @@ package org.dom4j.jaxb;
  * Exception internally thrown by the JAXBReader classes. This is a
  * RuntimeException since the {@link org.dom4j.ElementHandler}methods do not
  * throw Exceptions.
- * 
+ *
  * @author Wonne Keysers (Realsoftware.be)
  */
 class JAXBRuntimeException extends RuntimeException {
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param cause
-     *            The causing {@link java.lang.Throwable}
-     */
-    protected JAXBRuntimeException(Throwable cause) {
-        super(cause);
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param cause The causing {@link java.lang.Throwable}
+	 */
+	protected JAXBRuntimeException(Throwable cause) {
+		super(cause);
+	}
 }
 
 /*
@@ -46,7 +45,7 @@ class JAXBRuntimeException extends RuntimeException {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

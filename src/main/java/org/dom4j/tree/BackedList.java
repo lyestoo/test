@@ -7,165 +7,131 @@
 
 package org.dom4j.tree;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import org.dom4j.Node;
+
 import java.util.Iterator;
 import java.util.List;
 
-import org.dom4j.Node;
-
 /**
- * <p>
  * <code>BackedList</code> represents a list of content of a {@link
  * org.dom4j.Branch}. Changes to the list will be reflected in the branch,
  * though changes to the branch will not be reflected in this list.
- * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.14 $
  */
-public class BackedList<T extends Node> extends ArrayList<T> {
-    /** The content of the Branch which is modified if I am modified */
-    private List<Node> branchContent;
+public class BackedList<T extends Node> extends LazyList<T> {
+	/**
+	 * The content of the Branch which is modified if I am modified
+	 */
+	private final List<Node> branchContent;
 
-    /** The <code>AbstractBranch</code> instance which owns the content */
-    private AbstractBranch branch;
+	/**
+	 * The <code>AbstractBranch</code> instance which owns the content
+	 */
+	private final AbstractBranch branch;
 
-    public BackedList(AbstractBranch branch, List<Node> branchContent) {
-        this(branch, branchContent, branchContent.size());
-    }
+	public BackedList(AbstractBranch branch, List<Node> branchContent) {
+		super();
+		this.branch = branch;
+		this.branchContent = branchContent;
+	}
 
-    public BackedList(AbstractBranch branch, List<Node> branchContent, int capacity) {
-        super(capacity);
-        this.branch = branch;
-        this.branchContent = branchContent;
-    }
+	public BackedList(AbstractBranch branch, List<Node> branchContent,
+	                  List<T> initialContent) {
+		this(branch, branchContent);
+		this.addAll(initialContent);
+	}
 
-    public BackedList(AbstractBranch branch, List<Node> branchContent,
-            List<T> initialContent) {
-        super(initialContent);
-        this.branch = branch;
-        this.branchContent = branchContent;
-    }
+	@Override
+	public boolean add(T node) {
+		branch.addNode(node);
 
-    @Override
-    public boolean add(T node) {
-        branch.addNode(node);
+		return super.add(node);
+	}
 
-        return super.add(node);
-    }
+	@Override
+	public void add(int index, T node) {
+		if (index < 0) {
+			throw new IndexOutOfBoundsException("Index value: " + index
+					+ " is less than zero");
+		} else if (index > this.size()) {
+			throw new IndexOutOfBoundsException("Index value: " + index
+					+ " cannot be greater than " + "the size: " + this.size());
+		}
 
-    @Override
-    public void add(int index, T node) {
-        int size = size();
+		int realIndex;
 
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("Index value: " + index
-                    + " is less than zero");
-        } else if (index > size) {
-            throw new IndexOutOfBoundsException("Index value: " + index
-                    + " cannot be greater than " + "the size: " + size);
-        }
+		if (this.size() == 0) {
+			realIndex = branchContent.size();
+		} else if (index < this.size()) {
+			realIndex = branchContent.indexOf(get(index));
+		} else {
+			realIndex = branchContent.indexOf(get(this.size() - 1)) + 1;
+		}
 
-        int realIndex;
+		branch.addNode(realIndex, node);
+		super.add(index, node);
+	}
 
-        if (size == 0) {
-            realIndex = branchContent.size();
-        } else if (index < size) {
-            realIndex = branchContent.indexOf(get(index));
-        } else {
-            realIndex = branchContent.indexOf(get(size - 1)) + 1;
-        }
+	@Override
+	public T set(int index, T node) {
+		int realIndex = branchContent.indexOf(get(index));
 
-        branch.addNode(realIndex, node);
-        super.add(index, node);
-    }
+		if (realIndex < 0) {
+			realIndex = (index == 0) ? 0 : Integer.MAX_VALUE;
+		}
 
-    @Override
-    public T set(int index, T node) {
-        int realIndex = branchContent.indexOf(get(index));
+		if (realIndex < branchContent.size()) {
+			branch.removeNode(get(index));
+			branch.addNode(realIndex, node);
+		} else {
+			branch.removeNode(get(index));
+			branch.addNode(node);
+		}
 
-        if (realIndex < 0) {
-            realIndex = (index == 0) ? 0 : Integer.MAX_VALUE;
-        }
+		branch.childAdded(node);
 
-        if (realIndex < branchContent.size()) {
-            branch.removeNode(get(index));
-            branch.addNode(realIndex, node);
-        } else {
-            branch.removeNode(get(index));
-            branch.addNode(node);
-        }
+		return super.set(index, node);
+	}
 
-        branch.childAdded(node);
+	public boolean remove(Node node) {
+		branch.removeNode(node);
 
-        return super.set(index, node);
-    }
+		return super.remove(node);
+	}
 
-    public boolean remove(Node node) {
-        branch.removeNode(node);
+	@Override
+	public T remove(int index) {
+		T node = super.remove(index);
 
-        return super.remove(node);
-    }
+		if (node != null) {
+			branch.removeNode(node);
+		}
 
-    @Override
-    public T remove(int index) {
-        T node = super.remove(index);
+		return node;
+	}
 
-        if (node != null) {
-            branch.removeNode(node);
-        }
+	@Override
+	public void clear() {
+		for (Iterator<T> iter = iterator(); iter.hasNext();) {
+			T node = iter.next();
+			branchContent.remove(node);
+			branch.childRemoved(node);
+		}
 
-        return node;
-    }
+		super.clear();
+	}
 
-    @Override
-    public boolean addAll(Collection<? extends T> collection) {
-        ensureCapacity(size() + collection.size());
-
-        int count = size();
-
-        for (Iterator<? extends T> iter = collection.iterator(); iter.hasNext(); count--) {
-            add(iter.next());
-        }
-
-        return count != 0;
-    }
-
-    @Override
-    public boolean addAll(int index, Collection<? extends T> collection) {
-        ensureCapacity(size() + collection.size());
-
-        int count = size();
-
-        for (Iterator<? extends T> iter = collection.iterator(); iter.hasNext(); count--) {
-            add(index++, iter.next());
-        }
-
-        return count != 0;
-    }
-
-    @Override
-    public void clear() {
-        for (Iterator<T> iter = iterator(); iter.hasNext();) {
-            T node = iter.next();
-            branchContent.remove(node);
-            branch.childRemoved(node);
-        }
-
-        super.clear();
-    }
-
-    /**
-     * Performs a local addition which is not forward through to the Branch or
-     * backing list
-     * 
-     * @param object
-     *            DOCUMENT ME!
-     */
-    public void addLocal(T node) {
-        super.add(node);
-    }
+	/**
+	 * Performs a local addition which is not forward through to the Branch or
+	 * backing list
+	 *
+	 * @param object DOCUMENT ME!
+	 */
+	public void addLocal(T node) {
+		super.add(node);
+	}
 }
 
 /*
@@ -188,7 +154,7 @@ public class BackedList<T extends Node> extends ArrayList<T> {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

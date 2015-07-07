@@ -12,126 +12,128 @@ package org.dom4j.dtd;
  * <code>InternalEntityDecl</code> represents an internal entity declaration
  * in a DTD.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.9 $
  */
 public class InternalEntityDecl implements InternalDeclaration {
-    /** Holds value of property name. */
-    private String name;
+	/**
+	 * Holds value of property name.
+	 */
+	private String name;
 
-    /** Holds value of property value. */
-    private String value;
+	/**
+	 * Holds value of property value.
+	 */
+	private String value;
 
-    public InternalEntityDecl() {
-    }
+	public InternalEntityDecl() {
+	}
 
-    public InternalEntityDecl(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
+	public InternalEntityDecl(String name, String value) {
+		this.name = name;
+		this.value = value;
+	}
 
-    /**
-     * Getter for property name.
-     * 
-     * @return Value of property name.
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Getter for property name.
+	 *
+	 * @return Value of property name.
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Setter for property name.
-     * 
-     * @param name
-     *            New value of property name.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 * Setter for property name.
+	 *
+	 * @param name New value of property name.
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    /**
-     * Getter for property value.
-     * 
-     * @return Value of property value.
-     */
-    public String getValue() {
-        return value;
-    }
+	/**
+	 * Getter for property value.
+	 *
+	 * @return Value of property value.
+	 */
+	public String getValue() {
+		return value;
+	}
 
-    /**
-     * Setter for property value.
-     * 
-     * @param value
-     *            New value of property value.
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+	/**
+	 * Setter for property value.
+	 *
+	 * @param value New value of property value.
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    public String toString() {
-        StringBuffer buffer = new StringBuffer("<!ENTITY ");
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("<!ENTITY ");
 
-        if (name.startsWith("%")) {
-            buffer.append("% ");
-            buffer.append(name.substring(1));
-        } else {
-            buffer.append(name);
-        }
+		if (name.startsWith("%")) {
+			buffer.append("% ");
+			buffer.append(name.substring(1));
+		} else {
+			buffer.append(name);
+		}
 
-        buffer.append(" \"");
-        buffer.append(escapeEntityValue(value));
-        buffer.append("\">");
+		buffer.append(" \"");
+		buffer.append(escapeEntityValue(value));
+		buffer.append("\">");
 
-        return buffer.toString();
-    }
+		return buffer.toString();
+	}
 
-    private String escapeEntityValue(String text) {
-        StringBuffer result = new StringBuffer();
+	private String escapeEntityValue(String text) {
+		StringBuffer result = new StringBuffer();
 
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
+		for (int i = 0; i < text.length(); i++) {
+			char c = text.charAt(i);
 
-            switch (c) {
-                case '<':
-                    result.append("&#38;#60;");
+			switch (c) {
+				case '<':
+					result.append("&#38;#60;");
 
-                    break;
+					break;
 
-                case '>':
-                    result.append("&#62;");
+				case '>':
+					result.append("&#62;");
 
-                    break;
+					break;
 
-                case '&':
-                    result.append("&#38;#38;");
+				case '&':
+					result.append("&#38;#38;");
 
-                    break;
+					break;
 
-                case '\'':
-                    result.append("&#39;");
+				case '\'':
+					result.append("&#39;");
 
-                    break;
+					break;
 
-                case '\"':
-                    result.append("&#34;");
+				case '\"':
+					result.append("&#34;");
 
-                    break;
+					break;
 
-                default:
+				default:
 
-                    if (c < 32) {
-                        result.append("&#" + (int) c + ";");
-                    } else {
-                        result.append(c);
-                    }
+					if (c < 32) {
+						result.append("&#" + (int) c + ";");
+					} else {
+						result.append(c);
+					}
 
-                    break;
-            }
-        }
+					break;
+			}
+		}
 
-        return result.toString();
-    }
+		return result.toString();
+	}
 }
 
 /*
@@ -154,7 +156,7 @@ public class InternalEntityDecl implements InternalDeclaration {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

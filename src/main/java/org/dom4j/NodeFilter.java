@@ -11,25 +11,23 @@ package org.dom4j;
  * <p>
  * <code>NodeFilter</code> defines the behavior for a filter or predicate
  * which acts on a DOM4J Node. Instances can be generated from an {@link
- * DocumentFactory}.
+ * DefaultDocumentFactory}.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.7 $
  */
 public interface NodeFilter {
-    /**
-     * <p>
-     * <code>matches</code> returns true if the given node matches the filter
-     * condition.
-     * </p>
-     * 
-     * @param node
-     *            DOCUMENT ME!
-     * 
-     * @return true if this filter matches the given node
-     */
-    boolean matches(Node node);
+	/**
+	 * <p>
+	 * <code>matches</code> returns true if the given node matches the filter
+	 * condition.
+	 * </p>
+	 *
+	 * @param node DOCUMENT ME!
+	 * @return true if this filter matches the given node
+	 */
+	boolean matches(Node node);
 }
 
 /*
@@ -52,7 +50,7 @@ public interface NodeFilter {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

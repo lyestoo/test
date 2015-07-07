@@ -18,166 +18,167 @@ import org.dom4j.ElementPath;
  * an integration possibility allowing derivations to prune the tree when a node
  * is complete.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.14 $
  */
 class ElementStack implements ElementPath {
-    /** stack of <code>Element</code> objects */
-    protected Element[] stack;
+	/**
+	 * stack of <code>Element</code> objects
+	 */
+	protected Element[] stack;
 
-    /** index of the item at the top of the stack or -1 if the stack is empty */
-    protected int lastElementIndex = -1;
+	/**
+	 * index of the item at the top of the stack or -1 if the stack is empty
+	 */
+	protected int lastElementIndex = -1;
 
-    private DispatchHandler handler = null;
+	private DispatchHandler handler = null;
 
-    public ElementStack() {
-        this(50);
-    }
+	public ElementStack() {
+		this(50);
+	}
 
-    public ElementStack(int defaultCapacity) {
-        stack = new Element[defaultCapacity];
-    }
+	public ElementStack(int defaultCapacity) {
+		stack = new Element[defaultCapacity];
+	}
 
-    public void setDispatchHandler(DispatchHandler dispatchHandler) {
-        this.handler = dispatchHandler;
-    }
+	public void setDispatchHandler(DispatchHandler dispatchHandler) {
+		this.handler = dispatchHandler;
+	}
 
-    public DispatchHandler getDispatchHandler() {
-        return this.handler;
-    }
+	public DispatchHandler getDispatchHandler() {
+		return this.handler;
+	}
 
-    /**
-     * Peeks at the top element on the stack without changing the contents of
-     * the stack.
-     */
-    public void clear() {
-        lastElementIndex = -1;
-    }
+	/**
+	 * Peeks at the top element on the stack without changing the contents of
+	 * the stack.
+	 */
+	public void clear() {
+		lastElementIndex = -1;
+	}
 
-    /**
-     * Peeks at the top element on the stack without changing the contents of
-     * the stack.
-     * 
-     * @return the current element on the stack
-     */
-    public Element peekElement() {
-        if (lastElementIndex < 0) {
-            return null;
-        }
+	/**
+	 * Peeks at the top element on the stack without changing the contents of
+	 * the stack.
+	 *
+	 * @return the current element on the stack
+	 */
+	public Element peekElement() {
+		if (lastElementIndex < 0) {
+			return null;
+		}
 
-        return stack[lastElementIndex];
-    }
+		return stack[lastElementIndex];
+	}
 
-    /**
-     * Pops the element off the stack
-     * 
-     * @return the element that has just been popped off the stack
-     */
-    public Element popElement() {
-        if (lastElementIndex < 0) {
-            return null;
-        }
+	/**
+	 * Pops the element off the stack
+	 *
+	 * @return the element that has just been popped off the stack
+	 */
+	public Element popElement() {
+		if (lastElementIndex < 0) {
+			return null;
+		}
 
-        return stack[lastElementIndex--];
-    }
+		return stack[lastElementIndex--];
+	}
 
-    /**
-     * Pushes a new element onto the stack
-     * 
-     * @param element
-     *            DOCUMENT ME!
-     */
-    public void pushElement(Element element) {
-        int length = stack.length;
+	/**
+	 * Pushes a new element onto the stack
+	 *
+	 * @param element DOCUMENT ME!
+	 */
+	public void pushElement(Element element) {
+		int length = stack.length;
 
-        if (++lastElementIndex >= length) {
-            reallocate(length * 2);
-        }
+		if (++lastElementIndex >= length) {
+			reallocate(length * 2);
+		}
 
-        stack[lastElementIndex] = element;
-    }
+		stack[lastElementIndex] = element;
+	}
 
-    /**
-     * Reallocates the stack to the given size
-     * 
-     * @param size
-     *            DOCUMENT ME!
-     */
-    protected void reallocate(int size) {
-        Element[] oldStack = stack;
-        stack = new Element[size];
-        System.arraycopy(oldStack, 0, stack, 0, oldStack.length);
-    }
+	/**
+	 * Reallocates the stack to the given size
+	 *
+	 * @param size DOCUMENT ME!
+	 */
+	protected void reallocate(int size) {
+		Element[] oldStack = stack;
+		stack = new Element[size];
+		System.arraycopy(oldStack, 0, stack, 0, oldStack.length);
+	}
 
-    // The ElementPath Interface
-    //
-    public int size() {
-        return lastElementIndex + 1;
-    }
+	// The ElementPath Interface
+	//
 
-    public Element getElement(int depth) {
-        Element element;
+	public int size() {
+		return lastElementIndex + 1;
+	}
 
-        try {
-            element = (Element) stack[depth];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            element = null;
-        }
+	public Element getElement(int depth) {
+		Element element;
 
-        return element;
-    }
+		try {
+			element = (Element) stack[depth];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			element = null;
+		}
 
-    public String getPath() {
-        if (handler == null) {
-            setDispatchHandler(new DispatchHandler());
-        }
+		return element;
+	}
 
-        return handler.getPath();
-    }
+	public String getPath() {
+		if (handler == null) {
+			setDispatchHandler(new DispatchHandler());
+		}
 
-    public Element getCurrent() {
-        return peekElement();
-    }
+		return handler.getPath();
+	}
 
-    public void addHandler(String path, ElementHandler elementHandler) {
-        this.handler.addHandler(getHandlerPath(path), elementHandler);
-    }
+	public Element getCurrent() {
+		return peekElement();
+	}
 
-    public void removeHandler(String path) {
-        this.handler.removeHandler(getHandlerPath(path));
-    }
+	public void addHandler(String path, ElementHandler elementHandler) {
+		this.handler.addHandler(getHandlerPath(path), elementHandler);
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param path
-     *            DOCUMENT ME!
-     * 
-     * @return true when an <code>ElementHandler</code> is registered for the
-     *         specified path.
-     */
-    public boolean containsHandler(String path) {
-        return this.handler.containsHandler(path);
-    }
+	public void removeHandler(String path) {
+		this.handler.removeHandler(getHandlerPath(path));
+	}
 
-    private String getHandlerPath(String path) {
-        String handlerPath;
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param path DOCUMENT ME!
+	 * @return true when an <code>ElementHandler</code> is registered for the
+	 *         specified path.
+	 */
+	public boolean containsHandler(String path) {
+		return this.handler.containsHandler(path);
+	}
 
-        if (this.handler == null) {
-            setDispatchHandler(new DispatchHandler());
-        }
+	private String getHandlerPath(String path) {
+		String handlerPath;
 
-        if (path.startsWith("/")) {
-            handlerPath = path;
-        } else if (getPath().equals("/")) {
-            handlerPath = getPath() + path;
-        } else {
-            handlerPath = getPath() + "/" + path;
-        }
+		if (this.handler == null) {
+			setDispatchHandler(new DispatchHandler());
+		}
 
-        return handlerPath;
-    }
+		if (path.startsWith("/")) {
+			handlerPath = path;
+		} else if (getPath().equals("/")) {
+			handlerPath = getPath() + path;
+		} else {
+			handlerPath = getPath() + "/" + path;
+		}
+
+		return handlerPath;
+	}
 }
 
 /*
@@ -200,7 +201,7 @@ class ElementStack implements ElementPath {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

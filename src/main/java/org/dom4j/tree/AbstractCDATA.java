@@ -7,67 +7,67 @@
 
 package org.dom4j.tree;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-
 import org.dom4j.CDATA;
 import org.dom4j.NodeType;
 import org.dom4j.Visitor;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * <p>
  * <code>AbstractCDATA</code> is an abstract base class for tree implementors
  * to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.12 $
  */
 public abstract class AbstractCDATA extends AbstractCharacterData implements
-        CDATA {
-    public AbstractCDATA() {
-    }
+		CDATA {
+	public AbstractCDATA() {
+	}
 
-    @Override
-    public NodeType getNodeTypeEnum() {
-        return NodeType.CDATA_SECTION_NODE;
-    }
+	@Override
+	public NodeType getNodeTypeEnum() {
+		return NodeType.CDATA_SECTION_NODE;
+	}
 
-    @Override
-    protected void toString(StringBuilder builder) {
-        super.toString(builder);
-        builder.append(" [CDATA: \"");
-        builder.append(getText());
-        builder.append("\"]");
-    }
+	@Override
+	protected void toString(StringBuilder builder) {
+		super.toString(builder);
+		builder.append(" [CDATA: \"");
+		builder.append(getText());
+		builder.append("\"]");
+	}
 
-    public String asXML() {
-        StringWriter writer = new StringWriter();
+	public String asXML() {
+		StringWriter writer = new StringWriter();
 
-        try {
-            write(writer);
-        } catch (IOException e) {
-            // will not happen since we are using a StringWriter!
-        }
+		try {
+			write(writer);
+		} catch (IOException e) {
+			// will not happen since we are using a StringWriter!
+		}
 
-        return writer.toString();
-    }
+		return writer.toString();
+	}
 
-    @Override
-    public void write(Writer writer) throws IOException {
-        writer.write("<![CDATA[");
+	@Override
+	public void write(Writer writer) throws IOException {
+		writer.write("<![CDATA[");
 
-        if (getText() != null) {
-            writer.write(getText());
-        }
+		if (getText() != null) {
+			writer.write(getText());
+		}
 
-        writer.write("]]>");
-    }
+		writer.write("]]>");
+	}
 
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
 }
 
 /*
@@ -90,7 +90,7 @@ public abstract class AbstractCDATA extends AbstractCharacterData implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

@@ -16,34 +16,34 @@ import org.dom4j.tree.BaseElement;
  * <code>NonLazyElement</code> is the default DOM4J default implementation of
  * an XML element.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.8 $
  */
 public class NonLazyElement extends BaseElement {
-    public NonLazyElement(String name) {
-        super(name);
-        this.attributes = createAttributeList();
-        this.content = createContentList();
-    }
+	public NonLazyElement(String name) {
+		super(name);
+		this.attributes = createAttributeList();
+		this.content = createContentList();
+	}
 
-    public NonLazyElement(QName qname) {
-        super(qname);
-        this.attributes = createAttributeList();
-        this.content = createContentList();
-    }
+	public NonLazyElement(QName qname) {
+		super(qname);
+		this.attributes = createAttributeList();
+		this.content = createContentList();
+	}
 
-    public NonLazyElement(String name, Namespace namespace) {
-        super(name, namespace);
-        this.attributes = createAttributeList();
-        this.content = createContentList();
-    }
+	public NonLazyElement(String name, Namespace namespace) {
+		super(name, namespace);
+		this.attributes = createAttributeList();
+		this.content = createContentList();
+	}
 
-    public NonLazyElement(QName qname, int attributeCount) {
-        super(qname);
-        this.attributes = createAttributeList(attributeCount);
-        this.content = createContentList();
-    }
+	public NonLazyElement(QName qname, int attributeCount) {
+		super(qname);
+		this.attributes = createAttributeList(attributeCount);
+		this.content = createContentList();
+	}
 }
 
 /*
@@ -66,7 +66,7 @@ public class NonLazyElement extends BaseElement {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

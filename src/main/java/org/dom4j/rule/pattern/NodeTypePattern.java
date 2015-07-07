@@ -16,60 +16,72 @@ import org.dom4j.rule.Pattern;
  * <code>NodeTypePattern</code> implements a Pattern which matches any node of
  * the given node type.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.7 $
  */
 public class NodeTypePattern implements Pattern {
-    /** A pattern which matches any Attribute node */
-    public static final NodeTypePattern ANY_ATTRIBUTE = new NodeTypePattern(
-            NodeType.ATTRIBUTE_NODE);
+	/**
+	 * A pattern which matches any Attribute node
+	 */
+	public static final NodeTypePattern ANY_ATTRIBUTE = new NodeTypePattern(
+			NodeType.ATTRIBUTE_NODE);
 
-    /** A pattern which matches any Comment node */
-    public static final NodeTypePattern ANY_COMMENT = new NodeTypePattern(
-            NodeType.COMMENT_NODE);
+	/**
+	 * A pattern which matches any Comment node
+	 */
+	public static final NodeTypePattern ANY_COMMENT = new NodeTypePattern(
+			NodeType.COMMENT_NODE);
 
-    /** A pattern which matches any Document node */
-    public static final NodeTypePattern ANY_DOCUMENT = new NodeTypePattern(
-            NodeType.DOCUMENT_NODE);
+	/**
+	 * A pattern which matches any Document node
+	 */
+	public static final NodeTypePattern ANY_DOCUMENT = new NodeTypePattern(
+			NodeType.DOCUMENT_NODE);
 
-    /** A pattern which matches any Element node */
-    public static final NodeTypePattern ANY_ELEMENT = new NodeTypePattern(
-            NodeType.ELEMENT_NODE);
+	/**
+	 * A pattern which matches any Element node
+	 */
+	public static final NodeTypePattern ANY_ELEMENT = new NodeTypePattern(
+			NodeType.ELEMENT_NODE);
 
-    /** A pattern which matches any ProcessingInstruction node */
-    public static final NodeTypePattern ANY_PROCESSING_INSTRUCTION = 
-            new NodeTypePattern(NodeType.PROCESSING_INSTRUCTION_NODE);
+	/**
+	 * A pattern which matches any ProcessingInstruction node
+	 */
+	public static final NodeTypePattern ANY_PROCESSING_INSTRUCTION =
+			new NodeTypePattern(NodeType.PROCESSING_INSTRUCTION_NODE);
 
-    /** A pattern which matches any Text node */
-    public static final NodeTypePattern ANY_TEXT = new NodeTypePattern(
-            NodeType.TEXT_NODE);
+	/**
+	 * A pattern which matches any Text node
+	 */
+	public static final NodeTypePattern ANY_TEXT = new NodeTypePattern(
+			NodeType.TEXT_NODE);
 
-    private NodeType nodeType;
+	private NodeType nodeType;
 
-    public NodeTypePattern(NodeType nodeType) {
-        this.nodeType = nodeType;
-    }
+	public NodeTypePattern(NodeType nodeType) {
+		this.nodeType = nodeType;
+	}
 
-    public boolean matches(Node node) {
-        return node.getNodeType() == nodeType;
-    }
+	public boolean matches(Node node) {
+		return node.getNodeTypeEnum() == nodeType;
+	}
 
-    public double getPriority() {
-        return Pattern.DEFAULT_PRIORITY;
-    }
+	public double getPriority() {
+		return Pattern.DEFAULT_PRIORITY;
+	}
 
-    public Pattern[] getUnionPatterns() {
-        return null;
-    }
+	public Pattern[] getUnionPatterns() {
+		return null;
+	}
 
-    public NodeType getMatchType() {
-        return nodeType;
-    }
+	public NodeType getMatchType() {
+		return nodeType;
+	}
 
-    public String getMatchesNodeName() {
-        return null;
-    }
+	public String getMatchesNodeName() {
+		return null;
+	}
 }
 
 /*
@@ -92,7 +104,7 @@ public class NodeTypePattern implements Pattern {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

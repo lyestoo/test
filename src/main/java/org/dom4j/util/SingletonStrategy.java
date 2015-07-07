@@ -15,27 +15,27 @@ package org.dom4j.util;
  * SimpleSingleton and PerThreadSingleton. This will replace previous usage of
  * ThreadLocal to allow for alternate strategies.
  * </p>
- * 
+ *
  * @author <a href="mailto:ddlucas@users.sourceforge.net">David Lucas </a>
  * @version $Revision: 1.2 $
  */
 public interface SingletonStrategy {
-    /**
-     * return a singleton instance of the class specified in setSingletonClass
-     */
-    Object instance();
+	/**
+	 * return a singleton instance of the class specified in setSingletonClass
+	 */
+	Object instance();
 
-    /**
-     * reset the instance to a new instance for the implemented strategy
-     */
-    void reset();
+	/**
+	 * reset the instance to a new instance for the implemented strategy
+	 */
+	void reset();
 
-    /**
-     * set a singleton class name that will be used to create the singleton
-     * based on the strategy implementation of this interface. The default
-     * constructor of the class will be used and must be public.
-     */
-    void setSingletonClassName(String singletonClassName);
+	/**
+	 * set a singleton class name that will be used to create the singleton
+	 * based on the strategy implementation of this interface. The default
+	 * constructor of the class will be used and must be public.
+	 */
+	void setSingletonClassName(String singletonClassName);
 }
 
 /*
@@ -58,7 +58,7 @@ public interface SingletonStrategy {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

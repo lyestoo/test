@@ -13,21 +13,20 @@ package org.dom4j;
  * such as the <code>CDATA</code>,<code>Comment</code> and
  * <code>Text</code> nodes.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.9 $
  */
 public interface CharacterData extends Node {
-    /**
-     * Appends the given text to this nodes text value. Calling this method is
-     * equivalent of the code <code>node.setText(node.getText() + text)</code>
-     * but allows for possible implementation optimisations (such as a text
-     * based node storing a StringBuffer internally
-     * 
-     * @param text
-     *            the text to append
-     */
-    void appendText(String text);
+	/**
+	 * Appends the given text to this nodes text value. Calling this method is
+	 * equivalent of the code <code>node.setText(node.getText() + text)</code>
+	 * but allows for possible implementation optimisations (such as a text
+	 * based node storing a StringBuffer internally
+	 *
+	 * @param text the text to append
+	 */
+	void appendText(String text);
 }
 
 /*
@@ -50,7 +49,7 @@ public interface CharacterData extends Node {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

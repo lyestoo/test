@@ -7,237 +7,232 @@
 
 package org.dom4j.tree;
 
+import org.dom4j.*;
+import org.dom4j.rule.Pattern;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.List;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.NodeFilter;
-import org.dom4j.NodeType;
-import org.dom4j.XPath;
-import org.dom4j.rule.Pattern;
 
 /**
  * <p>
  * <code>AbstractNode</code> is an abstract base class for tree implementors
  * to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.31 $
  */
 public abstract class AbstractNode implements Node, Cloneable, Serializable {
 
-    /** The <code>DocumentFactory</code> instance used by default */
-    private static final DocumentFactory DOCUMENT_FACTORY = DocumentFactory
-            .getInstance();
+	/**
+	 * The <code>DefaultDocumentFactory</code> instance used by default
+	 */
+	private static final DocumentFactory DOCUMENT_FACTORY = DefaultDocumentFactory.getInstance();
 
-    public AbstractNode() {
-    }
+	public AbstractNode() {
+	}
 
-    public NodeType getNodeTypeEnum() {
-        return NodeType.UNKNOWN_NODE;
-    }
+	public NodeType getNodeTypeEnum() {
+		return NodeType.UNKNOWN_NODE;
+	}
 
-    public short getNodeType() {
-        return this.getNodeTypeEnum().getCode();
-    }
+	public short getNodeType() {
+		return this.getNodeTypeEnum().getCode();
+	}
 
-    public String getNodeTypeName() {
-        return this.getNodeTypeEnum().getName();
-    }
+	public String getNodeTypeName() {
+		return this.getNodeTypeEnum().getName();
+	}
 
-    public Document getDocument() {
-        Element element = getParent();
+	public Document getDocument() {
+		Element element = getParent();
 
-        return (element != null) ? element.getDocument() : null;
-    }
+		return (element != null) ? element.getDocument() : null;
+	}
 
-    public void setDocument(Document document) {
-    }
+	public void setDocument(Document document) {
+	}
 
-    public Element getParent() {
-        return null;
-    }
+	public Element getParent() {
+		return null;
+	}
 
-    public void setParent(Element parent) {
-    }
+	public void setParent(Element parent) {
+	}
 
-    public boolean supportsParent() {
-        return false;
-    }
+	public boolean supportsParent() {
+		return false;
+	}
 
-    public boolean isReadOnly() {
-        return true;
-    }
+	public boolean isReadOnly() {
+		return true;
+	}
 
-    public boolean hasContent() {
-        return false;
-    }
+	public boolean hasContent() {
+		return false;
+	}
 
-    public String getPath() {
-        return getPath(null);
-    }
+	public String getPath() {
+		return getPath(null);
+	}
 
-    public String getUniquePath() {
-        return getUniquePath(null);
-    }
+	public String getUniquePath() {
+		return getUniquePath(null);
+	}
 
-    @Override
-    public Object clone() {
-        if (isReadOnly()) {
-            return this;
-        } else {
-            try {
-                Node answer = (Node) super.clone();
-                answer.setParent(null);
-                answer.setDocument(null);
+	@Override
+	public AbstractNode clone() {
+		if (isReadOnly()) {
+			return this;
+		} else {
+			try {
+				AbstractNode answer = (AbstractNode) super.clone();
+				answer.setParent(null);
+				answer.setDocument(null);
 
-                return answer;
-            } catch (CloneNotSupportedException e) {
-                // should never happen
-                throw new RuntimeException("This should never happen. Caught: "
-                        + e);
-            }
-        }
-    }
+				return answer;
+			} catch (CloneNotSupportedException e) {
+				// should never happen
+				throw new RuntimeException("This should never happen. Caught: ", e);
+			}
+		}
+	}
 
-    public Node detach() {
-        Element parent = getParent();
+	public Node detach() {
+		Element parent = getParent();
 
-        if (parent != null) {
-            parent.remove(this);
-        } else {
-            Document document = getDocument();
+		if (parent != null) {
+			parent.remove(this);
+		} else {
+			Document document = getDocument();
 
-            if (document != null) {
-                document.remove(this);
-            }
-        }
+			if (document != null) {
+				document.remove(this);
+			}
+		}
 
-        setParent(null);
-        setDocument(null);
+		setParent(null);
+		setDocument(null);
 
-        return this;
-    }
+		return this;
+	}
 
-    public String getName() {
-        return null;
-    }
+	public String getName() {
+		return null;
+	}
 
-    public void setName(String name) {
-        throw new UnsupportedOperationException("This node cannot be modified");
-    }
+	public void setName(String name) {
+		throw new UnsupportedOperationException("This node cannot be modified");
+	}
 
-    public String getText() {
-        return null;
-    }
+	public String getText() {
+		return null;
+	}
 
-    public String getStringValue() {
-        return getText();
-    }
+	public String getStringValue() {
+		return getText();
+	}
 
-    public void setText(String text) {
-        throw new UnsupportedOperationException("This node cannot be modified");
-    }
+	public void setText(String text) {
+		throw new UnsupportedOperationException("This node cannot be modified");
+	}
 
-    public void write(Writer writer) throws IOException {
-        writer.write(asXML());
-    }
+	public void write(Writer writer) throws IOException {
+		writer.write(asXML());
+	}
 
-    // XPath methods
-    public Object selectObject(String xpathExpression) {
-        XPath xpath = createXPath(xpathExpression);
+	// XPath methods
 
-        return xpath.evaluate(this);
-    }
+	public Object selectObject(String xpathExpression) {
+		XPath xpath = createXPath(xpathExpression);
 
-    public List<? extends Node> selectNodes(String xpathExpression) {
-        XPath xpath = createXPath(xpathExpression);
+		return xpath.evaluate(this);
+	}
 
-        return xpath.selectNodes(this);
-    }
+	public List<? extends Node> selectNodes(String xpathExpression) {
+		XPath xpath = createXPath(xpathExpression);
 
-    public List<? extends Node> selectNodes(String xpathExpression,
-            String comparisonXPathExpression) {
-        return selectNodes(xpathExpression, comparisonXPathExpression, false);
-    }
+		return xpath.selectNodes(this);
+	}
 
-    public List<? extends Node> selectNodes(String xpathExpression,
-            String comparisonXPathExpression, boolean removeDuplicates) {
-        XPath xpath = createXPath(xpathExpression);
-        XPath sortBy = createXPath(comparisonXPathExpression);
+	public List<? extends Node> selectNodes(String xpathExpression,
+	                                        String comparisonXPathExpression) {
+		return selectNodes(xpathExpression, comparisonXPathExpression, false);
+	}
 
-        return xpath.selectNodes(this, sortBy, removeDuplicates);
-    }
+	public List<? extends Node> selectNodes(String xpathExpression,
+	                                        String comparisonXPathExpression, boolean removeDuplicates) {
+		XPath xpath = createXPath(xpathExpression);
+		XPath sortBy = createXPath(comparisonXPathExpression);
 
-    public Node selectSingleNode(String xpathExpression) {
-        XPath xpath = createXPath(xpathExpression);
+		return xpath.selectNodes(this, sortBy, removeDuplicates);
+	}
 
-        return xpath.selectSingleNode(this);
-    }
+	public Node selectSingleNode(String xpathExpression) {
+		XPath xpath = createXPath(xpathExpression);
 
-    public String valueOf(String xpathExpression) {
-        XPath xpath = createXPath(xpathExpression);
+		return xpath.selectSingleNode(this);
+	}
 
-        return xpath.valueOf(this);
-    }
+	public String valueOf(String xpathExpression) {
+		XPath xpath = createXPath(xpathExpression);
 
-    public Number numberValueOf(String xpathExpression) {
-        XPath xpath = createXPath(xpathExpression);
+		return xpath.valueOf(this);
+	}
 
-        return xpath.numberValueOf(this);
-    }
+	public Number numberValueOf(String xpathExpression) {
+		XPath xpath = createXPath(xpathExpression);
 
-    public boolean matches(String patternText) {
-        NodeFilter filter = createXPathFilter(patternText);
+		return xpath.numberValueOf(this);
+	}
 
-        return filter.matches(this);
-    }
+	public boolean matches(String patternText) {
+		NodeFilter filter = createXPathFilter(patternText);
 
-    public XPath createXPath(String xpathExpression) {
-        return getDocumentFactory().createXPath(xpathExpression);
-    }
+		return filter.matches(this);
+	}
 
-    public NodeFilter createXPathFilter(String patternText) {
-        return getDocumentFactory().createXPathFilter(patternText);
-    }
+	public XPath createXPath(String xpathExpression) {
+		return getDocumentFactory().createXPath(xpathExpression);
+	}
 
-    public Pattern createPattern(String patternText) {
-        return getDocumentFactory().createPattern(patternText);
-    }
+	public NodeFilter createXPathFilter(String patternText) {
+		return getDocumentFactory().createXPathFilter(patternText);
+	}
 
-    public Node asXPathResult(Element parent) {
-        if (supportsParent()) {
-            return this;
-        }
+	public Pattern createPattern(String patternText) {
+		return getDocumentFactory().createPattern(patternText);
+	}
 
-        return createXPathResult(parent);
-    }
+	public Node asXPathResult(Element parent) {
+		if (supportsParent()) {
+			return this;
+		}
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        this.toString(builder);
-        return builder.toString();
-    }
-    
-    protected void toString(StringBuilder builder) {
-        builder.append(super.toString());
-    }
+		return createXPathResult(parent);
+	}
 
-    protected DocumentFactory getDocumentFactory() {
-        return DOCUMENT_FACTORY;
-    }
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		this.toString(builder);
+		return builder.toString();
+	}
 
-    protected Node createXPathResult(Element parent) {
-        throw new RuntimeException("asXPathResult() not yet implemented fully "
-                + "for: " + this);
-    }
+	protected void toString(StringBuilder builder) {
+		builder.append(super.toString());
+	}
+
+	protected DocumentFactory getDocumentFactory() {
+		return DOCUMENT_FACTORY;
+	}
+
+	protected Node createXPathResult(Element parent) {
+		throw new RuntimeException("asXPathResult() not yet implemented fully "
+				+ "for: " + this);
+	}
 }
 
 /*
@@ -260,7 +255,7 @@ public abstract class AbstractNode implements Node, Cloneable, Serializable {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

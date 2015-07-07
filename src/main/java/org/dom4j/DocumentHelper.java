@@ -7,371 +7,339 @@
 
 package org.dom4j;
 
+import org.dom4j.io.SAXReader;
+import org.dom4j.rule.Pattern;
+import org.jaxen.VariableContext;
+import org.xml.sax.InputSource;
+
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import org.dom4j.io.SAXReader;
-import org.dom4j.rule.Pattern;
-
-import org.jaxen.VariableContext;
-
-import org.xml.sax.InputSource;
 
 /**
  * <p>
  * <code>DocumentHelper</code> is a collection of helper methods for using
  * DOM4J.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.26 $
  */
 public final class DocumentHelper {
-    private DocumentHelper() {
-    }
+	private DocumentHelper() {
+	}
 
-    private static DocumentFactory getDocumentFactory() {
-        return DocumentFactory.getInstance();
-    }
+	private static DocumentFactory getDocumentFactory() {
+		return DefaultDocumentFactory.getInstance();
+	}
 
-    // Static helper methods
-    public static Document createDocument() {
-        return getDocumentFactory().createDocument();
-    }
+	// Static helper methods
 
-    public static Document createDocument(Element rootElement) {
-        return getDocumentFactory().createDocument(rootElement);
-    }
+	public static Document createDocument() {
+		return getDocumentFactory().createDocument();
+	}
 
-    public static Element createElement(QName qname) {
-        return getDocumentFactory().createElement(qname);
-    }
+	public static Document createDocument(Element rootElement) {
+		return getDocumentFactory().createDocument(rootElement);
+	}
 
-    public static Element createElement(String name) {
-        return getDocumentFactory().createElement(name);
-    }
+	public static Element createElement(QName qname) {
+		return getDocumentFactory().createElement(qname);
+	}
 
-    public static Attribute createAttribute(Element owner, QName qname,
-            String value) {
-        return getDocumentFactory().createAttribute(owner, qname, value);
-    }
+	public static Element createElement(String name) {
+		return getDocumentFactory().createElement(name);
+	}
 
-    public static Attribute createAttribute(Element owner, String name,
-            String value) {
-        return getDocumentFactory().createAttribute(owner, name, value);
-    }
+	public static Attribute createAttribute(Element owner, QName qname,
+	                                        String value) {
+		return getDocumentFactory().createAttribute(owner, qname, value);
+	}
 
-    public static CDATA createCDATA(String text) {
-        return DocumentFactory.getInstance().createCDATA(text);
-    }
+	public static Attribute createAttribute(Element owner, String name,
+	                                        String value) {
+		return getDocumentFactory().createAttribute(owner, name, value);
+	}
 
-    public static Comment createComment(String text) {
-        return DocumentFactory.getInstance().createComment(text);
-    }
+	public static CDATA createCDATA(String text) {
+		return DefaultDocumentFactory.getInstance().createCDATA(text);
+	}
 
-    public static Text createText(String text) {
-        return DocumentFactory.getInstance().createText(text);
-    }
+	public static Comment createComment(String text) {
+		return DefaultDocumentFactory.getInstance().createComment(text);
+	}
 
-    public static Entity createEntity(String name, String text) {
-        return DocumentFactory.getInstance().createEntity(name, text);
-    }
+	public static Text createText(String text) {
+		return DefaultDocumentFactory.getInstance().createText(text);
+	}
 
-    public static Namespace createNamespace(String prefix, String uri) {
-        return DocumentFactory.getInstance().createNamespace(prefix, uri);
-    }
+	public static Entity createEntity(String name, String text) {
+		return DefaultDocumentFactory.getInstance().createEntity(name, text);
+	}
 
-    public static ProcessingInstruction createProcessingInstruction(String pi,
-            String d) {
-        return getDocumentFactory().createProcessingInstruction(pi, d);
-    }
+	public static Namespace createNamespace(String prefix, String uri) {
+		return DefaultDocumentFactory.getInstance().createNamespace(prefix, uri);
+	}
 
-    public static ProcessingInstruction createProcessingInstruction(String pi,
-            Map data) {
-        return getDocumentFactory().createProcessingInstruction(pi, data);
-    }
+	public static ProcessingInstruction createProcessingInstruction(String pi,
+	                                                                String d) {
+		return getDocumentFactory().createProcessingInstruction(pi, d);
+	}
 
-    public static QName createQName(String localName, Namespace namespace) {
-        return getDocumentFactory().createQName(localName, namespace);
-    }
+	public static ProcessingInstruction createProcessingInstruction(String pi,
+	                                                                Map data) {
+		return getDocumentFactory().createProcessingInstruction(pi, data);
+	}
 
-    public static QName createQName(String localName) {
-        return getDocumentFactory().createQName(localName);
-    }
+	public static QName createQName(String localName, Namespace namespace) {
+		return getDocumentFactory().createQName(localName, namespace);
+	}
 
-    /**
-     * <p>
-     * <code>createXPath</code> parses an XPath expression and creates a new
-     * XPath <code>XPath</code> instance using the singleton {@link
-     * DocumentFactory}.
-     * </p>
-     * 
-     * @param xpathExpression
-     *            is the XPath expression to create
-     * 
-     * @return a new <code>XPath</code> instance
-     * 
-     * @throws InvalidXPathException
-     *             if the XPath expression is invalid
-     */
-    public static XPath createXPath(String xpathExpression)
-            throws InvalidXPathException {
-        return getDocumentFactory().createXPath(xpathExpression);
-    }
+	public static QName createQName(String localName) {
+		return getDocumentFactory().createQName(localName);
+	}
 
-    /**
-     * <p>
-     * <code>createXPath</code> parses an XPath expression and creates a new
-     * XPath <code>XPath</code> instance using the singleton {@link
-     * DocumentFactory}.
-     * </p>
-     * 
-     * @param xpathExpression
-     *            is the XPath expression to create
-     * @param context
-     *            is the variable context to use when evaluating the XPath
-     * 
-     * @return a new <code>XPath</code> instance
-     * 
-     * @throws InvalidXPathException
-     *             if the XPath expression is invalid
-     */
-    public static XPath createXPath(String xpathExpression,
-            VariableContext context) throws InvalidXPathException {
-        return getDocumentFactory().createXPath(xpathExpression, context);
-    }
+	/**
+	 * <p>
+	 * <code>createXPath</code> parses an XPath expression and creates a new
+	 * XPath <code>XPath</code> instance using the singleton {@link
+	 * DefaultDocumentFactory}.
+	 * </p>
+	 *
+	 * @param xpathExpression is the XPath expression to create
+	 * @return a new <code>XPath</code> instance
+	 * @throws InvalidXPathException if the XPath expression is invalid
+	 */
+	public static XPath createXPath(String xpathExpression)
+			throws InvalidXPathException {
+		return getDocumentFactory().createXPath(xpathExpression);
+	}
 
-    /**
-     * <p>
-     * <code>createXPathFilter</code> parses a NodeFilter from the given XPath
-     * filter expression using the singleton {@link DocumentFactory}. XPath
-     * filter expressions occur within XPath expressions such as
-     * <code>self::node()[ filterExpression ]</code>
-     * </p>
-     * 
-     * @param xpathFilterExpression
-     *            is the XPath filter expression to create
-     * 
-     * @return a new <code>NodeFilter</code> instance
-     */
-    public static NodeFilter createXPathFilter(String xpathFilterExpression) {
-        return getDocumentFactory().createXPathFilter(xpathFilterExpression);
-    }
+	/**
+	 * <p>
+	 * <code>createXPath</code> parses an XPath expression and creates a new
+	 * XPath <code>XPath</code> instance using the singleton {@link
+	 * DefaultDocumentFactory}.
+	 * </p>
+	 *
+	 * @param xpathExpression is the XPath expression to create
+	 * @param context         is the variable context to use when evaluating the XPath
+	 * @return a new <code>XPath</code> instance
+	 * @throws InvalidXPathException if the XPath expression is invalid
+	 */
+	public static XPath createXPath(String xpathExpression,
+	                                VariableContext context) throws InvalidXPathException {
+		return getDocumentFactory().createXPath(xpathExpression, context);
+	}
 
-    /**
-     * <p>
-     * <code>createPattern</code> parses the given XPath expression to create
-     * an XSLT style {@link Pattern}instance which can then be used in an XSLT
-     * processing model.
-     * </p>
-     * 
-     * @param xpathPattern
-     *            is the XPath pattern expression to create
-     * 
-     * @return a new <code>Pattern</code> instance
-     */
-    public static Pattern createPattern(String xpathPattern) {
-        return getDocumentFactory().createPattern(xpathPattern);
-    }
+	/**
+	 * <p>
+	 * <code>createXPathFilter</code> parses a NodeFilter from the given XPath
+	 * filter expression using the singleton {@link DefaultDocumentFactory}. XPath
+	 * filter expressions occur within XPath expressions such as
+	 * <code>self::node()[ filterExpression ]</code>
+	 * </p>
+	 *
+	 * @param xpathFilterExpression is the XPath filter expression to create
+	 * @return a new <code>NodeFilter</code> instance
+	 */
+	public static NodeFilter createXPathFilter(String xpathFilterExpression) {
+		return getDocumentFactory().createXPathFilter(xpathFilterExpression);
+	}
 
-    /**
-     * <p>
-     * <code>selectNodes</code> performs the given XPath expression on the
-     * {@link List}of {@link Node}instances appending all the results together
-     * into a single list.
-     * </p>
-     * 
-     * @param xpathFilterExpression
-     *            is the XPath filter expression to evaluate
-     * @param nodes
-     *            is the list of nodes on which to evalute the XPath
-     * 
-     * @return the results of all the XPath evaluations as a single list
-     */
-    public static List<? extends Node> selectNodes(String xpathFilterExpression, List<? extends Node> nodes) {
-        XPath xpath = createXPath(xpathFilterExpression);
+	/**
+	 * <p>
+	 * <code>createPattern</code> parses the given XPath expression to create
+	 * an XSLT style {@link Pattern}instance which can then be used in an XSLT
+	 * processing model.
+	 * </p>
+	 *
+	 * @param xpathPattern is the XPath pattern expression to create
+	 * @return a new <code>Pattern</code> instance
+	 */
+	public static Pattern createPattern(String xpathPattern) {
+		return getDocumentFactory().createPattern(xpathPattern);
+	}
 
-        return xpath.selectNodes(nodes);
-    }
+	/**
+	 * <p>
+	 * <code>selectNodes</code> performs the given XPath expression on the
+	 * {@link List}of {@link Node}instances appending all the results together
+	 * into a single list.
+	 * </p>
+	 *
+	 * @param xpathFilterExpression is the XPath filter expression to evaluate
+	 * @param nodes                 is the list of nodes on which to evalute the XPath
+	 * @return the results of all the XPath evaluations as a single list
+	 */
+	public static List<? extends Node> selectNodes(String xpathFilterExpression, List<? extends Node> nodes) {
+		XPath xpath = createXPath(xpathFilterExpression);
 
-    /**
-     * <p>
-     * <code>selectNodes</code> performs the given XPath expression on the
-     * {@link List}of {@link Node}instances appending all the results together
-     * into a single list.
-     * </p>
-     * 
-     * @param xpathFilterExpression
-     *            is the XPath filter expression to evaluate
-     * @param node
-     *            is the Node on which to evalute the XPath
-     * 
-     * @return the results of all the XPath evaluations as a single list
-     */
-    public static List<? extends Node> selectNodes(String xpathFilterExpression, Node node) {
-        XPath xpath = createXPath(xpathFilterExpression);
+		return xpath.selectNodes(nodes);
+	}
 
-        return xpath.selectNodes(node);
-    }
+	/**
+	 * <p>
+	 * <code>selectNodes</code> performs the given XPath expression on the
+	 * {@link List}of {@link Node}instances appending all the results together
+	 * into a single list.
+	 * </p>
+	 *
+	 * @param xpathFilterExpression is the XPath filter expression to evaluate
+	 * @param node                  is the Node on which to evalute the XPath
+	 * @return the results of all the XPath evaluations as a single list
+	 */
+	public static List<? extends Node> selectNodes(String xpathFilterExpression, Node node) {
+		XPath xpath = createXPath(xpathFilterExpression);
 
-    /**
-     * <p>
-     * <code>sort</code> sorts the given List of Nodes using an XPath
-     * expression as a {@link java.util.Comparator}.
-     * </p>
-     * 
-     * @param list
-     *            is the list of Nodes to sort
-     * @param xpathExpression
-     *            is the XPath expression used for comparison
-     */
-    public static void sort(List<? extends Node> list, String xpathExpression) {
-        XPath xpath = createXPath(xpathExpression);
-        xpath.sort(list);
-    }
+		return xpath.selectNodes(node);
+	}
 
-    /**
-     * <p>
-     * <code>sort</code> sorts the given List of Nodes using an XPath
-     * expression as a {@link java.util.Comparator}and optionally removing
-     * duplicates.
-     * </p>
-     * 
-     * @param list
-     *            is the list of Nodes to sort
-     * @param expression
-     *            is the XPath expression used for comparison
-     * @param distinct
-     *            if true then duplicate values (using the sortXPath for
-     *            comparisions) will be removed from the List
-     */
-    public static void sort(List<? extends Node> list, String expression, boolean distinct) {
-        XPath xpath = createXPath(expression);
-        xpath.sort(list, distinct);
-    }
+	/**
+	 * <p>
+	 * <code>sort</code> sorts the given List of Nodes using an XPath
+	 * expression as a {@link java.util.Comparator}.
+	 * </p>
+	 *
+	 * @param list            is the list of Nodes to sort
+	 * @param xpathExpression is the XPath expression used for comparison
+	 */
+	public static void sort(List<? extends Node> list, String xpathExpression) {
+		XPath xpath = createXPath(xpathExpression);
+		xpath.sort(list);
+	}
 
-    /**
-     * <p>
-     * <code>parseText</code> parses the given text as an XML document and
-     * returns the newly created Document.
-     * </p>
-     * 
-     * @param text
-     *            the XML text to be parsed
-     * 
-     * @return a newly parsed Document
-     * 
-     * @throws DocumentException
-     *             if the document could not be parsed
-     */
-    public static Document parseText(String text) throws DocumentException {
-        Document result = null;
+	/**
+	 * <p>
+	 * <code>sort</code> sorts the given List of Nodes using an XPath
+	 * expression as a {@link java.util.Comparator}and optionally removing
+	 * duplicates.
+	 * </p>
+	 *
+	 * @param list       is the list of Nodes to sort
+	 * @param expression is the XPath expression used for comparison
+	 * @param distinct   if true then duplicate values (using the sortXPath for
+	 *                   comparisions) will be removed from the List
+	 */
+	public static void sort(List<? extends Node> list, String expression, boolean distinct) {
+		XPath xpath = createXPath(expression);
+		xpath.sort(list, distinct);
+	}
 
-        SAXReader reader = new SAXReader();
-        String encoding = getEncoding(text);
+	/**
+	 * <p>
+	 * <code>parseText</code> parses the given text as an XML document and
+	 * returns the newly created Document.
+	 * </p>
+	 *
+	 * @param text the XML text to be parsed
+	 * @return a newly parsed Document
+	 * @throws DocumentException if the document could not be parsed
+	 */
+	public static Document parseText(String text) throws DocumentException {
+		Document result = null;
 
-        InputSource source = new InputSource(new StringReader(text));
-        source.setEncoding(encoding);
+		SAXReader reader = new SAXReader();
+		String encoding = getEncoding(text);
 
-        result = reader.read(source);
+		InputSource source = new InputSource(new StringReader(text));
+		source.setEncoding(encoding);
 
-        // if the XML parser doesn't provide a way to retrieve the encoding,
-        // specify it manually
-        if (result.getXMLEncoding() == null) {
-            result.setXMLEncoding(encoding);
-        }
+		result = reader.read(source);
 
-        return result;
-    }
+		// if the XML parser doesn't provide a way to retrieve the encoding,
+		// specify it manually
+		if (result.getXMLEncoding() == null) {
+			result.setXMLEncoding(encoding);
+		}
 
-    private static String getEncoding(String text) {
-        String result = null;
+		return result;
+	}
 
-        String xml = text.trim();
+	private static String getEncoding(String text) {
+		String result = null;
 
-        if (xml.startsWith("<?xml")) {
-            int end = xml.indexOf("?>");
-            String sub = xml.substring(0, end);
-            StringTokenizer tokens = new StringTokenizer(sub, " =\"\'");
+		String xml = text.trim();
 
-            while (tokens.hasMoreTokens()) {
-                String token = tokens.nextToken();
+		if (xml.startsWith("<?xml")) {
+			int end = xml.indexOf("?>");
+			String sub = xml.substring(0, end);
+			StringTokenizer tokens = new StringTokenizer(sub, " =\"\'");
 
-                if ("encoding".equals(token)) {
-                    if (tokens.hasMoreTokens()) {
-                        result = tokens.nextToken();
-                    }
+			while (tokens.hasMoreTokens()) {
+				String token = tokens.nextToken();
 
-                    break;
-                }
-            }
-        }
+				if ("encoding".equals(token)) {
+					if (tokens.hasMoreTokens()) {
+						result = tokens.nextToken();
+					}
 
-        return result;
-    }
+					break;
+				}
+			}
+		}
 
-    /**
-     * <p>
-     * makeElement
-     * </p>
-     * a helper method which navigates from the given Document or Element node
-     * to some Element using the path expression, creating any necessary
-     * elements along the way. For example the path <code>a/b/c</code> would
-     * get the first child &lt;a&gt; element, which would be created if it did
-     * not exist, then the next child &lt;b&gt; and so on until finally a
-     * &lt;c&gt; element is returned.
-     * 
-     * @param source
-     *            is the Element or Document to start navigating from
-     * @param path
-     *            is a simple path expression, seperated by '/' which denotes
-     *            the path from the source to the resulting element such as
-     *            a/b/c
-     * 
-     * @return the first Element on the given path which either already existed
-     *         on the path or were created by this method.
-     */
-    public static Element makeElement(Branch source, String path) {
-        StringTokenizer tokens = new StringTokenizer(path, "/");
-        Element parent;
+		return result;
+	}
 
-        if (source instanceof Document) {
-            Document document = (Document) source;
-            parent = document.getRootElement();
+	/**
+	 * <p>
+	 * makeElement
+	 * </p>
+	 * a helper method which navigates from the given Document or Element node
+	 * to some Element using the path expression, creating any necessary
+	 * elements along the way. For example the path <code>a/b/c</code> would
+	 * get the first child &lt;a&gt; element, which would be created if it did
+	 * not exist, then the next child &lt;b&gt; and so on until finally a
+	 * &lt;c&gt; element is returned.
+	 *
+	 * @param source is the Element or Document to start navigating from
+	 * @param path   is a simple path expression, seperated by '/' which denotes
+	 *               the path from the source to the resulting element such as
+	 *               a/b/c
+	 * @return the first Element on the given path which either already existed
+	 *         on the path or were created by this method.
+	 */
+	public static Element makeElement(Branch source, String path) {
+		StringTokenizer tokens = new StringTokenizer(path, "/");
+		Element parent;
 
-            // lets throw a NoSuchElementException
-            // if we are given an empty path
-            String name = tokens.nextToken();
+		if (source instanceof Document) {
+			Document document = (Document) source;
+			parent = document.getRootElement();
 
-            if (parent == null) {
-                parent = document.addElement(name);
-            }
-        } else {
-            parent = (Element) source;
-        }
+			// lets throw a NoSuchElementException
+			// if we are given an empty path
+			String name = tokens.nextToken();
 
-        Element element = null;
+			if (parent == null) {
+				parent = document.addElement(name);
+			}
+		} else {
+			parent = (Element) source;
+		}
 
-        while (tokens.hasMoreTokens()) {
-            String name = tokens.nextToken();
+		Element element = null;
 
-            if (name.indexOf(':') > 0) {
-                element = parent.element(parent.getQName(name));
-            } else {
-                element = parent.element(name);
-            }
+		while (tokens.hasMoreTokens()) {
+			String name = tokens.nextToken();
 
-            if (element == null) {
-                element = parent.addElement(name);
-            }
+			if (name.indexOf(':') > 0) {
+				element = parent.element(parent.getQName(name));
+			} else {
+				element = parent.element(name);
+			}
 
-            parent = element;
-        }
+			if (element == null) {
+				element = parent.addElement(name);
+			}
 
-        return element;
-    }
+			parent = element;
+		}
+
+		return element;
+	}
 }
 
 /*
@@ -394,7 +362,7 @@ public final class DocumentHelper {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

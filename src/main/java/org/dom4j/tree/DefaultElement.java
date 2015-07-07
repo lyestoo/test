@@ -6,36 +6,30 @@
  */
 package org.dom4j.tree;
 
+import org.dom4j.*;
+
 import java.util.Iterator;
 import java.util.List;
-
-import org.dom4j.Attribute;
-import org.dom4j.Branch;
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.IllegalAddException;
-import org.dom4j.Namespace;
-import org.dom4j.Node;
-import org.dom4j.NodeHelper;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.QName;
 
 /**
  * <p>
  * <code>DefaultElement</code> is the default DOM4J default implementation of
  * an XML element.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.59 $
  */
 public class DefaultElement extends AbstractElement {
 
-	/** The <code>DocumentFactory</code> instance used by default */
+	/**
+	 * The <code>DefaultDocumentFactory</code> instance used by default
+	 */
 	private static final transient DocumentFactory DOCUMENT_FACTORY =
-					DocumentFactory.getInstance();
-	/** The <code>QName</code> for this element */
+			DefaultDocumentFactory.getInstance();
+	/**
+	 * The <code>QName</code> for this element
+	 */
 	private QName qname;
 	/**
 	 * Stores the parent branch of this node which is either a Document if this
@@ -49,8 +43,10 @@ public class DefaultElement extends AbstractElement {
 	 * for multiple content nodes. The List will be lazily constructed when
 	 * required.
 	 */
-	private final List<Node> content = new LazyList<Node>();
-	/** Lazily constructes list of attributes */
+	private List<Node> content = new LazyList<Node>();
+	/**
+	 * Lazily constructes list of attributes
+	 */
 	private final List<Attribute> attributes;
 
 	public DefaultElement(String name) {
@@ -63,7 +59,7 @@ public class DefaultElement extends AbstractElement {
 
 	public DefaultElement(QName qname, int attributeCount) {
 		this.qname = qname;
-		this.attributes = new LazyList<Attribute>(attributeCount);
+		this.attributes = new LazyList<Attribute>();
 	}
 
 	public DefaultElement(String name, Namespace namespace) {
@@ -147,12 +143,12 @@ public class DefaultElement extends AbstractElement {
 	}
 
 	@Override
-	public Object clone() {
+	public DefaultElement clone() {
 		DefaultElement answer = (DefaultElement) super.clone();
 
 		if (answer != this) {
-			answer.content.clear();
-			answer.attributes.clear();
+			CloneHelper.setFinalLazyList(DefaultElement.class, answer, "attributes");
+			CloneHelper.setFinalContent(DefaultElement.class, answer);
 			answer.appendAttributes(this);
 			answer.appendContent(this);
 		}
@@ -262,6 +258,7 @@ public class DefaultElement extends AbstractElement {
 	}
 
 // Processing instruction API
+
 	@Override
 	public List<ProcessingInstruction> processingInstructions() {
 		BackedList<ProcessingInstruction> answer = createResultList();
@@ -348,26 +345,22 @@ public class DefaultElement extends AbstractElement {
 			content = ((ContentListFacade<Node>) content).getBackingList();
 		}
 
-		this.content.clear();
-		if (content == null) {
-			return;
-		}
+		List<Node> newContent = createContentList();
 
-		List<Node> newContent = createContentList(content.size());
-		for (Node node : content) {
-			Element parent = node.getParent();
+		if (content != null) {
+			for (Node node : content) {
+				Element parent = node.getParent();
 
-			if ((parent != null) && (parent != this)) {
-				node = (Node) node.clone();
+				if ((parent != null) && (parent != this)) {
+					node = (Node) node.clone();
+				}
+
+				newContent.add(node);
+				childAdded(node);
 			}
-
-			newContent.add(node);
-			childAdded(node);
 		}
 
-
-		this.content.addAll(newContent);
-
+		this.content = newContent;
 	}
 
 	public void clearContent() {
@@ -410,7 +403,9 @@ public class DefaultElement extends AbstractElement {
 		}
 
 		this.attributes.clear();
-		this.attributes.addAll(attributes);
+		if (attributes != null) {
+			this.attributes.addAll(attributes);
+		}
 	}
 
 	@Override
@@ -570,7 +565,7 @@ public class DefaultElement extends AbstractElement {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

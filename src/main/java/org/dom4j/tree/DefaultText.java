@@ -15,61 +15,60 @@ import org.dom4j.Element;
  * linked node which supports the parent relationship and can be modified in
  * place.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.11 $
  */
 public class DefaultText extends FlyweightText {
-    /** The parent of this node */
-    private Element parent;
+	/**
+	 * The parent of this node
+	 */
+	private Element parent;
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param text
-     *            is the Text text
-     */
-    public DefaultText(String text) {
-        super(text);
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param text is the Text text
+	 */
+	public DefaultText(String text) {
+		super(text);
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param parent
-     *            is the parent element
-     * @param text
-     *            is the Text text
-     */
-    public DefaultText(Element parent, String text) {
-        super(text);
-        this.parent = parent;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param parent is the parent element
+	 * @param text   is the Text text
+	 */
+	public DefaultText(Element parent, String text) {
+		super(text);
+		this.parent = parent;
+	}
 
-    @Override
-    public void setText(String text) {
-        this.text = text;
-    }
+	@Override
+	public void setText(String text) {
+		this.text = text;
+	}
 
-    @Override
-    public Element getParent() {
-        return parent;
-    }
+	@Override
+	public Element getParent() {
+		return parent;
+	}
 
-    @Override
-    public void setParent(Element parent) {
-        this.parent = parent;
-    }
+	@Override
+	public void setParent(Element parent) {
+		this.parent = parent;
+	}
 
-    @Override
-    public boolean supportsParent() {
-        return true;
-    }
+	@Override
+	public boolean supportsParent() {
+		return true;
+	}
 
-    @Override
-    public boolean isReadOnly() {
-        return false;
-    }
+	@Override
+	public boolean isReadOnly() {
+		return false;
+	}
 }
 
 /*
@@ -92,7 +91,7 @@ public class DefaultText extends FlyweightText {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

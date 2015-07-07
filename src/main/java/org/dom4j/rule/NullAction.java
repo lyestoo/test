@@ -13,16 +13,18 @@ import org.dom4j.Node;
  * <p>
  * <code>NullAction</code> represents an empty action that does nothing.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.7 $
  */
 public class NullAction implements Action {
-    /** Singleton instance */
-    public static final NullAction SINGLETON = new NullAction();
+	/**
+	 * Singleton instance
+	 */
+	public static final NullAction SINGLETON = new NullAction();
 
-    public void run(Node node) throws Exception {
-    }
+	public void run(Node node) throws Exception {
+	}
 }
 
 /*
@@ -45,7 +47,7 @@ public class NullAction implements Action {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

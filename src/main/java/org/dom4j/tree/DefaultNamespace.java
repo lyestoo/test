@@ -16,104 +16,99 @@ import org.dom4j.Namespace;
  * supports the parent relationship and is mutable. It is useful when returning
  * results from XPath expressions.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.16 $
  */
 public class DefaultNamespace extends Namespace {
-    /** The parent of this node */
-    private Element parent;
+	/**
+	 * The parent of this node
+	 */
+	private Element parent;
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param prefix
-     *            is the prefix for this namespace
-     * @param uri
-     *            is the URI for this namespace
-     */
-    public DefaultNamespace(String prefix, String uri) {
-        super(prefix, uri);
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param prefix is the prefix for this namespace
+	 * @param uri    is the URI for this namespace
+	 */
+	public DefaultNamespace(String prefix, String uri) {
+		super(prefix, uri);
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param parent
-     *            is the parent element
-     * @param prefix
-     *            is the prefix for this namespace
-     * @param uri
-     *            is the URI for this namespace
-     */
-    public DefaultNamespace(Element parent, String prefix, String uri) {
-        super(prefix, uri);
-        this.parent = parent;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @param parent is the parent element
+	 * @param prefix is the prefix for this namespace
+	 * @param uri    is the URI for this namespace
+	 */
+	public DefaultNamespace(Element parent, String prefix, String uri) {
+		super(prefix, uri);
+		this.parent = parent;
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the hash code based on the qualified name and the URI of the
-     *         namespace and the hashCode() of the parent element.
-     */
-    @Override
-    protected int createHashCode() {
-        int hashCode = super.createHashCode();
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the hash code based on the qualified name and the URI of the
+	 *         namespace and the hashCode() of the parent element.
+	 */
+	@Override
+	protected int createHashCode() {
+		int hashCode = super.createHashCode();
 
-        if (parent != null) {
-            hashCode ^= parent.hashCode();
-        }
+		if (parent != null) {
+			hashCode ^= parent.hashCode();
+		}
 
-        return hashCode;
-    }
+		return hashCode;
+	}
 
-    /**
-     * Implements an identity based comparsion using the parent element as well
-     * as the prefix and URI
-     * 
-     * @param object
-     *            DOCUMENT ME!
-     * 
-     * @return DOCUMENT ME!
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof DefaultNamespace) {
-            DefaultNamespace that = (DefaultNamespace) object;
+	/**
+	 * Implements an identity based comparsion using the parent element as well
+	 * as the prefix and URI
+	 *
+	 * @param object DOCUMENT ME!
+	 * @return DOCUMENT ME!
+	 */
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof DefaultNamespace) {
+			DefaultNamespace that = (DefaultNamespace) object;
 
-            if (that.parent == parent) {
-                return super.equals(object);
-            }
-        }
+			if (that.parent == parent) {
+				return super.equals(object);
+			}
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 
-    @Override
-    public Element getParent() {
-        return parent;
-    }
+	@Override
+	public Element getParent() {
+		return parent;
+	}
 
-    @Override
-    public void setParent(Element parent) {
-        this.parent = parent;
-    }
+	@Override
+	public void setParent(Element parent) {
+		this.parent = parent;
+	}
 
-    @Override
-    public boolean supportsParent() {
-        return true;
-    }
-    
-    @Override
-    public boolean isReadOnly() {
-        return false;
-    }
+	@Override
+	public boolean supportsParent() {
+		return true;
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		return false;
+	}
 }
 
 /*
@@ -136,7 +131,7 @@ public class DefaultNamespace extends Namespace {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

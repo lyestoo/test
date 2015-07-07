@@ -7,71 +7,71 @@
 
 package org.dom4j.tree;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import org.dom4j.Comment;
 import org.dom4j.Element;
 import org.dom4j.NodeType;
 import org.dom4j.Visitor;
+
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * <p>
  * <code>AbstractComment</code> is an abstract base class for tree
  * implementors to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.13 $
  */
 public abstract class AbstractComment extends AbstractCharacterData implements
-        Comment {
-    public AbstractComment() {
-    }
+		Comment {
+	public AbstractComment() {
+	}
 
-    @Override
-    public NodeType getNodeTypeEnum() {
-        return NodeType.COMMENT_NODE;
-    }
+	@Override
+	public NodeType getNodeTypeEnum() {
+		return NodeType.COMMENT_NODE;
+	}
 
-    @Override
-    public String getPath(Element context) {
-        Element parent = getParent();
+	@Override
+	public String getPath(Element context) {
+		Element parent = getParent();
 
-        return ((parent != null) && (parent != context)) ? (parent
-                .getPath(context) + "/comment()") : "comment()";
-    }
+		return ((parent != null) && (parent != context)) ? (parent
+				.getPath(context) + "/comment()") : "comment()";
+	}
 
-    @Override
-    public String getUniquePath(Element context) {
-        Element parent = getParent();
+	@Override
+	public String getUniquePath(Element context) {
+		Element parent = getParent();
 
-        return ((parent != null) && (parent != context)) ? (parent
-                .getUniquePath(context) + "/comment()") : "comment()";
-    }
+		return ((parent != null) && (parent != context)) ? (parent
+				.getUniquePath(context) + "/comment()") : "comment()";
+	}
 
-    @Override
-    protected void toString(StringBuilder builder) {
-        super.toString(builder);
-        builder.append(" [Comment: \"");
-        builder.append(getText());
-        builder.append("\"]");
-    }
+	@Override
+	protected void toString(StringBuilder builder) {
+		super.toString(builder);
+		builder.append(" [Comment: \"");
+		builder.append(getText());
+		builder.append("\"]");
+	}
 
-    public String asXML() {
-        return "<!--" + getText() + "-->";
-    }
+	public String asXML() {
+		return "<!--" + getText() + "-->";
+	}
 
-    @Override
-    public void write(Writer writer) throws IOException {
-        writer.write("<!--");
-        writer.write(getText());
-        writer.write("-->");
-    }
+	@Override
+	public void write(Writer writer) throws IOException {
+		writer.write("<!--");
+		writer.write(getText());
+		writer.write("-->");
+	}
 
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
 }
 
 /*
@@ -94,7 +94,7 @@ public abstract class AbstractComment extends AbstractCharacterData implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

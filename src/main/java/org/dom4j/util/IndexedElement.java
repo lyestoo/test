@@ -6,16 +6,12 @@
  */
 package org.dom4j.util;
 
-import java.util.List;
-
-import org.dom4j.Attribute;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.NodeHelper;
-import org.dom4j.QName;
+import org.dom4j.*;
 import org.dom4j.tree.BackedList;
 import org.dom4j.tree.DefaultElement;
 import org.dom4j.tree.LazyList;
+
+import java.util.List;
 
 /**
  * <p>
@@ -23,15 +19,19 @@ import org.dom4j.tree.LazyList;
  * maintains an index of the attributes and elements it contains to optimise
  * lookups via name.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.10 $
  */
 public class IndexedElement extends DefaultElement {
 
-	/** Lazily constructed index for elements */
+	/**
+	 * Lazily constructed index for elements
+	 */
 	private DoubleNameMap<List<Element>> elementIndex;
-	/** Lazily constructed index for attributes */
+	/**
+	 * Lazily constructed index for attributes
+	 */
 	private DoubleNameMap<Attribute> attributeIndex;
 
 	public IndexedElement(String name) {
@@ -94,6 +94,7 @@ public class IndexedElement extends DefaultElement {
 	}
 
 	// #### could we override the add(Element) remove(Element methods?
+
 	@Override
 	protected void addNode(Node node) {
 		super.addNode(node);
@@ -164,7 +165,7 @@ public class IndexedElement extends DefaultElement {
 		QName qName = element.getQName();
 		List<Element> list = elementIndex.get(qName);
 		if (list == null) {
-			list = new LazyList<Element>(1);
+			list = new LazyList<Element>();
 			elementIndex.put(qName, list);
 		}
 
@@ -214,7 +215,7 @@ public class IndexedElement extends DefaultElement {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

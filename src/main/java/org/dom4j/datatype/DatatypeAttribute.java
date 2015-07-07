@@ -10,12 +10,10 @@ package org.dom4j.datatype;
 import com.sun.msv.datatype.DatabindableDatatype;
 import com.sun.msv.datatype.SerializationContext;
 import com.sun.msv.datatype.xsd.XSDatatype;
-
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.tree.AbstractAttribute;
-
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 
@@ -25,170 +23,184 @@ import org.relaxng.datatype.ValidationContext;
  * <a href="http://www.w3.org/TR/xmlschema-2/">XML Schema Data Types </a>
  * specification.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.9 $
  */
 public class DatatypeAttribute extends AbstractAttribute implements
-        SerializationContext, ValidationContext {
-    /** The parent <code>Element</code> of the <code>Attribute</code> */
-    private Element parent;
+		SerializationContext, ValidationContext {
+	/**
+	 * The parent <code>Element</code> of the <code>Attribute</code>
+	 */
+	private Element parent;
 
-    /** The <code>QName</code> for this element */
-    private QName qname;
+	/**
+	 * The <code>QName</code> for this element
+	 */
+	private QName qname;
 
-    /** The <code>XSDatatype</code> of the <code>Attribute</code> */
-    private XSDatatype datatype;
+	/**
+	 * The <code>XSDatatype</code> of the <code>Attribute</code>
+	 */
+	private XSDatatype datatype;
 
-    /** The data (Object) value of the <code>Attribute</code> */
-    private Object data;
+	/**
+	 * The data (Object) value of the <code>Attribute</code>
+	 */
+	private Object data;
 
-    /** The text value of the <code>Attribute</code> */
-    private String text;
+	/**
+	 * The text value of the <code>Attribute</code>
+	 */
+	private String text;
 
-    public DatatypeAttribute(QName qname, XSDatatype datatype) {
-        this.qname = qname;
-        this.datatype = datatype;
-    }
+	public DatatypeAttribute(QName qname, XSDatatype datatype) {
+		this.qname = qname;
+		this.datatype = datatype;
+	}
 
-    public DatatypeAttribute(QName qname, XSDatatype datatype, String text) {
-        this.qname = qname;
-        this.datatype = datatype;
-        this.text = text;
-        this.data = convertToValue(text);
-    }
+	public DatatypeAttribute(QName qname, XSDatatype datatype, String text) {
+		this.qname = qname;
+		this.datatype = datatype;
+		this.text = text;
+		this.data = convertToValue(text);
+	}
 
-    public String toString() {
-        return getClass().getName() + hashCode() + " [Attribute: name "
-                + getQualifiedName() + " value \"" + getValue() + "\" data: "
-                + getData() + "]";
-    }
+	public String toString() {
+		return getClass().getName() + hashCode() + " [Attribute: name "
+				+ getQualifiedName() + " value \"" + getValue() + "\" data: "
+				+ getData() + "]";
+	}
 
-    /**
-     * Returns the MSV XSDatatype for this node
-     * 
-     * @return DOCUMENT ME!
-     */
-    public XSDatatype getXSDatatype() {
-        return datatype;
-    }
+	/**
+	 * Returns the MSV XSDatatype for this node
+	 *
+	 * @return DOCUMENT ME!
+	 */
+	public XSDatatype getXSDatatype() {
+		return datatype;
+	}
 
-    // SerializationContext interface
-    // -------------------------------------------------------------------------
-    public String getNamespacePrefix(String uri) {
-        Element parentElement = getParent();
+	// SerializationContext interface
+	// -------------------------------------------------------------------------
 
-        if (parentElement != null) {
-            Namespace namespace = parentElement.getNamespaceForURI(uri);
+	public String getNamespacePrefix(String uri) {
+		Element parentElement = getParent();
 
-            if (namespace != null) {
-                return namespace.getPrefix();
-            }
-        }
+		if (parentElement != null) {
+			Namespace namespace = parentElement.getNamespaceForURI(uri);
 
-        return null;
-    }
+			if (namespace != null) {
+				return namespace.getPrefix();
+			}
+		}
 
-    // ValidationContext interface
-    // -------------------------------------------------------------------------
-    public String getBaseUri() {
-        // XXXX: could we use a Document for this?
-        return null;
-    }
+		return null;
+	}
 
-    public boolean isNotation(String notationName) {
-        // XXXX: no way to do this yet in dom4j so assume false
-        return false;
-    }
+	// ValidationContext interface
+	// -------------------------------------------------------------------------
 
-    public boolean isUnparsedEntity(String entityName) {
-        // XXXX: no way to do this yet in dom4j so assume valid
-        return true;
-    }
+	public String getBaseUri() {
+		// XXXX: could we use a Document for this?
+		return null;
+	}
 
-    public String resolveNamespacePrefix(String prefix) {
-        // first lets see if this is our attribute's prefix
-        if (prefix.equals(getNamespacePrefix())) {
-            return getNamespaceURI();
-        } else {
-            Element parentElement = getParent();
+	public boolean isNotation(String notationName) {
+		// XXXX: no way to do this yet in dom4j so assume false
+		return false;
+	}
 
-            if (parentElement != null) {
-                Namespace namespace = parentElement
-                        .getNamespaceForPrefix(prefix);
+	public boolean isUnparsedEntity(String entityName) {
+		// XXXX: no way to do this yet in dom4j so assume valid
+		return true;
+	}
 
-                if (namespace != null) {
-                    return namespace.getURI();
-                }
-            }
-        }
+	public String resolveNamespacePrefix(String prefix) {
+		// first lets see if this is our attribute's prefix
+		if (prefix.equals(getNamespacePrefix())) {
+			return getNamespaceURI();
+		} else {
+			Element parentElement = getParent();
 
-        return null;
-    }
+			if (parentElement != null) {
+				Namespace namespace = parentElement
+						.getNamespaceForPrefix(prefix);
 
-    // Attribute interface
-    // -------------------------------------------------------------------------
-    public QName getQName() {
-        return qname;
-    }
+				if (namespace != null) {
+					return namespace.getURI();
+				}
+			}
+		}
 
-    public String getValue() {
-        return text;
-    }
+		return null;
+	}
 
-    public void setValue(String value) {
-        validate(value);
+	// Attribute interface
+	// -------------------------------------------------------------------------
 
-        this.text = value;
-        this.data = convertToValue(value);
-    }
+	public QName getQName() {
+		return qname;
+	}
 
-    public Object getData() {
-        return data;
-    }
+	public String getValue() {
+		return text;
+	}
 
-    public void setData(Object data) {
-        String s = datatype.convertToLexicalValue(data, this);
-        validate(s);
-        this.text = s;
-        this.data = data;
-    }
+	public void setValue(String value) {
+		validate(value);
 
-    public Element getParent() {
-        return parent;
-    }
+		this.text = value;
+		this.data = convertToValue(value);
+	}
 
-    public void setParent(Element parent) {
-        this.parent = parent;
-    }
+	public Object getData() {
+		return data;
+	}
 
-    public boolean supportsParent() {
-        return true;
-    }
+	public void setData(Object data) {
+		String s = datatype.convertToLexicalValue(data, this);
+		validate(s);
+		this.text = s;
+		this.data = data;
+	}
 
-    public boolean isReadOnly() {
-        return false;
-    }
+	public Element getParent() {
+		return parent;
+	}
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-    protected void validate(String txt) throws IllegalArgumentException {
-        try {
-            datatype.checkValid(txt, this);
-        } catch (DatatypeException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
+	public void setParent(Element parent) {
+		this.parent = parent;
+	}
 
-    protected Object convertToValue(String txt) {
-        if (datatype instanceof DatabindableDatatype) {
-            DatabindableDatatype bindable = (DatabindableDatatype) datatype;
+	public boolean supportsParent() {
+		return true;
+	}
 
-            return bindable.createJavaObject(txt, this);
-        } else {
-            return datatype.createValue(txt, this);
-        }
-    }
+	public boolean isReadOnly() {
+		return false;
+	}
+
+	// Implementation methods
+	// -------------------------------------------------------------------------
+
+	protected void validate(String txt) throws IllegalArgumentException {
+		try {
+			datatype.checkValid(txt, this);
+		} catch (DatatypeException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	protected Object convertToValue(String txt) {
+		if (datatype instanceof DatabindableDatatype) {
+			DatabindableDatatype bindable = (DatabindableDatatype) datatype;
+
+			return bindable.createJavaObject(txt, this);
+		} else {
+			return datatype.createValue(txt, this);
+		}
+	}
 }
 
 /*
@@ -211,7 +223,7 @@ public class DatatypeAttribute extends AbstractAttribute implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

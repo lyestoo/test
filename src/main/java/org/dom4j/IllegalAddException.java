@@ -12,25 +12,25 @@ package org.dom4j;
  * <code>IllegalAddException</code> is thrown when a node is added incorrectly
  * to an <code>{@link Element}</code>
  * </p>
- * 
+ *
  * @version $Revision: 1.6 $
  */
 public class IllegalAddException extends IllegalArgumentException {
-    public IllegalAddException(String reason) {
-        super(reason);
-    }
+	public IllegalAddException(String reason) {
+		super(reason);
+	}
 
-    public IllegalAddException(Element parent, Node node, String reason) {
-        super("The node \"" + node.toString()
-                + "\" could not be added to the element \""
-                + parent.getQualifiedName() + "\" because: " + reason);
-    }
+	public IllegalAddException(Element parent, Node node, String reason) {
+		super("The node \"" + node.toString()
+				+ "\" could not be added to the element \""
+				+ parent.getQualifiedName() + "\" because: " + reason);
+	}
 
-    public IllegalAddException(Branch parent, Node node, String reason) {
-        super("The node \"" + node.toString()
-                + "\" could not be added to the branch \"" + parent.getName()
-                + "\" because: " + reason);
-    }
+	public IllegalAddException(Branch parent, Node node, String reason) {
+		super("The node \"" + node.toString()
+				+ "\" could not be added to the branch \"" + parent.getName()
+				+ "\" because: " + reason);
+	}
 }
 
 /*
@@ -53,7 +53,7 @@ public class IllegalAddException extends IllegalArgumentException {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

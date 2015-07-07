@@ -16,52 +16,52 @@ import java.lang.ref.WeakReference;
  * instance based on an implementation strategy for one object instance per
  * thread. This is useful in replace of the ThreadLocal usage.
  * </p>
- * 
+ *
  * @author <a href="mailto:ddlucas@users.sourceforge.net">David Lucas </a>
  * @version $Revision: 1.3 $
  */
 
 public class PerThreadSingleton implements SingletonStrategy {
-    private String singletonClassName = null;
+	private String singletonClassName = null;
 
-    private ThreadLocal perThreadCache = new ThreadLocal();
+	private ThreadLocal perThreadCache = new ThreadLocal();
 
-    public PerThreadSingleton() {
-    }
+	public PerThreadSingleton() {
+	}
 
-    public void reset() {
-        perThreadCache = new ThreadLocal();
-    }
+	public void reset() {
+		perThreadCache = new ThreadLocal();
+	}
 
-    public Object instance() {
-        Object singletonInstancePerThread = null;
-        // use weak reference to prevent cyclic reference during GC
-        WeakReference ref = (WeakReference) perThreadCache.get();
-        // singletonInstancePerThread=perThreadCache.get();
-        // if (singletonInstancePerThread==null) {
-        if (ref == null || ref.get() == null) {
-            Class clazz = null;
-            try {
-                clazz = Thread.currentThread().getContextClassLoader().loadClass(
-                        singletonClassName);
-                singletonInstancePerThread = clazz.newInstance();
-            } catch (Exception ignore) {
-                try {
-                    clazz = Class.forName(singletonClassName);
-                    singletonInstancePerThread = clazz.newInstance();
-                } catch (Exception ignore2) {
-                }
-            }
-            perThreadCache.set(new WeakReference(singletonInstancePerThread));
-        } else {
-            singletonInstancePerThread = ref.get();
-        }
-        return singletonInstancePerThread;
-    }
+	public Object instance() {
+		Object singletonInstancePerThread = null;
+		// use weak reference to prevent cyclic reference during GC
+		WeakReference ref = (WeakReference) perThreadCache.get();
+		// singletonInstancePerThread=perThreadCache.get();
+		// if (singletonInstancePerThread==null) {
+		if (ref == null || ref.get() == null) {
+			Class clazz = null;
+			try {
+				clazz = Thread.currentThread().getContextClassLoader().loadClass(
+						singletonClassName);
+				singletonInstancePerThread = clazz.newInstance();
+			} catch (Exception ignore) {
+				try {
+					clazz = Class.forName(singletonClassName);
+					singletonInstancePerThread = clazz.newInstance();
+				} catch (Exception ignore2) {
+				}
+			}
+			perThreadCache.set(new WeakReference(singletonInstancePerThread));
+		} else {
+			singletonInstancePerThread = ref.get();
+		}
+		return singletonInstancePerThread;
+	}
 
-    public void setSingletonClassName(String singletonClassName) {
-        this.singletonClassName = singletonClassName;
-    }
+	public void setSingletonClassName(String singletonClassName) {
+		this.singletonClassName = singletonClassName;
+	}
 
 }
 
@@ -85,7 +85,7 @@ public class PerThreadSingleton implements SingletonStrategy {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

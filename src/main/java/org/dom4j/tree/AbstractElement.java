@@ -6,6 +6,11 @@
  */
 package org.dom4j.tree;
 
+import org.dom4j.*;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+import org.xml.sax.Attributes;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -14,42 +19,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Attribute;
-import org.dom4j.CDATA;
-import org.dom4j.CharacterData;
-import org.dom4j.Comment;
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.Entity;
-import org.dom4j.IllegalAddException;
-import org.dom4j.Namespace;
-import org.dom4j.Node;
-import org.dom4j.NodeHelper;
-import org.dom4j.NodeType;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.QName;
-import org.dom4j.Text;
-import org.dom4j.Visitor;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-
-import org.xml.sax.Attributes;
-
 /**
  * <p>
  * <code>AbstractElement</code> is an abstract base class for tree
  * implementors to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.80 $
  */
 public abstract class AbstractElement extends AbstractBranch implements
-				org.dom4j.Element {
+		org.dom4j.Element {
 
-	/** The <code>DocumentFactory</code> instance used by default */
-	private static final DocumentFactory DOCUMENT_FACTORY = DocumentFactory.getInstance();
+	/**
+	 * The <code>DefaultDocumentFactory</code> instance used by default
+	 */
+	private static final DocumentFactory DOCUMENT_FACTORY = DefaultDocumentFactory.getInstance();
 	protected static final boolean VERBOSE_TOSTRING = false;
 	protected static final boolean USE_STRINGVALUE_SEPARATOR = false;
 
@@ -89,7 +74,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 	 * getQualifiedName() if there is a namespace prefix defined or if no
 	 * namespace is present then it is getName() or if a namespace is defined
 	 * with no prefix then the expression is [name()='X'] where X = getName().
-	 * 
+	 *
 	 * @return DOCUMENT ME!
 	 */
 	public String getXPathNameStep() {
@@ -183,9 +168,8 @@ public abstract class AbstractElement extends AbstractBranch implements
 	 * <code>accept</code> method is the <code>Visitor Pattern</code>
 	 * method.
 	 * </p>
-	 * 
-	 * @param visitor
-	 *            <code>Visitor</code> is the visitor.
+	 *
+	 * @param visitor <code>Visitor</code> is the visitor.
 	 */
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
@@ -228,6 +212,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// QName methods
 	// -------------------------------------------------------------------------
+
 	public Namespace getNamespace() {
 		return getQName().getNamespace();
 	}
@@ -259,6 +244,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// Node methods
 	// -------------------------------------------------------------------------
+
 	@Override
 	public Node node(int index) {
 		if (index >= 0) {
@@ -290,6 +276,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// Element methods
 	// -------------------------------------------------------------------------
+
 	public Element element(String name) {
 		for (Node node : contentList()) {
 			Element element = NodeHelper.nodeAsElement(node);
@@ -366,6 +353,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// Attribute methods
 	// -------------------------------------------------------------------------
+
 	public List<Attribute> attributes() {
 		return new ContentListFacade<Attribute>(this, attributeList());
 	}
@@ -409,16 +397,13 @@ public abstract class AbstractElement extends AbstractBranch implements
 	/**
 	 * This method provides a more optimal way of setting all the attributes on
 	 * an Element particularly for use in {@link org.dom4j.io.SAXReader}.
-	 * 
-	 * @param attributes
-	 *            DOCUMENT ME!
-	 * @param namespaceStack
-	 *            DOCUMENT ME!
-	 * @param noNamespaceAttributes
-	 *            DOCUMENT ME!
+	 *
+	 * @param attributes            DOCUMENT ME!
+	 * @param namespaceStack        DOCUMENT ME!
+	 * @param noNamespaceAttributes DOCUMENT ME!
 	 */
 	public void setAttributes(Attributes attributes,
-					NamespaceStack namespaceStack, boolean noNamespaceAttributes) {
+	                          NamespaceStack namespaceStack, boolean noNamespaceAttributes) {
 		// now lets add all attribute values
 		int size = attributes.getLength();
 
@@ -437,10 +422,10 @@ public abstract class AbstractElement extends AbstractBranch implements
 					String attributeValue = attributes.getValue(0);
 
 					QName attributeQName = namespaceStack.getAttributeQName(
-									attributeURI, attributeLocalName, name);
+							attributeURI, attributeLocalName, name);
 
 					add(factory.createAttribute(this, attributeQName,
-									attributeValue));
+							attributeValue));
 				}
 			} else {
 				List<Attribute> list = attributeList(size);
@@ -460,10 +445,10 @@ public abstract class AbstractElement extends AbstractBranch implements
 						String attributeValue = attributes.getValue(i);
 
 						QName attributeQName = namespaceStack.getAttributeQName(attributeURI,
-										attributeLocalName, attributeName);
+								attributeLocalName, attributeName);
 
 						Attribute attribute = factory.createAttribute(this,
-										attributeQName, attributeValue);
+								attributeQName, attributeValue);
 
 						list.add(attribute);
 
@@ -536,6 +521,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// Processing instruction API
 	// -------------------------------------------------------------------------
+
 	public List<ProcessingInstruction> processingInstructions() {
 		List<? extends Node> list = contentList();
 
@@ -618,6 +604,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// Content Model methods
 	// -------------------------------------------------------------------------
+
 	public Node getXPathResult(int index) {
 		Node answer = node(index);
 
@@ -768,6 +755,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 	}
 
 	// polymorphic node methods
+
 	@Override
 	public void add(Node node) {
 		switch (node.getNodeTypeEnum()) {
@@ -856,6 +844,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 	}
 
 	// typesafe versions using node classes
+
 	public void add(CDATA cdata) {
 		addNode(cdata);
 	}
@@ -920,6 +909,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// Helper methods
 	// -------------------------------------------------------------------------
+
 	public boolean hasMixedContent() {
 		List<? extends Node> content = contentList();
 
@@ -978,7 +968,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 				switch (node.getNodeTypeEnum()) {
 					case CDATA_SECTION_NODE:
 
-					// case ENTITY_NODE:
+						// case ENTITY_NODE:
 					case ENTITY_REFERENCE_NODE:
 					case TEXT_NODE:
 						it.remove();
@@ -1042,7 +1032,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 	 * the normalize operation alone may not be sufficient, since XPointers do
 	 * not differentiate between <code>Text</code> nodes and
 	 * <code>CDATASection</code> nodes.
-	 * 
+	 *
 	 * @since DOM Level 2
 	 */
 	public void normalize() {
@@ -1115,6 +1105,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// add to me content from another element
 	// analagous to the addAll(collection) methods in Java 2 collections
+
 	public void appendAttributes(Element element) {
 		for (int i = 0, size = element.attributeCount(); i < size; i++) {
 			Attribute attribute = element.attribute(i);
@@ -1132,7 +1123,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 	 * This returns a deep clone of this element. The new element is detached
 	 * from its parent, and getParent() on the clone will return null.
 	 * </p>
-	 * 
+	 *
 	 * @return the clone of this element
 	 */
 
@@ -1355,11 +1346,11 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// Implementation helper methods
 	// -------------------------------------------------------------------------
+
 	/**
 	 * Ensures that the list of attributes has the given size
-	 * 
-	 * @param minCapacity
-	 *            DOCUMENT ME!
+	 *
+	 * @param minCapacity DOCUMENT ME!
 	 */
 	public void ensureAttributesCapacity(int minCapacity) {
 		if (minCapacity > 1) {
@@ -1375,6 +1366,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	// Implementation methods
 	// -------------------------------------------------------------------------
+
 	protected Element createElement(String name) {
 		return getDocumentFactory().createElement(name);
 	}
@@ -1407,9 +1399,8 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	/**
 	 * Like addNode() but does not require a parent check
-	 * 
-	 * @param node
-	 *            DOCUMENT ME!
+	 *
+	 * @param node DOCUMENT ME!
 	 */
 	protected void addNewNode(Node node) {
 		contentList().add(node);
@@ -1435,9 +1426,8 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	/**
 	 * Called when a new child node is added to create any parent relationships
-	 * 
-	 * @param node
-	 *            DOCUMENT ME!
+	 *
+	 * @param node DOCUMENT ME!
 	 */
 	protected void childAdded(Node node) {
 		if (node != null) {
@@ -1455,7 +1445,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	/**
 	 * DOCUMENT ME!
-	 * 
+	 *
 	 * @return the internal List used to store attributes or creates one if one
 	 *         is not available
 	 */
@@ -1463,10 +1453,8 @@ public abstract class AbstractElement extends AbstractBranch implements
 
 	/**
 	 * DOCUMENT ME!
-	 * 
-	 * @param attributeCount
-	 *            DOCUMENT ME!
-	 * 
+	 *
+	 * @param attributeCount DOCUMENT ME!
 	 * @return the internal List used to store attributes or creates one with
 	 *         the specified size if one is not available
 	 */
@@ -1491,7 +1479,7 @@ public abstract class AbstractElement extends AbstractBranch implements
 	/**
 	 * A Factory Method pattern which creates a List implementation used to
 	 * store attributes
-	 * 
+	 *
 	 * @return DOCUMENT ME!
 	 */
 	protected List<Attribute> createAttributeList() {
@@ -1501,10 +1489,8 @@ public abstract class AbstractElement extends AbstractBranch implements
 	/**
 	 * A Factory Method pattern which creates a List implementation used to
 	 * store attributes
-	 * 
-	 * @param size
-	 *            DOCUMENT ME!
-	 * 
+	 *
+	 * @param size DOCUMENT ME!
 	 * @return DOCUMENT ME!
 	 */
 	protected List<Attribute> createAttributeList(int size) {
@@ -1537,7 +1523,7 @@ public abstract class AbstractElement extends AbstractBranch implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

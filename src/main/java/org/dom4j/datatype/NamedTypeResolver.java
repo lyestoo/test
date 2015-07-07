@@ -7,19 +7,19 @@
 package org.dom4j.datatype;
 
 import com.sun.msv.datatype.xsd.XSDatatype;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import org.dom4j.DefaultDocumentFactory;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.QName;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
  * <code>NamedTypeResolver</code> resolves named types for a given QName.
  * </p>
- * 
+ *
  * @author Yuxin Ruan
  * @version $Revision: 1.8 $
  */
@@ -35,7 +35,7 @@ class NamedTypeResolver {
 		this.documentFactory = documentFactory;
 	}
 
-	void registerComplexType(QName type, DocumentFactory factory) {
+	void registerComplexType(QName type, DefaultDocumentFactory factory) {
 		complexTypeMap.put(type, factory);
 	}
 
@@ -44,7 +44,7 @@ class NamedTypeResolver {
 	}
 
 	void registerTypedElement(Element element, QName type,
-					DocumentFactory parentFactory) {
+	                          DefaultDocumentFactory parentFactory) {
 		typedElementMap.put(element, type);
 		elementFactoryMap.put(element, parentFactory);
 	}
@@ -56,11 +56,11 @@ class NamedTypeResolver {
 			QName type = entry.getValue();
 
 			if (complexTypeMap.containsKey(type)) {
-				DocumentFactory factory = (DocumentFactory) complexTypeMap.get(type);
+				DocumentFactory factory = complexTypeMap.get(type);
 				elementQName.setDocumentFactory(factory);
 			} else if (simpleTypeMap.containsKey(type)) {
 				XSDatatype datatype = (XSDatatype) simpleTypeMap.get(type);
-				DocumentFactory factory = (DocumentFactory) elementFactoryMap.get(element);
+				DocumentFactory factory = elementFactoryMap.get(element);
 
 				if (factory instanceof DatatypeElementFactory) {
 					((DatatypeElementFactory) factory).setChildElementXSDatatype(elementQName, datatype);
@@ -104,7 +104,7 @@ class NamedTypeResolver {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

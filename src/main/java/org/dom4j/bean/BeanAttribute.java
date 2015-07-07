@@ -16,47 +16,51 @@ import org.dom4j.tree.AbstractAttribute;
  * <code>BeanAttribute</code> represents a mutable XML attribute which is
  * backed by a property of the JavaBean of its parent element.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.7 $
  */
 public class BeanAttribute extends AbstractAttribute {
-    /** The list of Bean attributes */
-    private final BeanAttributeList beanList;
+	/**
+	 * The list of Bean attributes
+	 */
+	private final BeanAttributeList beanList;
 
-    /** The index in the Bean attribute list */
-    private final int index;
+	/**
+	 * The index in the Bean attribute list
+	 */
+	private final int index;
 
-    public BeanAttribute(BeanAttributeList beanList, int index) {
-        this.beanList = beanList;
-        this.index = index;
-    }
+	public BeanAttribute(BeanAttributeList beanList, int index) {
+		this.beanList = beanList;
+		this.index = index;
+	}
 
-    public QName getQName() {
-        return beanList.getQName(index);
-    }
+	public QName getQName() {
+		return beanList.getQName(index);
+	}
 
-    public Element getParent() {
-        return beanList.getParent();
-    }
+	public Element getParent() {
+		return beanList.getParent();
+	}
 
-    public String getValue() {
-        Object data = getData();
+	public String getValue() {
+		Object data = getData();
 
-        return (data != null) ? data.toString() : null;
-    }
+		return (data != null) ? data.toString() : null;
+	}
 
-    public void setValue(String data) {
-        beanList.setData(index, data);
-    }
+	public void setValue(String data) {
+		beanList.setData(index, data);
+	}
 
-    public Object getData() {
-        return beanList.getData(index);
-    }
+	public Object getData() {
+		return beanList.getData(index);
+	}
 
-    public void setData(Object data) {
-        beanList.setData(index, data);
-    }
+	public void setData(Object data) {
+		beanList.setData(index, data);
+	}
 }
 
 /*
@@ -79,7 +83,7 @@ public class BeanAttribute extends AbstractAttribute {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

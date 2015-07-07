@@ -8,19 +8,13 @@ package org.dom4j.dom;
 
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultComment;
-
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.UserDataHandler;
+import org.w3c.dom.*;
 
 /**
  * <p>
  * <code>DOMText</code> implements a Text node which supports the W3C DOM API.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.12 $
  */
@@ -36,6 +30,7 @@ public class DOMComment extends DefaultComment implements org.w3c.dom.Comment {
 
 	// org.w3c.dom.Node interface
 	// -------------------------------------------------------------------------
+
 	public boolean supports(String feature, String version) {
 		return DOMNodeHelper.supports(this, feature, version);
 	}
@@ -63,6 +58,7 @@ public class DOMComment extends DefaultComment implements org.w3c.dom.Comment {
 	// already part of API
 	//
 	// public short getNodeType();
+
 	public String getNodeValue() throws DOMException {
 		return DOMNodeHelper.getNodeValue(this);
 	}
@@ -104,35 +100,35 @@ public class DOMComment extends DefaultComment implements org.w3c.dom.Comment {
 	}
 
 	public org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild,
-					org.w3c.dom.Node refChild) throws DOMException {
+	                                     org.w3c.dom.Node refChild) throws DOMException {
 		checkNewChildNode(newChild);
 
 		return DOMNodeHelper.insertBefore(this, newChild, refChild);
 	}
 
 	public org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild,
-					org.w3c.dom.Node oldChild) throws DOMException {
+	                                     org.w3c.dom.Node oldChild) throws DOMException {
 		checkNewChildNode(newChild);
 
 		return DOMNodeHelper.replaceChild(this, newChild, oldChild);
 	}
 
 	public org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild)
-					throws DOMException {
+			throws DOMException {
 		return DOMNodeHelper.removeChild(this, oldChild);
 	}
 
 	public org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild)
-					throws DOMException {
+			throws DOMException {
 		checkNewChildNode(newChild);
 
 		return DOMNodeHelper.appendChild(this, newChild);
 	}
 
 	private void checkNewChildNode(org.w3c.dom.Node newChild)
-					throws DOMException {
+			throws DOMException {
 		throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-						"Comment nodes cannot have children");
+				"Comment nodes cannot have children");
 	}
 
 	public boolean hasChildNodes() {
@@ -157,6 +153,7 @@ public class DOMComment extends DefaultComment implements org.w3c.dom.Comment {
 
 	// org.w3c.dom.CharacterData interface
 	// -------------------------------------------------------------------------
+
 	public String getData() throws DOMException {
 		return DOMNodeHelper.getData(this);
 	}
@@ -186,7 +183,7 @@ public class DOMComment extends DefaultComment implements org.w3c.dom.Comment {
 	}
 
 	public void replaceData(int offset, int count, String arg)
-					throws DOMException {
+			throws DOMException {
 		DOMNodeHelper.replaceData(this, offset, count, arg);
 	}
 
@@ -211,8 +208,7 @@ public class DOMComment extends DefaultComment implements org.w3c.dom.Comment {
 	}
 
 	public boolean isSameNode(Node other) {
-		//TODO
-		throw new UnsupportedOperationException("Not supported yet.");
+		return DOMNodeHelper.isNodeSame(this, other);
 	}
 
 	public String lookupPrefix(String namespaceURI) {
@@ -230,9 +226,8 @@ public class DOMComment extends DefaultComment implements org.w3c.dom.Comment {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public boolean isEqualNode(Node arg) {
-		//TODO
-		throw new UnsupportedOperationException("Not supported yet.");
+	public boolean isEqualNode(Node other) {
+		return DOMNodeHelper.isNodeEquals(this, other);
 	}
 
 	public Object getFeature(String feature, String version) {
@@ -272,7 +267,7 @@ public class DOMComment extends DefaultComment implements org.w3c.dom.Comment {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

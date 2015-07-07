@@ -6,15 +6,11 @@
  */
 package org.dom4j.rule;
 
+import org.dom4j.*;
+
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.NodeType;
 
 /**
  * <p>
@@ -23,16 +19,20 @@ import org.dom4j.NodeType;
  * Node using the XSLT processing model uses the smallest possible RuleSet to
  * reduce the number of Rule evaluations.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.9 $
  */
 public class Mode {
 
 	private EnumMap<NodeType, RuleSet> ruleSets = new EnumMap<NodeType, RuleSet>(NodeType.class);
-	/** Map of exact (local) element names to RuleSet instances */
+	/**
+	 * Map of exact (local) element names to RuleSet instances
+	 */
 	private Map<String, RuleSet> elementNameRuleSets;
-	/** Map of exact (local) attribute names to RuleSet instances */
+	/**
+	 * Map of exact (local) attribute names to RuleSet instances
+	 */
 	private Map<String, RuleSet> attributeNameRuleSets;
 
 	public Mode() {
@@ -40,12 +40,9 @@ public class Mode {
 
 	/**
 	 * Runs the actions associated with the given node
-	 * 
-	 * @param node
-	 *            DOCUMENT ME!
-	 * 
-	 * @throws Exception
-	 *             DOCUMENT ME!
+	 *
+	 * @param node DOCUMENT ME!
+	 * @throws Exception DOCUMENT ME!
 	 */
 	public void fireRule(Node node) throws Exception {
 		if (node != null) {
@@ -141,14 +138,12 @@ public class Mode {
 	/**
 	 * Performs an XSLT processing model match for the rule which matches the
 	 * given Node the best.
-	 * 
-	 * @param node
-	 *            is the DOM4J Node to match against
-	 * 
+	 *
+	 * @param node is the DOM4J Node to match against
 	 * @return the matching Rule or no rule if none matched
 	 */
 	public Rule getMatchingRule(Node node) {
-		NodeType matchType = node.getNodeType();
+		NodeType matchType = node.getNodeTypeEnum();
 
 		switch (matchType) {
 			case ELEMENT_NODE:
@@ -208,10 +203,8 @@ public class Mode {
 
 	/**
 	 * DOCUMENT ME!
-	 * 
-	 * @param matchType
-	 *            DOCUMENT ME!
-	 * 
+	 *
+	 * @param matchType DOCUMENT ME!
 	 * @return the RuleSet for the given matching type. This method will never
 	 *         return null, a new instance will be created.
 	 */
@@ -237,14 +230,10 @@ public class Mode {
 
 	/**
 	 * Adds the Rule to a RuleSet for the given name.
-	 * 
-	 * @param map
-	 *            DOCUMENT ME!
-	 * @param name
-	 *            DOCUMENT ME!
-	 * @param rule
-	 *            DOCUMENT ME!
-	 * 
+	 *
+	 * @param map  DOCUMENT ME!
+	 * @param name DOCUMENT ME!
+	 * @param rule DOCUMENT ME!
 	 * @return the Map (which will be created if the given map was null
 	 */
 	protected Map<String, RuleSet> addToNameMap(Map<String, RuleSet> map, String name, Rule rule) {
@@ -295,7 +284,7 @@ public class Mode {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

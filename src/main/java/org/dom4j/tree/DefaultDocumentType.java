@@ -7,135 +7,139 @@
 
 package org.dom4j.tree;
 
-import java.util.List;
 import org.dom4j.dtd.ExternalDeclaration;
 import org.dom4j.dtd.InternalDeclaration;
+
+import java.util.List;
 
 /**
  * <p>
  * <code>DefaultDocumentType</code> is the DOM4J default implementation of an
  * XML document type.
  * </p>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @version $Revision: 1.10 $
  */
 public class DefaultDocumentType extends AbstractDocumentType {
-    /** The root element name of the document typ */
-    protected String elementName;
+	/**
+	 * The root element name of the document typ
+	 */
+	protected String elementName;
 
-    /** Holds value of property publicID. */
-    private String publicID;
+	/**
+	 * Holds value of property publicID.
+	 */
+	private String publicID;
 
-    /** Holds value of property systemID. */
-    private String systemID;
+	/**
+	 * Holds value of property systemID.
+	 */
+	private String systemID;
 
-    /** The internal DTD declarations */
-    private List<InternalDeclaration> internalDeclarations;
+	/**
+	 * The internal DTD declarations
+	 */
+	private List<InternalDeclaration> internalDeclarations;
 
-    /** The external DTD declarations */
-    private List<ExternalDeclaration> externalDeclarations;
+	/**
+	 * The external DTD declarations
+	 */
+	private List<ExternalDeclaration> externalDeclarations;
 
-    public DefaultDocumentType() {
-    }
+	public DefaultDocumentType() {
+	}
 
-    /**
-     * <p>
-     * This will create a new <code>DocumentType</code> with a reference to
-     * the external DTD
-     * </p>
-     * 
-     * @param elementName
-     *            is the root element name of the document type
-     * @param systemID
-     *            is the system ID of the external DTD
-     */
-    public DefaultDocumentType(String elementName, String systemID) {
-        this.elementName = elementName;
-        this.systemID = systemID;
-    }
+	/**
+	 * <p>
+	 * This will create a new <code>DocumentType</code> with a reference to
+	 * the external DTD
+	 * </p>
+	 *
+	 * @param elementName is the root element name of the document type
+	 * @param systemID    is the system ID of the external DTD
+	 */
+	public DefaultDocumentType(String elementName, String systemID) {
+		this.elementName = elementName;
+		this.systemID = systemID;
+	}
 
-    /**
-     * <p>
-     * This will create a new <code>DocumentType</code> with a reference to
-     * the external DTD
-     * </p>
-     * 
-     * @param elementName
-     *            is the root element name of the document type
-     * @param publicID
-     *            is the public ID of the DTD
-     * @param systemID
-     *            is the system ID of the DTD
-     */
-    public DefaultDocumentType(String elementName, String publicID,
-            String systemID) {
-        this.elementName = elementName;
-        this.publicID = publicID;
-        this.systemID = systemID;
-    }
+	/**
+	 * <p>
+	 * This will create a new <code>DocumentType</code> with a reference to
+	 * the external DTD
+	 * </p>
+	 *
+	 * @param elementName is the root element name of the document type
+	 * @param publicID    is the public ID of the DTD
+	 * @param systemID    is the system ID of the DTD
+	 */
+	public DefaultDocumentType(String elementName, String publicID,
+	                           String systemID) {
+		this.elementName = elementName;
+		this.publicID = publicID;
+		this.systemID = systemID;
+	}
 
-    public String getElementName() {
-        return elementName;
-    }
+	public String getElementName() {
+		return elementName;
+	}
 
-    public void setElementName(String elementName) {
-        this.elementName = elementName;
-    }
+	public void setElementName(String elementName) {
+		this.elementName = elementName;
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the public ID of the document type
-     */
-    public String getPublicID() {
-        return publicID;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the public ID of the document type
+	 */
+	public String getPublicID() {
+		return publicID;
+	}
 
-    /**
-     * Sets the public ID of the document type
-     * 
-     * @param publicID
-     *            DOCUMENT ME!
-     */
-    public void setPublicID(String publicID) {
-        this.publicID = publicID;
-    }
+	/**
+	 * Sets the public ID of the document type
+	 *
+	 * @param publicID DOCUMENT ME!
+	 */
+	public void setPublicID(String publicID) {
+		this.publicID = publicID;
+	}
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return the system ID of the document type
-     */
-    public String getSystemID() {
-        return systemID;
-    }
+	/**
+	 * DOCUMENT ME!
+	 *
+	 * @return the system ID of the document type
+	 */
+	public String getSystemID() {
+		return systemID;
+	}
 
-    /**
-     * Sets the system ID of the document type
-     * 
-     * @param systemID
-     *            DOCUMENT ME!
-     */
-    public void setSystemID(String systemID) {
-        this.systemID = systemID;
-    }
+	/**
+	 * Sets the system ID of the document type
+	 *
+	 * @param systemID DOCUMENT ME!
+	 */
+	public void setSystemID(String systemID) {
+		this.systemID = systemID;
+	}
 
-    public List<InternalDeclaration> getInternalDeclarations() {
-        return internalDeclarations;
-    }
+	public List<InternalDeclaration> getInternalDeclarations() {
+		return internalDeclarations;
+	}
 
-    public void setInternalDeclarations(List<InternalDeclaration> internalDeclarations) {
-        this.internalDeclarations = internalDeclarations;
-    }
+	public void setInternalDeclarations(List<InternalDeclaration> internalDeclarations) {
+		this.internalDeclarations = internalDeclarations;
+	}
 
-    public List<ExternalDeclaration> getExternalDeclarations() {
-        return externalDeclarations;
-    }
+	public List<ExternalDeclaration> getExternalDeclarations() {
+		return externalDeclarations;
+	}
 
-    public void setExternalDeclarations(List<ExternalDeclaration> externalDeclarations) {
-        this.externalDeclarations = externalDeclarations;
-    }
+	public void setExternalDeclarations(List<ExternalDeclaration> externalDeclarations) {
+		this.externalDeclarations = externalDeclarations;
+	}
 }
 
 /*
@@ -158,7 +162,7 @@ public class DefaultDocumentType extends AbstractDocumentType {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

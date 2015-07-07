@@ -2,12 +2,12 @@
 // $Id$  
 package org.dom4j.util;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.dom4j.QName;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- *
  * @author Jirsák Filip
  * @version $Revision$
  */

@@ -16,39 +16,39 @@ import org.dom4j.QName;
  * <code>AttributeHelper</code> a number of helper methods for working with
  * attribute values.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.7 $
  */
 public class AttributeHelper {
-    protected AttributeHelper() {
-    }
+	protected AttributeHelper() {
+	}
 
-    public static boolean booleanValue(Element element, String attributeName) {
-        return booleanValue(element.attribute(attributeName));
-    }
+	public static boolean booleanValue(Element element, String attributeName) {
+		return booleanValue(element.attribute(attributeName));
+	}
 
-    public static boolean booleanValue(Element element, QName attributeQName) {
-        return booleanValue(element.attribute(attributeQName));
-    }
+	public static boolean booleanValue(Element element, QName attributeQName) {
+		return booleanValue(element.attribute(attributeQName));
+	}
 
-    protected static boolean booleanValue(Attribute attribute) {
-        if (attribute == null) {
-            return false;
-        }
+	protected static boolean booleanValue(Attribute attribute) {
+		if (attribute == null) {
+			return false;
+		}
 
-        Object value = attribute.getData();
+		Object value = attribute.getData();
 
-        if (value == null) {
-            return false;
-        } else if (value instanceof Boolean) {
-            Boolean b = (Boolean) value;
+		if (value == null) {
+			return false;
+		} else if (value instanceof Boolean) {
+			Boolean b = (Boolean) value;
 
-            return b.booleanValue();
-        } else {
-            return "true".equalsIgnoreCase(value.toString());
-        }
-    }
+			return b.booleanValue();
+		} else {
+			return "true".equalsIgnoreCase(value.toString());
+		}
+	}
 }
 
 /*
@@ -71,7 +71,7 @@ public class AttributeHelper {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

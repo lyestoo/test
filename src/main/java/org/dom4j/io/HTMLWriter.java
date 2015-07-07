@@ -6,23 +6,14 @@
  */
 package org.dom4j.io;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import org.dom4j.*;
+import org.xml.sax.SAXException;
+
+import java.io.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Entity;
-
-import org.dom4j.NodeType;
-import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -33,17 +24,17 @@ import org.xml.sax.SAXException;
  * and it supports certain elements which have no corresponding close tag such
  * as for &lt;BR&gt; and &lt;P&gt;.
  * </p>
- * 
+ * <p/>
  * <p>
  * The OutputFormat passed in to the constructor is checked for isXHTML() and
  * isExpandEmptyElements(). See {@link OutputFormat OutputFormat}for details.
  * Here are the rules for <b>this class </b> based on an OutputFormat, "format",
  * passed in to the constructor: <br/><br/>
- * 
+ * <p/>
  * <ul>
  * <li>If an element is in {@link #getOmitElementCloseSet()
  * getOmitElementCloseSet}, then it is treated specially:
- * 
+ * <p/>
  * <ul>
  * <li>It never expands, since some browsers treat this as two separate
  * Horizontal Rules: &lt;HR&gt;&lt;/HR&gt;</li>
@@ -53,7 +44,7 @@ import org.xml.sax.SAXException;
  * "/", but that's better than when it refuses to recognize this: &lt;hr/&gt;
  * which it thinks is an element named "HR/".</li>
  * </ul>
- * 
+ * <p/>
  * </li>
  * <li>If {@link org.dom4j.io.OutputFormat#isXHTML() format.isXHTML()}, all
  * elements must have either a close element, or be a closed single tag.</li>
@@ -61,32 +52,32 @@ import org.xml.sax.SAXException;
  * format.isExpandEmptyElements()}() is true, all elements are expanded except
  * as above.</li>
  * </ul>
- * 
+ * <p/>
  * <b>Examples </b>
  * </p>
- * 
+ * <p/>
  * <p>
  * </p>
- * 
+ * <p/>
  * <p>
  * If isXHTML == true, CDATA sections look like this:
- * 
+ * <p/>
  * <PRE>
- * 
+ * <p/>
  * <b>&lt;myelement&gt;&lt;![CDATA[My data]]&gt;&lt;/myelement&gt; </b>
- * 
+ * <p/>
  * </PRE>
- * 
+ * <p/>
  * Otherwise, they look like this:
- * 
+ * <p/>
  * <PRE>
- * 
+ * <p/>
  * <b>&lt;myelement&gt;My data&lt;/myelement&gt; </b>
- * 
+ * <p/>
  * </PRE>
- * 
+ * <p/>
  * </p>
- * 
+ * <p/>
  * <p>
  * Basically, {@link OutputFormat.isXHTML() OutputFormat.isXHTML()} ==
  * <code>true</code> will produce valid XML, while {@link
@@ -94,7 +85,7 @@ import org.xml.sax.SAXException;
  * format.isExpandEmptyElements()} determines whether empty elements are
  * expanded if isXHTML is true, excepting the special HTML single tags.
  * </p>
- * 
+ * <p/>
  * <p>
  * Also, HTMLWriter handles tags whose contents should be preformatted, that is,
  * whitespace-preserved. By default, this set includes the tags &lt;PRE&gt;,
@@ -109,7 +100,7 @@ import org.xml.sax.SAXException;
  * See examples and discussion here: {@link#setPreformattedTags(java.util.Set)
  * setPreformattedTags}
  * </p>
- * 
+ * <p/>
  * <p>
  * <b>Examples </b>
  * </p>
@@ -117,7 +108,7 @@ import org.xml.sax.SAXException;
  * <p>
  * <b>Pretty Printing </b>
  * </p>
- * 
+ * <p/>
  * <p>
  * This example shows how to pretty print a string containing a valid HTML
  * document to a string. You can also just call the static methods of this
@@ -128,7 +119,7 @@ import org.xml.sax.SAXException;
  * {@link #prettyPrintXHTML(String) prettyPrintXHTML(String)}for XHTML (note
  * the X)
  * </p>
- * 
+ * <p/>
  * <pre>
  * String testPrettyPrint(String html) {
  *     StringWriter sw = new StringWriter();
@@ -145,14 +136,14 @@ import org.xml.sax.SAXException;
  *     return sw.toString();
  * }
  * </pre>
- * 
+ * <p/>
  * <p>
  * This example shows how to create a "squeezed" document, but one that will
  * work in browsers even if the browser line length is limited. No newlines are
  * included, no extra whitespace at all, except where it it required by
  * {@link #setPreformattedTags(java.util.Set) setPreformattedTags}.
  * </p>
- * 
+ * <p/>
  * <pre>
  * String testCrunch(String html) {
  *     StringWriter sw = new StringWriter();
@@ -170,9 +161,9 @@ import org.xml.sax.SAXException;
  *     return sw.toString();
  * }
  * </pre>
- * 
+ * <p/>
  * </blockquote>
- * 
+ *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
  * @author Laramie Crocker
  * @version $Revision: 1.21 $
@@ -181,7 +172,7 @@ public class HTMLWriter extends XMLWriter {
 
 	private static String lineSeparator = System.getProperty("line.separator");
 	protected static final HashSet<String> DEFAULT_PREFORMATTED_TAGS;
-	
+
 
 	static {
 		// If you change this list, update the javadoc examples, above in the
@@ -192,14 +183,16 @@ public class HTMLWriter extends XMLWriter {
 		DEFAULT_PREFORMATTED_TAGS.add("STYLE");
 		DEFAULT_PREFORMATTED_TAGS.add("TEXTAREA");
 	}
+
 	protected static final OutputFormat DEFAULT_HTML_FORMAT;
-	
+
 
 	static {
 		DEFAULT_HTML_FORMAT = new OutputFormat("  ", true);
 		DEFAULT_HTML_FORMAT.setTrimText(true);
 		DEFAULT_HTML_FORMAT.setSuppressDeclaration(true);
 	}
+
 	private LinkedList<FormatState> formatStack = new LinkedList<FormatState>();
 	private String lastText = "";
 	private int tagsOuput = 0;	// legal values are 0+, but -1 signifies lazy initialization.
@@ -232,7 +225,7 @@ public class HTMLWriter extends XMLWriter {
 	}
 
 	public HTMLWriter(OutputStream out, OutputFormat format)
-					throws UnsupportedEncodingException {
+			throws UnsupportedEncodingException {
 		super(out, format);
 	}
 
@@ -246,6 +239,7 @@ public class HTMLWriter extends XMLWriter {
 
 	// Overloaded methods
 	// added isXHTML() stuff so you get the CDATA brackets if you desire.
+
 	@Override
 	protected void writeCDATA(String text) throws IOException {
 		// XXX: Should we escape entities?
@@ -303,12 +297,9 @@ public class HTMLWriter extends XMLWriter {
 	/**
 	 * Overriden method to not close certain element names to avoid wierd
 	 * behaviour from browsers for versions up to 5.x
-	 * 
-	 * @param qualifiedName
-	 *            DOCUMENT ME!
-	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!
+	 *
+	 * @param qualifiedName DOCUMENT ME!
+	 * @throws IOException DOCUMENT ME!
 	 */
 	@Override
 	protected void writeClose(String qualifiedName) throws IOException {
@@ -319,7 +310,7 @@ public class HTMLWriter extends XMLWriter {
 
 	@Override
 	protected void writeEmptyElementClose(String qualifiedName)
-					throws IOException {
+			throws IOException {
 		if (getOutputFormat().isXHTML()) {
 			// xhtml, always check with format object whether to expand or not.
 			if (omitElementClose(qualifiedName)) {
@@ -347,7 +338,7 @@ public class HTMLWriter extends XMLWriter {
 
 	protected boolean omitElementClose(String qualifiedName) {
 		return internalGetOmitElementCloseSet().contains(
-						qualifiedName.toUpperCase());
+				qualifiedName.toUpperCase());
 	}
 
 	private HashSet internalGetOmitElementCloseSet() {
@@ -360,6 +351,7 @@ public class HTMLWriter extends XMLWriter {
 	}
 
 	// If you change this, change the javadoc for getOmitElementCloseSet.
+
 	protected void loadOmitElementCloseSet(Set<String> set) {
 		set.add("AREA");
 		set.add("BASE");
@@ -375,11 +367,12 @@ public class HTMLWriter extends XMLWriter {
 	}
 
 	// let the people see the set, but not modify it.
+
 	/**
 	 * A clone of the Set of elements that can have their close-tags omitted. By
 	 * default it should be "AREA", "BASE", "BR", "COL", "HR", "IMG", "INPUT",
 	 * "LINK", "META", "P", "PARAM"
-	 * 
+	 *
 	 * @return A clone of the Set.
 	 */
 	public Set getOmitElementCloseSet() {
@@ -388,19 +381,18 @@ public class HTMLWriter extends XMLWriter {
 
 	/**
 	 * To use the empty set, pass an empty Set, or null:
-	 * 
+	 * <p/>
 	 * <pre>
-	 * 
-	 * 
+	 * <p/>
+	 * <p/>
 	 *       setOmitElementCloseSet(new HashSet());
 	 *     or
 	 *       setOmitElementCloseSet(null);
-	 * 
-	 *  
+	 * <p/>
+	 * <p/>
 	 * </pre>
-	 * 
-	 * @param newSet
-	 *            DOCUMENT ME!
+	 *
+	 * @param newSet DOCUMENT ME!
 	 */
 	public void setOmitElementCloseSet(Set<String> newSet) {
 		// resets, and safely empties it out if newSet is null.
@@ -428,11 +420,11 @@ public class HTMLWriter extends XMLWriter {
 	 * Override the default set, which includes PRE, SCRIPT, STYLE, and
 	 * TEXTAREA, case insensitively.
 	 * </p>
-	 * 
+	 * <p/>
 	 * <p>
 	 * <b>Setting Preformatted Tags </b>
 	 * </p>
-	 * 
+	 * <p/>
 	 * <p>
 	 * Pass in a Set of Strings, one for each tag name that should be treated
 	 * like a PRE tag. You may pass in null or an empty Set to assign the empty
@@ -443,7 +435,7 @@ public class HTMLWriter extends XMLWriter {
 	 * This will generally make the close tag not line up with the start tag,
 	 * but it preserves the intention of the whitespace within the tag.
 	 * </p>
-	 * 
+	 * <p/>
 	 * <p>
 	 * The browser considers leading whitespace before the close tag to be
 	 * significant, but leading whitespace before the open tag to be
@@ -454,7 +446,7 @@ public class HTMLWriter extends XMLWriter {
 	 * flushed left close PRE tag as different from a close tag with leading
 	 * whitespace. Again, this must be left up to the HTML author.
 	 * </p>
-	 * 
+	 * <p/>
 	 * <p>
 	 * <b>Examples </b>
 	 * </p>
@@ -463,62 +455,61 @@ public class HTMLWriter extends XMLWriter {
 	 * Here is an example of how you can set the PreformattedTags list using
 	 * setPreformattedTags to include IFRAME, as well as the default set, if you
 	 * have an instance of this class named myHTMLWriter:
-	 * 
+	 * <p/>
 	 * <pre>
 	 * Set current = myHTMLWriter.getPreformattedTags();
 	 * current.add(&quot;IFRAME&quot;);
 	 * myHTMLWriter.setPreformattedTags(current);
-	 * 
+	 * <p/>
 	 * //The set is now &lt;b&gt;PRE, SCRIPT, STYLE, TEXTAREA, IFRAME&lt;/b&gt;
-	 * 
-	 * 
+	 * <p/>
+	 * <p/>
 	 * </pre>
-	 * 
+	 * <p/>
 	 * Similarly, you can simply replace it with your own:
-	 * 
+	 * <p/>
 	 * <pre>
-	 * 
-	 * 
+	 * <p/>
+	 * <p/>
 	 *       HashSet newset = new HashSet();
 	 *       newset.add(&quot;PRE&quot;);
 	 *       newset.add(&quot;TEXTAREA&quot;);
 	 *       myHTMLWriter.setPreformattedTags(newset);
-	 * 
+	 * <p/>
 	 *       //The set is now &lt;b&gt;{PRE, TEXTAREA}&lt;/b&gt;
-	 * 
-	 *  
+	 * <p/>
+	 * <p/>
 	 * </pre>
-	 * 
+	 * <p/>
 	 * You can remove all tags from the preformatted tags list, with an empty
 	 * set, like this:
-	 * 
+	 * <p/>
 	 * <pre>
-	 * 
-	 * 
+	 * <p/>
+	 * <p/>
 	 *       myHTMLWriter.setPreformattedTags(new HashSet());
-	 * 
+	 * <p/>
 	 *       //The set is now &lt;b&gt;{}&lt;/b&gt;
-	 * 
-	 *  
+	 * <p/>
+	 * <p/>
 	 * </pre>
-	 * 
+	 * <p/>
 	 * or with null, like this:
-	 * 
+	 * <p/>
 	 * <pre>
-	 * 
-	 * 
+	 * <p/>
+	 * <p/>
 	 *       myHTMLWriter.setPreformattedTags(null);
-	 * 
+	 * <p/>
 	 *       //The set is now &lt;b&gt;{}&lt;/b&gt;
-	 * 
-	 *  
+	 * <p/>
+	 * <p/>
 	 * </pre>
-	 * 
+	 * <p/>
 	 * </p>
 	 * </blockquote>
-	 * 
-	 * @param newSet
-	 *            DOCUMENT ME!
+	 *
+	 * @param newSet DOCUMENT ME!
 	 */
 	public void setPreformattedTags(Set<String> newSet) {
 		// no fancy merging, just set it, assuming they did a
@@ -538,14 +529,11 @@ public class HTMLWriter extends XMLWriter {
 
 	/**
 	 * DOCUMENT ME!
-	 * 
-	 * @param qualifiedName
-	 *            DOCUMENT ME!
-	 * 
+	 *
+	 * @param qualifiedName DOCUMENT ME!
 	 * @return true if the qualifiedName passed in matched (case-insensitively)
 	 *         a tag in the preformattedTags set, or false if not found or if
 	 *         the set is empty or null.
-	 * 
 	 * @see #setPreformattedTags(java.util.Set) setPreformattedTags
 	 */
 	public boolean isPreformattedTag(String qualifiedName) {
@@ -559,13 +547,9 @@ public class HTMLWriter extends XMLWriter {
 	 * such as &lt;PRE&gt;, &lt;SCRIPT&gt;, &lt;STYLE&gt;, and &lt;TEXTAREA&gt;.
 	 * Note: the close tags won't line up with the open tag, but we can't alter
 	 * that. See javadoc note at setPreformattedTags.
-	 * 
-	 * @param element
-	 *            DOCUMENT ME!
-	 * 
-	 * @throws IOException
-	 *             When the stream could not be written to.
-	 * 
+	 *
+	 * @param element DOCUMENT ME!
+	 * @throws IOException When the stream could not be written to.
 	 * @see #setPreformattedTags(java.util.Set) setPreformattedTags
 	 */
 	@Override
@@ -595,7 +579,7 @@ public class HTMLWriter extends XMLWriter {
 			// You could have nested PREs, or SCRIPTS within PRE... etc.,
 			// therefore use push and pop.
 			formatStack.addFirst(new FormatState(saveNewlines, saveTrimText,
-							currentIndent));
+					currentIndent));
 
 			try {
 				// do this manually, since it won't be done while outputting
@@ -662,77 +646,68 @@ public class HTMLWriter extends XMLWriter {
 	}
 
 	// Convenience methods, static, with bunch-o-defaults
+
 	/**
 	 * Convenience method to just get a String result.
-	 * 
-	 * @param html
-	 *            DOCUMENT ME!
-	 * 
+	 *
+	 * @param html DOCUMENT ME!
 	 * @return a pretty printed String from the source string, preserving
 	 *         whitespace in the defaultPreformattedTags set, and leaving the
 	 *         close tags off of the default omitElementCloseSet set. Use one of
 	 *         the write methods if you want stream output.
-	 * 
 	 * @throws java.io.IOException
 	 * @throws java.io.UnsupportedEncodingException
+	 *
 	 * @throws org.dom4j.DocumentException
 	 */
 	public static String prettyPrintHTML(String html)
-					throws java.io.IOException, java.io.UnsupportedEncodingException,
-					org.dom4j.DocumentException {
+			throws java.io.IOException, java.io.UnsupportedEncodingException,
+			org.dom4j.DocumentException {
 		return prettyPrintHTML(html, true, true, false, true);
 	}
 
 	/**
 	 * Convenience method to just get a String result, but <b>As XHTML </b>.
-	 * 
-	 * @param html
-	 *            DOCUMENT ME!
-	 * 
+	 *
+	 * @param html DOCUMENT ME!
 	 * @return a pretty printed String from the source string, preserving
 	 *         whitespace in the defaultPreformattedTags set, but conforming to
 	 *         XHTML: no close tags are omitted (though if empty, they will be
 	 *         converted to XHTML empty tags: &lt;HR/&gt; Use one of the write
 	 *         methods if you want stream output.
-	 * 
 	 * @throws java.io.IOException
 	 * @throws java.io.UnsupportedEncodingException
+	 *
 	 * @throws org.dom4j.DocumentException
 	 */
 	public static String prettyPrintXHTML(String html)
-					throws java.io.IOException, java.io.UnsupportedEncodingException,
-					org.dom4j.DocumentException {
+			throws java.io.IOException, java.io.UnsupportedEncodingException,
+			org.dom4j.DocumentException {
 		return prettyPrintHTML(html, true, true, true, false);
 	}
 
 	/**
 	 * DOCUMENT ME!
-	 * 
-	 * @param html
-	 *            DOCUMENT ME!
-	 * @param newlines
-	 *            DOCUMENT ME!
-	 * @param trim
-	 *            DOCUMENT ME!
-	 * @param isXHTML
-	 *            DOCUMENT ME!
-	 * @param expandEmpty
-	 *            DOCUMENT ME!
-	 * 
+	 *
+	 * @param html        DOCUMENT ME!
+	 * @param newlines    DOCUMENT ME!
+	 * @param trim        DOCUMENT ME!
+	 * @param isXHTML     DOCUMENT ME!
+	 * @param expandEmpty DOCUMENT ME!
 	 * @return a pretty printed String from the source string, preserving
 	 *         whitespace in the defaultPreformattedTags set, and leaving the
 	 *         close tags off of the default omitElementCloseSet set. This
 	 *         override allows you to specify various formatter options. Use one
 	 *         of the write methods if you want stream output.
-	 * 
 	 * @throws java.io.IOException
 	 * @throws java.io.UnsupportedEncodingException
+	 *
 	 * @throws org.dom4j.DocumentException
 	 */
 	public static String prettyPrintHTML(String html, boolean newlines,
-					boolean trim, boolean isXHTML, boolean expandEmpty)
-					throws java.io.IOException, java.io.UnsupportedEncodingException,
-					org.dom4j.DocumentException {
+	                                     boolean trim, boolean isXHTML, boolean expandEmpty)
+			throws java.io.IOException, java.io.UnsupportedEncodingException,
+			org.dom4j.DocumentException {
 		StringWriter sw = new StringWriter();
 		OutputFormat format = OutputFormat.createPrettyPrint();
 		format.setNewlines(newlines);
@@ -750,6 +725,7 @@ public class HTMLWriter extends XMLWriter {
 
 	// Allows us to the current state of the format in this struct on the
 	// formatStack.
+
 	private class FormatState {
 
 		private boolean newlines = false;
@@ -808,7 +784,7 @@ public class HTMLWriter extends XMLWriter {
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

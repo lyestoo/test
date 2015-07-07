@@ -7,6 +7,10 @@
 
 package org.dom4j.tree;
 
+import org.dom4j.*;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -14,263 +18,249 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Comment;
-import org.dom4j.Document;
-import org.dom4j.DocumentType;
-import org.dom4j.Element;
-import org.dom4j.IllegalAddException;
-import org.dom4j.Node;
-import org.dom4j.NodeType;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.QName;
-import org.dom4j.Text;
-import org.dom4j.Visitor;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-
 /**
  * <p>
  * <code>AbstractDocument</code> is an abstract base class for tree
  * implementors to use for implementation inheritence.
  * </p>
- * 
+ *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @version $Revision: 1.33 $
  */
 public abstract class AbstractDocument extends AbstractBranch implements
-        Document {
+		Document {
 
-    /** The encoding of this document as stated in the XML declaration */
-    protected String encoding;
+	/**
+	 * The encoding of this document as stated in the XML declaration
+	 */
+	protected String encoding;
 
-    public AbstractDocument() {
-    }
+	public AbstractDocument() {
+	}
 
-    @Override
-    public NodeType getNodeTypeEnum() {
-        return NodeType.DOCUMENT_NODE;
-    }
+	@Override
+	public NodeType getNodeTypeEnum() {
+		return NodeType.DOCUMENT_NODE;
+	}
 
-    public String getPath(Element context) {
-        return "/";
-    }
+	public String getPath(Element context) {
+		return "/";
+	}
 
-    public String getUniquePath(Element context) {
-        return "/";
-    }
+	public String getUniquePath(Element context) {
+		return "/";
+	}
 
-    @Override
-    public Document getDocument() {
-        return this;
-    }
+	@Override
+	public Document getDocument() {
+		return this;
+	}
 
-    public String getXMLEncoding() {
-        return null;
-    }
+	public String getXMLEncoding() {
+		return null;
+	}
 
-    @Override
-    public String getStringValue() {
-        Element root = getRootElement();
+	@Override
+	public String getStringValue() {
+		Element root = getRootElement();
 
-        return (root != null) ? root.getStringValue() : "";
-    }
+		return (root != null) ? root.getStringValue() : "";
+	}
 
-    public String asXML() {
-        OutputFormat format = new OutputFormat();
-        format.setEncoding(encoding);
-        
-        try {
-            StringWriter out = new StringWriter();
-            XMLWriter writer = new XMLWriter(out, format);
-            writer.write(this);
-            writer.flush();
+	public String asXML() {
+		OutputFormat format = new OutputFormat();
+		format.setEncoding(encoding);
 
-            return out.toString();
-        } catch (IOException e) {
-            throw new RuntimeException("IOException while generating textual "
-                    + "representation: " + e.getMessage());
-        }
-    }
+		try {
+			StringWriter out = new StringWriter();
+			XMLWriter writer = new XMLWriter(out, format);
+			writer.write(this);
+			writer.flush();
 
-    @Override
-    public void write(Writer out) throws IOException {
-        OutputFormat format = new OutputFormat();
-        format.setEncoding(encoding);
-        
-        XMLWriter writer = new XMLWriter(out, format);
-        writer.write(this);
-    }
+			return out.toString();
+		} catch (IOException e) {
+			throw new RuntimeException("IOException while generating textual "
+					+ "representation: " + e.getMessage());
+		}
+	}
 
-    /**
-     * <p>
-     * <code>accept</code> method is the <code>Visitor Pattern</code>
-     * method.
-     * </p>
-     * 
-     * @param visitor
-     *            <code>Visitor</code> is the visitor.
-     */
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
+	@Override
+	public void write(Writer out) throws IOException {
+		OutputFormat format = new OutputFormat();
+		format.setEncoding(encoding);
 
-        DocumentType docType = getDocType();
+		XMLWriter writer = new XMLWriter(out, format);
+		writer.write(this);
+	}
 
-        if (docType != null) {
-            visitor.visit(docType);
-        }
+	/**
+	 * <p>
+	 * <code>accept</code> method is the <code>Visitor Pattern</code>
+	 * method.
+	 * </p>
+	 *
+	 * @param visitor <code>Visitor</code> is the visitor.
+	 */
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
 
-        // visit content
-        List content = content();
+		DocumentType docType = getDocType();
 
-        if (content != null) {
-            for (Iterator iter = content.iterator(); iter.hasNext();) {
-                Object object = iter.next();
+		if (docType != null) {
+			visitor.visit(docType);
+		}
 
-                if (object instanceof String) {
-                    Text text = getDocumentFactory()
-                            .createText((String) object);
-                    visitor.visit(text);
-                } else {
-                    Node node = (Node) object;
-                    node.accept(visitor);
-                }
-            }
-        }
-    }
+		// visit content
+		List content = content();
 
-    @Override
-    protected void toString(StringBuilder builder) {
-        super.toString(builder);
-        builder.append(" [Document: name ");
-        builder.append(getName());
-        builder.append(']');
-    }
+		if (content != null) {
+			for (Iterator iter = content.iterator(); iter.hasNext();) {
+				Object object = iter.next();
 
-    public void normalize() {
-        Element element = getRootElement();
+				if (object instanceof String) {
+					Text text = getDocumentFactory()
+							.createText((String) object);
+					visitor.visit(text);
+				} else {
+					Node node = (Node) object;
+					node.accept(visitor);
+				}
+			}
+		}
+	}
 
-        if (element != null) {
-            element.normalize();
-        }
-    }
+	@Override
+	protected void toString(StringBuilder builder) {
+		super.toString(builder);
+		builder.append(" [Document: name ");
+		builder.append(getName());
+		builder.append(']');
+	}
 
-    public Document addComment(String comment) {
-        Comment node = getDocumentFactory().createComment(comment);
-        add(node);
+	public void normalize() {
+		Element element = getRootElement();
 
-        return this;
-    }
+		if (element != null) {
+			element.normalize();
+		}
+	}
 
-    public Document addProcessingInstruction(String target, String data) {
-        ProcessingInstruction node = getDocumentFactory()
-                .createProcessingInstruction(target, data);
-        add(node);
+	public Document addComment(String comment) {
+		Comment node = getDocumentFactory().createComment(comment);
+		add(node);
 
-        return this;
-    }
+		return this;
+	}
 
-    public Document addProcessingInstruction(String target, Map data) {
-        ProcessingInstruction node = getDocumentFactory()
-                .createProcessingInstruction(target, data);
-        add(node);
+	public Document addProcessingInstruction(String target, String data) {
+		ProcessingInstruction node = getDocumentFactory()
+				.createProcessingInstruction(target, data);
+		add(node);
 
-        return this;
-    }
+		return this;
+	}
 
-    @Override
-    public Element addElement(String name) {
-        Element element = getDocumentFactory().createElement(name);
-        add(element);
+	public Document addProcessingInstruction(String target, Map data) {
+		ProcessingInstruction node = getDocumentFactory()
+				.createProcessingInstruction(target, data);
+		add(node);
 
-        return element;
-    }
+		return this;
+	}
 
-    @Override
-    public Element addElement(String qualifiedName, String namespaceURI) {
-        Element element = getDocumentFactory().createElement(qualifiedName,
-                namespaceURI);
-        add(element);
+	@Override
+	public Element addElement(String name) {
+		Element element = getDocumentFactory().createElement(name);
+		add(element);
 
-        return element;
-    }
+		return element;
+	}
 
-    @Override
-    public Element addElement(QName qName) {
-        Element element = getDocumentFactory().createElement(qName);
-        add(element);
+	@Override
+	public Element addElement(String qualifiedName, String namespaceURI) {
+		Element element = getDocumentFactory().createElement(qualifiedName,
+				namespaceURI);
+		add(element);
 
-        return element;
-    }
+		return element;
+	}
 
-    public void setRootElement(Element rootElement) {
-        clearContent();
+	@Override
+	public Element addElement(QName qName) {
+		Element element = getDocumentFactory().createElement(qName);
+		add(element);
 
-        if (rootElement != null) {
-            super.add(rootElement);
-            rootElementAdded(rootElement);
-        }
-    }
+		return element;
+	}
 
-    @Override
-    public void add(Element element) {
-        checkAddElementAllowed(element);
-        super.add(element);
-        rootElementAdded(element);
-    }
+	public void setRootElement(Element rootElement) {
+		clearContent();
 
-    @Override
-    public boolean remove(Element element) {
-        boolean answer = super.remove(element);
-        Element root = getRootElement();
+		if (rootElement != null) {
+			super.add(rootElement);
+			rootElementAdded(rootElement);
+		}
+	}
 
-        if ((root != null) && answer) {
-            setRootElement(null);
-        }
+	@Override
+	public void add(Element element) {
+		checkAddElementAllowed(element);
+		super.add(element);
+		rootElementAdded(element);
+	}
 
-        element.setDocument(null);
+	@Override
+	public boolean remove(Element element) {
+		boolean answer = super.remove(element);
+		Element root = getRootElement();
 
-        return answer;
-    }
+		if ((root != null) && answer) {
+			setRootElement(null);
+		}
 
-    @Override
-    public Node asXPathResult(Element parent) {
-        return this;
-    }
+		element.setDocument(null);
 
-    protected void childAdded(Node node) {
-        if (node != null) {
-            node.setDocument(this);
-        }
-    }
+		return answer;
+	}
 
-    protected void childRemoved(Node node) {
-        if (node != null) {
-            node.setDocument(null);
-        }
-    }
+	@Override
+	public Node asXPathResult(Element parent) {
+		return this;
+	}
 
-    protected void checkAddElementAllowed(Element element) {
-        Element root = getRootElement();
+	protected void childAdded(Node node) {
+		if (node != null) {
+			node.setDocument(this);
+		}
+	}
 
-        if (root != null) {
-            throw new IllegalAddException(this, element,
-                    "Cannot add another element to this "
-                            + "Document as it already has a root "
-                            + "element of: " + root.getQualifiedName());
-        }
-    }
+	protected void childRemoved(Node node) {
+		if (node != null) {
+			node.setDocument(null);
+		}
+	}
 
-    /**
-     * Called to set the root element variable
-     * 
-     * @param rootElement
-     *            DOCUMENT ME!
-     */
-    protected abstract void rootElementAdded(Element rootElement);
+	protected void checkAddElementAllowed(Element element) {
+		Element root = getRootElement();
 
-    public void setXMLEncoding(String enc) {
-        this.encoding = enc;
-    }
+		if (root != null) {
+			throw new IllegalAddException(this, element,
+					"Cannot add another element to this "
+							+ "Document as it already has a root "
+							+ "element of: " + root.getQualifiedName());
+		}
+	}
+
+	/**
+	 * Called to set the root element variable
+	 *
+	 * @param rootElement DOCUMENT ME!
+	 */
+	protected abstract void rootElementAdded(Element rootElement);
+
+	public void setXMLEncoding(String enc) {
+		this.encoding = enc;
+	}
 }
 
 /*
@@ -293,7 +283,7 @@ public abstract class AbstractDocument extends AbstractBranch implements
  * "DOM4J" appear in their names without prior written permission of MetaStuff,
  * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
  * 
- * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 5. Due credit should be given to the DOM4J Project - http://dom4j.sourceforge.net
  * 
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
