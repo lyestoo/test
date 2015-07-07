@@ -66,7 +66,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * 
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
  * @author Joseph Bowbeer
- * @version $Revision: 1.83 $
+ * @version $Revision: 1.83.2.2 $
  */
 public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
     private static final String PAD_TEXT = " ";
@@ -1259,10 +1259,12 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
 
                     writer.write(token);
                     lastOutputNodeType = Node.TEXT_NODE;
+                    lastChar = token.charAt(token.length() - 1);
                 }
             } else {
                 lastOutputNodeType = Node.TEXT_NODE;
                 writer.write(text);
+                lastChar = text.charAt(text.length() - 1);
             }
         }
     }
@@ -1287,6 +1289,7 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
 
             lastOutputNodeType = Node.TEXT_NODE;
             writer.write(text);
+            lastChar = text.charAt(text.length() - 1);
         }
     }
 
@@ -1540,7 +1543,10 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
      */
     protected void writePrintln() throws IOException {
         if (format.isNewlines()) {
-            writer.write(format.getLineSeparator());
+            String seperator = format.getLineSeparator();
+            if (lastChar != seperator.charAt(seperator.length() - 1)) {
+                writer.write(format.getLineSeparator());
+            }
         }
     }
 

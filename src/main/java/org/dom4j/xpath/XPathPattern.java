@@ -32,7 +32,7 @@ import org.jaxen.saxpath.SAXPathException;
  * </p>
  * 
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.18.2.1 $
  */
 public class XPathPattern implements org.dom4j.rule.Pattern {
     private String text;
@@ -55,8 +55,8 @@ public class XPathPattern implements org.dom4j.rule.Pattern {
             this.pattern = PatternParser.parse(text);
         } catch (SAXPathException e) {
             throw new InvalidXPathException(text, e.getMessage());
-        } catch (RuntimeException e) {
-            throw new InvalidXPathException(text);
+        } catch (Throwable t) {
+            throw new InvalidXPathException(text, t);
         }
     }
 

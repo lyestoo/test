@@ -31,7 +31,7 @@ import org.w3c.dom.DOMException;
  * </p>
  * 
  * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class DOMDocumentFactory extends DocumentFactory implements
         org.w3c.dom.DOMImplementation {
@@ -48,11 +48,11 @@ public class DOMDocumentFactory extends DocumentFactory implements
                 singletonClass = System.getProperty(
                         "org.dom4j.dom.DOMDocumentFactory.singleton.strategy",
                         singletonClass);
-                clazz = DOMDocumentFactory.class.forName(singletonClass);
+                clazz = Class.forName(singletonClass);
             } catch (Exception exc1) {
                 try {
                     String singletonClass = defaultSingletonClass;
-                    clazz = DOMDocumentFactory.class.forName(singletonClass);
+                    clazz = Class.forName(singletonClass);
                 } catch (Exception exc2) {
                 }
             }

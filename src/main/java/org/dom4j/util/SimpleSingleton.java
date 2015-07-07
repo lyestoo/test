@@ -16,7 +16,7 @@ package org.dom4j.util;
  * </p>
  * 
  * @author <a href="mailto:ddlucas@users.sourceforge.net">David Lucas </a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 public class SimpleSingleton implements SingletonStrategy {
@@ -35,7 +35,7 @@ public class SimpleSingleton implements SingletonStrategy {
         if (singletonClassName != null) {
             Class clazz = null;
             try {
-                clazz = Thread.currentThread().getClass().forName(
+                clazz = Thread.currentThread().getContextClassLoader().loadClass(
                         singletonClassName);
                 singletonInstance = clazz.newInstance();
             } catch (Exception ignore) {
