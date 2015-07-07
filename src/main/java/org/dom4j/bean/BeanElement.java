@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BeanElement.java,v 1.7 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: BeanElement.java,v 1.8 2001/11/19 11:14:23 jstrachan Exp $
  */
 
 package org.dom4j.bean;
@@ -23,7 +23,7 @@ import org.dom4j.tree.DefaultElement;
 /** <p><code>BeanElement</code> uses a Java Bean to store its attributes.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.7 $
+  * @version $Revision: 1.8 $
   */
 public class BeanElement extends DefaultElement {
 
@@ -59,6 +59,10 @@ public class BeanElement extends DefaultElement {
     
     public void setData(Object data) {
         this.bean = bean;
+        
+        // force the attributeList to be lazily
+        // created next time an attribute related
+        // method is called again.
         setAttributeList(null);
     }
     
@@ -155,5 +159,5 @@ public class BeanElement extends DefaultElement {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BeanElement.java,v 1.7 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: BeanElement.java,v 1.8 2001/11/19 11:14:23 jstrachan Exp $
  */

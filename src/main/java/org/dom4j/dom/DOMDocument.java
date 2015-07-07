@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DOMDocument.java,v 1.6 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: DOMDocument.java,v 1.7 2002/02/01 10:13:39 jstrachan Exp $
  */
 
 package org.dom4j.dom;
@@ -30,12 +30,12 @@ import org.w3c.dom.NodeList;
   * supports the W3C DOM API.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.6 $
+  * @version $Revision: 1.7 $
   */
 public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document {
 
     /** The <code>DocumentFactory</code> instance used by default */
-    private static final DocumentFactory DOCUMENT_FACTORY = DOMDocumentFactory.getInstance();
+    private static final DOMDocumentFactory DOCUMENT_FACTORY = (DOMDocumentFactory) DOMDocumentFactory.getInstance();
     
 
     public DOMDocument() { 
@@ -192,7 +192,13 @@ public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document
     }
 
     public org.w3c.dom.DOMImplementation getImplementation() {
-        return DOMDocumentFactory.singleton;
+        if (getDocumentFactory() instanceof org.w3c.dom.DOMImplementation) {
+            return (org.w3c.dom.DOMImplementation) getDocumentFactory();
+        } 
+        else {
+            return DOCUMENT_FACTORY;
+        }
+
     }
 
     public org.w3c.dom.Element getDocumentElement() {
@@ -200,7 +206,7 @@ public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document
     }
 
     public org.w3c.dom.Element createElement(String tagName) throws DOMException {
-        return new DOMElement(tagName);
+        return (org.w3c.dom.Element) getDocumentFactory().createElement(tagName);
     }
 
     public org.w3c.dom.DocumentFragment createDocumentFragment() {
@@ -209,29 +215,30 @@ public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document
     }
 
     public org.w3c.dom.Text createTextNode(String data) {
-        return new DOMText(data);
+        return (org.w3c.dom.Text) getDocumentFactory().createText(data);
     }
 
     public org.w3c.dom.Comment createComment(String data) {
-        return new DOMComment(data);
+        return (org.w3c.dom.Comment) getDocumentFactory().createComment(data);
     }
 
     public org.w3c.dom.CDATASection createCDATASection(String data) throws DOMException {
-        return new DOMCDATA(data);
+        return (org.w3c.dom.CDATASection) getDocumentFactory().createCDATA(data);
     }
 
     public org.w3c.dom.ProcessingInstruction createProcessingInstruction(
         String target, String data
     ) throws DOMException {
-        return new DOMProcessingInstruction(target, data);
+        return (org.w3c.dom.ProcessingInstruction) getDocumentFactory().createProcessingInstruction(target, data);
     }
 
     public org.w3c.dom.Attr createAttribute(String name) throws DOMException {
-        return new DOMAttribute( DOCUMENT_FACTORY.createQName(name) );
+        QName qname = getDocumentFactory().createQName(name);
+        return (org.w3c.dom.Attr) getDocumentFactory().createAttribute(null, qname, null);
     }
     
     public org.w3c.dom.EntityReference createEntityReference(String name) throws DOMException {
-        return new DOMEntityReference(name);
+        return (org.w3c.dom.EntityReference) ((DOMDocumentFactory) getDocumentFactory()).createEntity(name);
     }
 
     public org.w3c.dom.Node importNode(
@@ -244,15 +251,15 @@ public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document
     public org.w3c.dom.Element createElementNS(
         String namespaceURI, String qualifiedName
     ) throws DOMException {
-        QName qname = DOCUMENT_FACTORY.createQName( qualifiedName, namespaceURI );
-        return new DOMElement( qname );
+        QName qname = getDocumentFactory().createQName( qualifiedName, namespaceURI );
+        return (org.w3c.dom.Element) getDocumentFactory().createElement(qname);
     }
 
     public org.w3c.dom.Attr createAttributeNS(
         String namespaceURI, String qualifiedName
     ) throws DOMException {
-        QName qname = DOCUMENT_FACTORY.createQName( qualifiedName, namespaceURI );
-        return new DOMAttribute( qname );
+        QName qname = getDocumentFactory().createQName( qualifiedName, namespaceURI );
+        return (org.w3c.dom.Attr) getDocumentFactory().createAttribute(null, qname, null);
     }
 
 
@@ -265,9 +272,13 @@ public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document
     // Implementation methods
     //-------------------------------------------------------------------------            
     protected DocumentFactory getDocumentFactory() {
-        return DOCUMENT_FACTORY;
-    }
-    
+        if (super.getDocumentFactory() == null) {
+            return DOCUMENT_FACTORY;
+        } 
+        else {
+            return super.getDocumentFactory();
+        }
+    }        
 }
 
 
@@ -315,5 +326,5 @@ public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMDocument.java,v 1.6 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: DOMDocument.java,v 1.7 2002/02/01 10:13:39 jstrachan Exp $
  */

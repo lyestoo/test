@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractElement.java,v 1.61 2001/11/02 12:50:51 jstrachan Exp $
+ * $Id: AbstractElement.java,v 1.63 2002/02/01 13:04:32 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -44,7 +44,7 @@ import org.xml.sax.Attributes;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.61 $
+  * @version $Revision: 1.63 $
   */
 public abstract class AbstractElement extends AbstractBranch implements Element {
 
@@ -56,7 +56,8 @@ public abstract class AbstractElement extends AbstractBranch implements Element 
     
     
     protected static final boolean VERBOSE_TOSTRING = false;
-        
+    protected static final boolean USE_STRINGVALUE_SEPARATOR = false;
+
     
     public AbstractElement() { 
     }
@@ -77,11 +78,11 @@ public abstract class AbstractElement extends AbstractBranch implements Element 
     }
 
     public void setName(String name) {
-        throw new UnsupportedOperationException("The name and namespace of this Element cannot be changed" );
+        setQName( getDocumentFactory().createQName( name ) );
     }
-    
+        
     public void setNamespace(Namespace namespace) {
-        throw new UnsupportedOperationException("The name and namespace of this Element cannot be changed" );
+        setQName( getDocumentFactory().createQName( getName(), namespace ) );
     }
 
     /** Returns the XPath expression to match this Elements name
@@ -922,8 +923,10 @@ public abstract class AbstractElement extends AbstractBranch implements Element 
                     Object node = list.get(i);
                     String string = getContentAsStringValue( node ); 
                     if ( string.length() > 0 ) {
-                        if ( buffer.length() > 0 ) {
-                            buffer.append( ' ' );
+                        if ( USE_STRINGVALUE_SEPARATOR ) {
+                            if ( buffer.length() > 0 ) {
+                                buffer.append( ' ' );
+                            }
                         }
                         buffer.append( string );
                     }
@@ -1338,5 +1341,5 @@ public abstract class AbstractElement extends AbstractBranch implements Element 
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractElement.java,v 1.61 2001/11/02 12:50:51 jstrachan Exp $
+ * $Id: AbstractElement.java,v 1.63 2002/02/01 13:04:32 jstrachan Exp $
  */

@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: HTMLWriter.java,v 1.8 2001/08/03 12:37:41 jstrachan Exp $
+ * $Id: HTMLWriter.java,v 1.9 2002/02/14 11:55:46 jstrachan Exp $
  */
 
 package org.dom4j.io;
@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
   * as for &lt;BR&gt; and &lt;P&gt;.
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a> (james.strachan@metastuff.com)
-  * @version $Revision: 1.8 $ 
+  * @version $Revision: 1.9 $ 
  */
 public class HTMLWriter extends XMLWriter {
 
@@ -81,22 +81,17 @@ public class HTMLWriter extends XMLWriter {
     public void endCDATA() throws SAXException {
     }
     
-    
-    
-    /** Writes the given {@link CDATA}.
-      *
-      * @param cdata <code>CDATA</code> to output.
-      */
-    public void write(CDATA cdata) throws IOException {
-        writer.write( escapeElementEntities( cdata.getText() ) );
+
+    // Overloaded methods
+
+    protected void writeCDATA(String text) throws IOException {
+        // XXX: Should we escape entities?
+        // writer.write( escapeElementEntities( text ) );
+        writer.write( text );
         lastOutputNodeType = Node.CDATA_SECTION_NODE;
     }
     
-    /** Writes the given {@link Entity}.
-      *
-      * @param entity <code>Entity</code> to output.
-      */    
-    public void write(Entity entity) throws IOException {
+    protected void writeEntity(Entity entity) throws IOException {
         writer.write(entity.getText());
         lastOutputNodeType = Node.ENTITY_REFERENCE_NODE;
     }
@@ -205,5 +200,5 @@ public class HTMLWriter extends XMLWriter {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: HTMLWriter.java,v 1.8 2001/08/03 12:37:41 jstrachan Exp $
+ * $Id: HTMLWriter.java,v 1.9 2002/02/14 11:55:46 jstrachan Exp $
  */

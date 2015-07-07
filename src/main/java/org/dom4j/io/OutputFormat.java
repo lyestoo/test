@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: OutputFormat.java,v 1.6 2001/08/14 08:33:44 jstrachan Exp $
+ * $Id: OutputFormat.java,v 1.7 2001/11/14 18:02:32 jstrachan Exp $
  */
 
 package org.dom4j.io;
@@ -13,7 +13,7 @@ package org.dom4j.io;
   * used by {@link XMLWriter} and its base classes to format the XML output
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.6 $
+  * @version $Revision: 1.7 $
   */
 public class OutputFormat implements Cloneable {
 
@@ -98,7 +98,7 @@ public class OutputFormat implements Cloneable {
 
     
     /** <p>This will set the new-line separator. The default is
-      * <code>\r\n</code>. Note that if the "newlines" property is
+      * <code>\n</code>. Note that if the "newlines" property is
       * false, this value is irrelevant.  To make it output the system
       * default line ending string, call
       * <code>setLineSeparator(System.getProperty("line.separator"))</code>
@@ -386,5 +386,5 @@ public class OutputFormat implements Cloneable {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: OutputFormat.java,v 1.6 2001/08/14 08:33:44 jstrachan Exp $
+ * $Id: OutputFormat.java,v 1.7 2001/11/14 18:02:32 jstrachan Exp $
  */

@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: SAXContentHandler.java,v 1.38 2001/11/01 09:46:45 jstrachan Exp $
+ * $Id: SAXContentHandler.java,v 1.41 2001/11/15 23:53:23 jstrachan Exp $
  */
 
 package org.dom4j.io;
@@ -53,7 +53,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /** <p><code>SAXHandler</code> builds a DOM4J tree via SAX events.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.38 $
+  * @version $Revision: 1.41 $
   */
 public class SAXContentHandler extends DefaultHandler implements LexicalHandler, DeclHandler, DTDHandler {
 
@@ -116,6 +116,18 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
     /** Are we in an internal DTD subset? */
     private boolean internalDTDsubset = false;
 
+    /** Whether adjacent text nodes should be merged */
+    private boolean mergeAdjacentText = false;    
+
+    /** Have we added text to the buffer */
+    private boolean textInTextBuffer = false;    
+    
+    /** Buffer used to concatenate text together */
+    private StringBuffer textBuffer;
+
+    /** Holds value of property stripWhitespaceText. */
+    private boolean stripWhitespaceText = false;
+
     
     public SAXContentHandler() {
         this( DocumentFactory.getInstance() );
@@ -152,6 +164,9 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
     //-------------------------------------------------------------------------
     
     public void processingInstruction(String target, String data) throws SAXException {
+        if ( mergeAdjacentText && textInTextBuffer ) {
+            completeCurrentTextNode();
+        }                
         if ( currentElement != null ) {
             currentElement.addProcessingInstruction(target, data);
         }
@@ -186,15 +201,25 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
         
         namespaceStack.clear();
         declaredNamespaceIndex = 0;
+        
+        if ( mergeAdjacentText && textBuffer == null ) {            
+            textBuffer = new StringBuffer();
+        }
+        textInTextBuffer = false;
     }
     
     public void endDocument() throws SAXException {
         namespaceStack.clear();
         elementStack.clear();
         currentElement = null;        
+        textBuffer = null;
     }
     
     public void startElement(String namespaceURI, String localName, String qualifiedName, Attributes attributes) throws SAXException {
+        if ( mergeAdjacentText && textInTextBuffer ) {
+            completeCurrentTextNode();
+        }
+        
         QName qName = namespaceStack.getQName( 
             namespaceURI, localName, qualifiedName 
         );
@@ -221,6 +246,10 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
     }
 
     public void endElement(String namespaceURI, String localName, String qName) {
+        if ( mergeAdjacentText && textInTextBuffer ) {
+            completeCurrentTextNode();
+        }
+        
         if ( elementHandler != null && currentElement != null ) {
             elementHandler.onEnd(elementStack);
         }
@@ -232,17 +261,29 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
         if ( end == 0 ) {
             return;
         }
-        String text = new String(ch, start, end);
         if ( currentElement != null ) {
+            String text = new String(ch, start, end);
             if (entity != null) {
-                currentElement.addEntity(entity, text);
+                if ( mergeAdjacentText && textInTextBuffer ) {
+                    completeCurrentTextNode();
+                }                
+                currentElement.addEntity(entity, new String(ch, start, end));
                 entity = null;
             }
             else if (insideCDATASection) {
-                currentElement.addCDATA(text);
+                if ( mergeAdjacentText && textInTextBuffer ) {
+                    completeCurrentTextNode();
+                }                
+                currentElement.addCDATA(new String(ch, start, end));
             }
             else {
-                currentElement.addText(text);
+                if ( mergeAdjacentText ) {
+                    textBuffer.append(ch, start, end);
+                    textInTextBuffer = true;
+                }
+                else {
+                    currentElement.addText(new String(ch, start, end));
+                }
             }
         }
     }
@@ -292,7 +333,7 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
                 if ( internalDTDDeclarations != null ) {
                     docType.setInternalDeclarations( internalDTDDeclarations );
                 }
-                if ( internalDTDDeclarations != null ) {
+                if ( externalDTDDeclarations != null ) {
                     docType.setExternalDeclarations( externalDTDDeclarations );
                 }
             }
@@ -338,6 +379,9 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
     }
     
     public void comment(char[] ch, int start, int end) throws SAXException {
+        if ( mergeAdjacentText && textInTextBuffer ) {
+            completeCurrentTextNode();
+        }                
         String text = new String(ch, start, end);
         if (!insideDTDSection && text.length() > 0) {
             if ( currentElement != null ) {
@@ -591,10 +635,64 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
         this.includeExternalDTDDeclarations = includeExternalDTDDeclarations;
     }
     
+    /** Returns whether adjacent text nodes should be merged together.
+      * @return Value of property mergeAdjacentText.
+      */
+    public boolean isMergeAdjacentText() {
+        return mergeAdjacentText;
+    }
+    
+    /** Sets whether or not adjacent text nodes should be merged
+      * together when parsing.
+      * @param mergeAdjacentText New value of property mergeAdjacentText.
+      */
+    public void setMergeAdjacentText(boolean mergeAdjacentText) {
+        this.mergeAdjacentText = mergeAdjacentText;
+    }
+    
+       
+    /** Sets whether whitespace between element start and end tags should be ignored
+      * 
+      * @return Value of property stripWhitespaceText.
+      */
+    public boolean isStripWhitespaceText() {
+        return stripWhitespaceText;
+    }
+    
+    /** Sets whether whitespace between element start and end tags should be ignored.
+      *
+      * @param stripWhitespaceText New value of property stripWhitespaceText.
+      */
+    public void setStripWhitespaceText(boolean stripWhitespaceText) {
+        this.stripWhitespaceText = stripWhitespaceText;
+    }
     
     // Implementation methods
     //-------------------------------------------------------------------------
 
+    /** If the current text buffer contains any text then create a new
+      * text node with it and add it to the current element 
+      */
+    protected void completeCurrentTextNode() {
+        if ( stripWhitespaceText ) {
+            boolean whitespace = true;
+            for ( int i = 0, size = textBuffer.length(); i < size; i++ ) {
+                if ( ! Character.isWhitespace( textBuffer.charAt(i) ) ) {
+                    whitespace = false;
+                    break;
+                }
+            }
+            if ( ! whitespace ) {
+                currentElement.addText( textBuffer.toString() );
+            }
+        }
+        else {
+            currentElement.addText( textBuffer.toString() );
+        }        
+        textBuffer.setLength(0);
+        textInTextBuffer = false;
+    }
+    
     /** @return the current document 
       */
     protected Document createDocument() {
@@ -618,9 +716,6 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
             || "lt".equals( name ) 
             || "quot".equals( name );
     }
-    
-    
-    
     
 
     /** Add all namespaces declared before the startElement() SAX event
@@ -689,8 +784,7 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
     
     protected ElementStack createElementStack() {
         return new ElementStack();
-    }
-       
+    }    
 }
 
 
@@ -738,5 +832,5 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXContentHandler.java,v 1.38 2001/11/01 09:46:45 jstrachan Exp $
+ * $Id: SAXContentHandler.java,v 1.41 2001/11/15 23:53:23 jstrachan Exp $
  */

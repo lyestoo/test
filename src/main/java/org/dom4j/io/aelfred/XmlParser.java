@@ -39,14 +39,14 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Stack;
 
 import org.xml.sax.SAXException;
 
 
-// $Id: XmlParser.java,v 1.2 2001/01/09 20:43:11 jstrachan Exp $
+// $Id: XmlParser.java,v 1.3 2001/07/30 21:20:54 jstrachan Exp $
 
 /**
  * Parse XML documents and return parse events through call-backs.
@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
  * @author Written by David Megginson &lt;dmeggins@microstar.com&gt;
  *	(version 1.2a with bugfixes)
  * @author Updated by David Brownell &lt;david-b@pacbell.net&gt;
- * @version $Date: 2001/01/09 20:43:11 $
+ * @version $Date: 2001/07/30 21:20:54 $
  * @see SAXDriver
  */
 final class XmlParser
@@ -3907,7 +3907,7 @@ loop:
 		}
 	    }
 	}
-	entityStack.push (ename);
+	entityStack.add (ename);
 
 	// Don't bother if there is no current input.
 	if (sourceType == INPUT_NONE) {
@@ -3930,7 +3930,7 @@ loop:
 	input [11] = reader;
 
 	// Push it onto the stack.
-	inputStack.push (input);
+	inputStack.add (input);
     }
 
 
@@ -3983,8 +3983,8 @@ loop:
 	    throw new EOFException ("no more input");
 	} else {
 	    String s;
-	    input = (Object[]) inputStack.pop ();
-	    s = (String) entityStack.pop ();
+	    input = (Object[]) inputStack.remove ( inputStack.size() - 1 );
+	    s = (String) entityStack.remove ( entityStack.size() - 1 );
 	}
 
 	sourceType = ((Integer) input [0]).intValue ();
@@ -4613,8 +4613,8 @@ loop:
 
 	// Set up the input variables
 	sourceType = INPUT_NONE;
-	inputStack = new Stack ();
-	entityStack = new Stack ();
+	inputStack = new ArrayList ();
+	entityStack = new ArrayList ();
 	externalEntity = null;
 	tagAttributePos = 0;
 	tagAttributes = new String [100];
@@ -4668,7 +4668,7 @@ loop:
     private int		line; 		// current line number
     private int		column; 	// current column number
     private int		sourceType; 	// type of input source
-    private Stack	inputStack; 	// stack of input soruces
+    private ArrayList	inputStack; 	// stack of input soruces
     private URLConnection externalEntity; // current external entity
     private int		encoding; 	// current character encoding
     private int		currentByteCount; // bytes read from current source
@@ -4733,7 +4733,7 @@ loop:
     //
     // Stack of entity names, to detect recursion.
     //
-    private Stack	entityStack;
+    private ArrayList	entityStack;
 
     //
     // PE expansion is enabled in most chunks of the DTD, not all.

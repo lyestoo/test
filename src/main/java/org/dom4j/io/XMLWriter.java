@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: XMLWriter.java,v 1.43 2001/10/10 13:55:33 jstrachan Exp $
+ * $Id: XMLWriter.java,v 1.46 2002/02/14 11:55:46 jstrachan Exp $
  */
 
 package org.dom4j.io;
@@ -76,7 +76,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
   * @author Joseph Bowbeer
-  * @version $Revision: 1.43 $
+  * @version $Revision: 1.46 $
   */
 public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
 
@@ -295,7 +295,7 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
       * @param entity <code>Entity</code> to output.
       */
     public void write(Entity entity) throws IOException {
-        writeEntityRef( entity.getName() );
+        writeEntity( entity );
         
         if ( autoFlush ) {
             flush();
@@ -702,19 +702,14 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
             if ( textOnly ) {
                 // we have at least one text node so lets assume
                 // that its non-empty
-                for ( int i = 0; i < size; i++ ) {
-                    Node node = element.node(i);
-                    writeNode(node);
-                }
+                writeElementContent(element);
             }
             else {
                 // we know it's not null or empty from above
                 ++indentLevel;
                 
-                for ( int i = 0; i < size; i++ ) {
-                    Node node = element.node(i);
-                    writeNode(node);
-                }
+                writeElementContent(element);
+                
                 --indentLevel;                
 
                 writePrintln();
@@ -733,6 +728,61 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
         lastOutputNodeType = Node.ELEMENT_NODE;
     }
     
+    /** Outputs the content of the given element. If whitespace trimming is
+     * enabled then all adjacent text nodes are appended together before
+     * the whitespace trimming occurs to avoid problems with multiple 
+     * text nodes being created due to text content that spans parser buffers 
+     * in a SAX parser.
+     */
+    protected void writeElementContent(Element element) throws IOException {
+        if (format.isTrimText()) {
+            // concatenate adjacent text nodes together 
+            // so that whitespace trimming works properly
+            Text lastTextNode = null;
+            StringBuffer buffer = null;
+            for ( int i = 0, size = element.nodeCount(); i < size; i++ ) {
+                Node node = element.node(i);
+                if ( node instanceof Text ) {
+                    if ( lastTextNode == null ) {
+                        lastTextNode = (Text) node;
+                    }
+                    else {
+                        buffer = new StringBuffer( lastTextNode.getText() );
+                        buffer.append( ((Text) node).getText() );
+                    }
+                }
+                else {
+                    if ( lastTextNode != null ) { 
+                        if ( buffer != null ) {
+                            writeString( buffer.toString() );
+                            buffer = null;
+                        }
+                        else {
+                            writeString( lastTextNode.getText() );
+                        }
+                        lastTextNode = null;
+                    }
+                    writeNode(node);
+                }
+            }
+            if ( lastTextNode != null ) { 
+                if ( buffer != null ) {
+                    writeString( buffer.toString() );
+                    buffer = null;
+                }
+                else {
+                    writeString( lastTextNode.getText() );
+                }
+                lastTextNode = null;
+            }
+        }
+        else {
+            for ( int i = 0, size = element.nodeCount(); i < size; i++ ) {
+                Node node = element.node(i);
+                writeNode(node);
+            }
+        }
+    }
     protected void writeCDATA(String text) throws IOException {
         writer.write( "<![CDATA[" );
         writer.write( text );
@@ -792,13 +842,20 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
             }
             
             if (format.isTrimText()) {
+                boolean first = true;
                 StringTokenizer tokenizer = new StringTokenizer(text);
                 while (tokenizer.hasMoreTokens()) {
                     String token = tokenizer.nextToken();
-                    writer.write(token);
-                    if (tokenizer.hasMoreTokens()) {
+                    if ( first ) {
+                        first = false;
+                        if ( lastOutputNodeType == Node.TEXT_NODE ) { 
+                            writer.write(" ");
+                        }
+                    }
+                    else {
                         writer.write(" ");
                     }
+                    writer.write(token);
                     lastOutputNodeType = Node.TEXT_NODE;
                 }
             } 
@@ -827,7 +884,7 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
                 writeCDATA(node.getText());
                 break;
             case Node.ENTITY_REFERENCE_NODE:
-                writeEntityRef( node.getName() );
+                writeEntity((Entity) node);
                 break;
             case Node.PROCESSING_INSTRUCTION_NODE:
                 writeProcessingInstruction((ProcessingInstruction) node);
@@ -896,6 +953,10 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
         writePrintln();
     }
 
+    protected void writeEntity(Entity entity) throws IOException {
+        writeEntityRef( entity.getName() );
+    }
+    
     protected void writeEntityRef(String name) throws IOException {
         writer.write( "&" );
         writer.write( name );
@@ -1225,5 +1286,5 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: XMLWriter.java,v 1.43 2001/10/10 13:55:33 jstrachan Exp $
+ * $Id: XMLWriter.java,v 1.46 2002/02/14 11:55:46 jstrachan Exp $
  */

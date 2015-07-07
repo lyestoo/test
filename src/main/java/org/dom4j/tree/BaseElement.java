@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BaseElement.java,v 1.2 2001/06/25 15:57:32 jstrachan Exp $
+ * $Id: BaseElement.java,v 1.3 2002/02/01 13:04:32 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -39,7 +39,7 @@ import org.dom4j.Text;
   * inheritence of an XML element.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 public class BaseElement extends AbstractElement {
 
@@ -109,6 +109,9 @@ public class BaseElement extends AbstractElement {
         return qname;
     }
     
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
 
     public void clearContent() {
         contentList().clear();
@@ -204,5 +207,5 @@ public class BaseElement extends AbstractElement {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BaseElement.java,v 1.2 2001/06/25 15:57:32 jstrachan Exp $
+ * $Id: BaseElement.java,v 1.3 2002/02/01 13:04:32 jstrachan Exp $
  */

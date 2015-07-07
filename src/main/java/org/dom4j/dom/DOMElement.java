@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DOMElement.java,v 1.13 2001/08/14 13:21:10 jstrachan Exp $
+ * $Id: DOMElement.java,v 1.14 2002/02/01 10:13:39 jstrachan Exp $
  */
 
 package org.dom4j.dom;
@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
   * supports the W3C DOM API.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.13 $
+  * @version $Revision: 1.14 $
   */
 public class DOMElement extends DefaultElement implements org.w3c.dom.Element {
 
@@ -299,7 +299,8 @@ public class DOMElement extends DefaultElement implements org.w3c.dom.Element {
     // Implementation methods
     //-------------------------------------------------------------------------            
     protected DocumentFactory getDocumentFactory() {
-        return DOCUMENT_FACTORY;
+        DocumentFactory factory = getQName().getDocumentFactory();
+        return ( factory != null ) ? factory : DOCUMENT_FACTORY;
     }
     
     protected Attribute attribute(org.w3c.dom.Attr attr) {
@@ -398,5 +399,5 @@ public class DOMElement extends DefaultElement implements org.w3c.dom.Element {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMElement.java,v 1.13 2001/08/14 13:21:10 jstrachan Exp $
+ * $Id: DOMElement.java,v 1.14 2002/02/01 10:13:39 jstrachan Exp $
  */

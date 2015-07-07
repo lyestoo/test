@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Stack;
 
 import org.xml.sax.*;
 import org.xml.sax.ext.*;
@@ -49,7 +48,7 @@ import org.xml.sax.helpers.NamespaceSupport;
 import org.dom4j.io.aelfred.DefaultHandler;
 
 
-// $Id: SAXDriver.java,v 1.2 2001/01/09 20:43:11 jstrachan Exp $
+// $Id: SAXDriver.java,v 1.3 2001/07/30 21:20:54 jstrachan Exp $
 
 /**
  * An enhanced SAX2 version of Microstar's &AElig;lfred XML parser.
@@ -110,7 +109,7 @@ import org.dom4j.io.aelfred.DefaultHandler;
  * @author Written by David Megginson &lt;dmeggins@microstar.com&gt;
  *	(version 1.2a from Microstar)
  * @author Updated by David Brownell &lt;david-b@pacbell.net&gt;
- * @version $Date: 2001/01/09 20:43:11 $
+ * @version $Date: 2001/07/30 21:20:54 $
  * @see org.xml.sax.Parser
  */
 final public class SAXDriver
@@ -127,7 +126,7 @@ final public class SAXDriver
     private LexicalHandler		lexicalHandler = base;
 
     private String			elementName = null;
-    private Stack			entityStack = new Stack ();
+    private ArrayList			entityStack = new ArrayList ();
 
     private ArrayList  			attributeNames = new ArrayList ();
     private ArrayList  			attributeNamespaces = new ArrayList ();
@@ -308,9 +307,9 @@ final public class SAXDriver
         		// start to get reported by the parser
 
         		if (systemId != null)
-        		    entityStack.push (systemId);
+        		    entityStack.add (systemId);
         		else
-        		    entityStack.push ("illegal:unknown system ID");
+        		    entityStack.add ("illegal:unknown system ID");
 
         		parser.doParse (systemId,
         			      source.getPublicId (),
@@ -563,13 +562,13 @@ final public class SAXDriver
     void startExternalEntity (String systemId)
     throws SAXException
     {
-	    entityStack.push (systemId);
+	    entityStack.add (systemId);
     }
 
     void endExternalEntity (String systemId)
     throws SAXException
     {
-	    entityStack.pop ();
+	    entityStack.remove ( entityStack.size() - 1 );
     }
 
     void doctypeDecl (String name, String publicId, String systemId)
@@ -1187,7 +1186,7 @@ final public class SAXDriver
      */
     public String getSystemId ()
     {
-	    return (String) entityStack.peek ();
+	    return (String) entityStack.get ( entityStack.size() - 1 );
     }
 
     /**

@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Element.java,v 1.33 2001/10/24 09:41:15 jstrachan Exp $
+ * $Id: Element.java,v 1.34 2002/02/01 13:04:32 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -26,7 +26,7 @@ import java.util.Map;
   *
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.33 $
+  * @version $Revision: 1.34 $
   */
 public interface Element extends Branch {
 
@@ -39,6 +39,13 @@ public interface Element extends Branch {
       * @return the <code>QName</code> associated with this element
       */
     public QName getQName();    
+
+    /** <p>Sets the <code>QName</code> of this element which represents 
+      * the local name, the qualified name and the <code>Namespace</code>.</p>
+      *
+      * @param qname is the <code>QName</code> to be associated with this element
+      */
+    public void setQName(QName qname);    
     
     /** <p>Returns the <code>Namespace</code> of this element if one exists 
       * otherwise <code>Namespace.NO_NAMESPACE</code> is returned.</p>
@@ -661,5 +668,5 @@ public interface Element extends Branch {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Element.java,v 1.33 2001/10/24 09:41:15 jstrachan Exp $
+ * $Id: Element.java,v 1.34 2002/02/01 13:04:32 jstrachan Exp $
  */

@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BranchTreeNode.java,v 1.1 2001/04/10 19:12:08 jstrachan Exp $
+ * $Id: BranchTreeNode.java,v 1.2 2001/12/19 09:51:39 jstrachan Exp $
  */
 
 package org.dom4j.swing;
@@ -24,7 +24,7 @@ import org.dom4j.Node;
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a> (james.strachan@metastuff.com)
   * @author Jakob Jenkov
-  * @version $Revision: 1.1 $ 
+  * @version $Revision: 1.2 $ 
   */
 public class BranchTreeNode extends LeafTreeNode {
 
@@ -77,7 +77,7 @@ public class BranchTreeNode extends LeafTreeNode {
     }
     
     public boolean isLeaf() {
-        return false;
+        return getXmlBranch().nodeCount() <= 0;
     }
     
     public String toString() {
@@ -179,5 +179,5 @@ public class BranchTreeNode extends LeafTreeNode {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BranchTreeNode.java,v 1.1 2001/04/10 19:12:08 jstrachan Exp $
+ * $Id: BranchTreeNode.java,v 1.2 2001/12/19 09:51:39 jstrachan Exp $
  */

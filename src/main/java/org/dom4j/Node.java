@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Node.java,v 1.22 2001/09/15 14:55:14 jstrachan Exp $
+ * $Id: Node.java,v 1.23 2001/12/19 09:51:39 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -24,7 +24,7 @@ import java.util.List;
   * @see #isReadOnly
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.22 $
+  * @version $Revision: 1.23 $
   */
 public interface Node extends Cloneable {
 
@@ -311,15 +311,14 @@ public interface Node extends Cloneable {
     
     /** <p><code>selectObject</code> evaluates an XPath expression and returns 
       * the result as an {@link Object}. The object returned can
-      * either be a {@link List} of {@link Node} instances, a {@link Node} 
-      * instance, a {@link String} or a {@link Number} instance depending on 
-      * the XPath expression. 
+      * either be a {@link List} of one or more {@link Node} instances
+      * or a scalar object like a {@link String} or a {@link Number} 
+      * instance depending on the XPath expression. 
       *
       * @param xpathExpression is the XPath expression to be evaluated
       * @return the value of the XPath expression as a
-      * {@link List} of {@link Node} instances, a {@link Node} 
-      * instance, a {@link String} or a {@link Number} instance depending on 
-      * the XPath expression. 
+      * {@link List} of {@link Node} instances, a {@link String} or 
+      * a {@link Number} instance depending on the XPath expression. 
       */
     public Object selectObject(String xpathExpression);
     
@@ -482,5 +481,5 @@ public interface Node extends Cloneable {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Node.java,v 1.22 2001/09/15 14:55:14 jstrachan Exp $
+ * $Id: Node.java,v 1.23 2001/12/19 09:51:39 jstrachan Exp $
  */

@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: SAXReader.java,v 1.38 2001/10/29 22:03:22 jstrachan Exp $
+ * $Id: SAXReader.java,v 1.39 2001/11/15 23:38:29 jstrachan Exp $
  */
 
 package org.dom4j.io;
@@ -76,7 +76,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
   * <a href="http://java.sun.com/xml/">Sun's Java &amp; XML site</a></p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.38 $
+  * @version $Revision: 1.39 $
   */
 public class SAXReader {
 
@@ -106,6 +106,13 @@ public class SAXReader {
     
     /** Should external DTD declarations be expanded into a List in the DTD */
     private boolean includeExternalDTDDeclarations = false;
+    
+    /** Whether adjacent text nodes should be merged */
+    private boolean mergeAdjacentText = false;    
+    
+    /** Holds value of property stripWhitespaceText. */
+    private boolean stripWhitespaceText = false;
+    
     
     //private boolean includeExternalGeneralEntities = false;
     //private boolean includeExternalParameterEntities = false;
@@ -307,6 +314,8 @@ public class SAXReader {
             contentHandler.setInputSource( in );
             contentHandler.setIncludeInternalDTDDeclarations( isIncludeInternalDTDDeclarations() );
             contentHandler.setIncludeExternalDTDDeclarations( isIncludeExternalDTDDeclarations() );
+            contentHandler.setMergeAdjacentText( isMergeAdjacentText() );
+            contentHandler.setStripWhitespaceText( isStripWhitespaceText() );
             xmlReader.setContentHandler(contentHandler);
 
             configureReader(xmlReader, contentHandler);
@@ -403,6 +412,38 @@ public class SAXReader {
     public void setStringInternEnabled(boolean stringInternEnabled) {
         this.stringInternEnabled = stringInternEnabled;
     }
+    
+    /** Returns whether adjacent text nodes should be merged together.
+      * @return Value of property mergeAdjacentText.
+      */
+    public boolean isMergeAdjacentText() {
+        return mergeAdjacentText;
+    }
+    
+    /** Sets whether or not adjacent text nodes should be merged
+      * together when parsing.
+      * @param mergeAdjacentText New value of property mergeAdjacentText.
+      */
+    public void setMergeAdjacentText(boolean mergeAdjacentText) {
+        this.mergeAdjacentText = mergeAdjacentText;
+    }
+           
+    /** Sets whether whitespace between element start and end tags should be ignored
+      * 
+      * @return Value of property stripWhitespaceText.
+      */
+    public boolean isStripWhitespaceText() {
+        return stripWhitespaceText;
+    }
+    
+    /** Sets whether whitespace between element start and end tags should be ignored.
+      *
+      * @param stripWhitespaceText New value of property stripWhitespaceText.
+      */
+    public void setStripWhitespaceText(boolean stripWhitespaceText) {
+        this.stripWhitespaceText = stripWhitespaceText;
+    }
+    
     
     /** @return the <code>DocumentFactory</code> used to create document objects
       */
@@ -743,5 +784,5 @@ public class SAXReader {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXReader.java,v 1.38 2001/10/29 22:03:22 jstrachan Exp $
+ * $Id: SAXReader.java,v 1.39 2001/11/15 23:38:29 jstrachan Exp $
  */

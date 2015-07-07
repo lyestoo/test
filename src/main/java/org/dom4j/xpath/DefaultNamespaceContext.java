@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultNamespaceContext.java,v 1.1 2001/11/02 12:50:51 jstrachan Exp $
+ * $Id: DefaultNamespaceContext.java,v 1.2 2001/11/11 09:27:03 jstrachan Exp $
  */
 
 package org.dom4j.xpath;
@@ -37,7 +37,7 @@ public class DefaultNamespaceContext implements NamespaceContext {
         if ( node instanceof Element ) {
             element = (Element) node;
         }
-        if ( node instanceof Document ) {
+        else if ( node instanceof Document ) {
             Document doc = (Document) node;
             element = doc.getRootElement();
         }
@@ -106,5 +106,5 @@ public class DefaultNamespaceContext implements NamespaceContext {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultNamespaceContext.java,v 1.1 2001/11/02 12:50:51 jstrachan Exp $
+ * $Id: DefaultNamespaceContext.java,v 1.2 2001/11/11 09:27:03 jstrachan Exp $
  */
