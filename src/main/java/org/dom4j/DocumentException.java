@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DocumentException.java,v 1.2 2001/06/09 13:29:38 jstrachan Exp $
+ * $Id: DocumentException.java,v 1.3 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -16,7 +16,7 @@ import java.io.PrintWriter;
   * during the processing of a DOM4J document.
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 public class DocumentException extends Exception {
 
@@ -124,5 +124,5 @@ public class DocumentException extends Exception {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DocumentException.java,v 1.2 2001/06/09 13:29:38 jstrachan Exp $
+ * $Id: DocumentException.java,v 1.3 2002/05/20 08:14:11 jstrachan Exp $
  */

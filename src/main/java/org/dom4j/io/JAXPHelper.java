@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: JAXPHelper.java,v 1.2 2001/08/03 11:00:34 jstrachan Exp $
+ * $Id: JAXPHelper.java,v 1.3 2002/05/20 08:14:14 jstrachan Exp $
  */
 
 package org.dom4j.io;
@@ -21,7 +21,7 @@ import org.xml.sax.XMLReader;
   * issues, such that dom4j can work without JAXP on the CLASSPATH
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 class JAXPHelper {
 
@@ -92,5 +92,5 @@ class JAXPHelper {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: JAXPHelper.java,v 1.2 2001/08/03 11:00:34 jstrachan Exp $
+ * $Id: JAXPHelper.java,v 1.3 2002/05/20 08:14:14 jstrachan Exp $
  */

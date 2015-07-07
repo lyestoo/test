@@ -4,24 +4,21 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BeanAttributeList.java,v 1.3 2001/03/06 16:40:19 jstrachan Exp $
+ * $Id: BeanAttributeList.java,v 1.5 2003/04/07 22:15:32 jstrachan Exp $
  */
 
 package org.dom4j.bean;
 
 import java.util.AbstractList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.dom4j.Attribute;
-import org.dom4j.Element;
 import org.dom4j.QName;
 
 /** <p><code>BeanAttributeList</code> implements a list of Attributes
   * which are the properties of a JavaBean.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.5 $
   */
 public class BeanAttributeList extends AbstractList {
 
@@ -189,5 +186,5 @@ public class BeanAttributeList extends AbstractList {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BeanAttributeList.java,v 1.3 2001/03/06 16:40:19 jstrachan Exp $
+ * $Id: BeanAttributeList.java,v 1.5 2003/04/07 22:15:32 jstrachan Exp $
  */

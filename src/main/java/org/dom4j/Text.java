@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Text.java,v 1.2 2001/01/09 20:43:11 jstrachan Exp $
+ * $Id: Text.java,v 1.3 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -12,7 +12,7 @@ package org.dom4j;
 /**<p><code>Text</code> defines an XML Text node.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 public interface Text extends CharacterData {
 
@@ -63,5 +63,5 @@ public interface Text extends CharacterData {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Text.java,v 1.2 2001/01/09 20:43:11 jstrachan Exp $
+ * $Id: Text.java,v 1.3 2002/05/20 08:14:11 jstrachan Exp $
  */

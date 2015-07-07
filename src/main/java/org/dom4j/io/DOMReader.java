@@ -4,40 +4,27 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: DOMReader.java,v 1.9 2002/03/02 14:23:25 slehmann Exp $
+ * $Id: DOMReader.java,v 1.10 2003/04/07 22:14:01 jstrachan Exp $
  */
 
 package org.dom4j.io;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.dom4j.Attribute;
 import org.dom4j.Branch;
-import org.dom4j.CDATA;
-import org.dom4j.Comment;
-import org.dom4j.DocumentType;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.Entity;
 import org.dom4j.Namespace;
-import org.dom4j.Node;
-import org.dom4j.ProcessingInstruction;
 import org.dom4j.QName;
-import org.dom4j.Text;
-
 import org.dom4j.tree.NamespaceStack;
 
 /** <p><code>DOMReader</code> navigates a W3C DOM tree and creates
   * a DOM4J tree from it.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.9 $
+  * @version $Revision: 1.10 $
   */
 public class DOMReader {
 
@@ -306,5 +293,5 @@ public class DOMReader {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMReader.java,v 1.9 2002/03/02 14:23:25 slehmann Exp $
+ * $Id: DOMReader.java,v 1.10 2003/04/07 22:14:01 jstrachan Exp $
  */

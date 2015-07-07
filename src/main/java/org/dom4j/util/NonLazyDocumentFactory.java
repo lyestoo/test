@@ -4,16 +4,13 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: NonLazyDocumentFactory.java,v 1.3 2001/07/03 14:42:43 jstrachan Exp $
+ * $Id: NonLazyDocumentFactory.java,v 1.5 2003/04/07 22:13:59 jstrachan Exp $
  */
 
 package org.dom4j.util;
 
-import org.dom4j.Attribute;
-import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
-import org.dom4j.Namespace;
 import org.dom4j.QName;
 
 /** <p><code>NonLazyDocumentFactory</code> is a factory of XML objects which 
@@ -23,7 +20,7 @@ import org.dom4j.QName;
   * modified.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.5 $
   */
 public class NonLazyDocumentFactory extends DocumentFactory {
     
@@ -93,5 +90,5 @@ public class NonLazyDocumentFactory extends DocumentFactory {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: NonLazyDocumentFactory.java,v 1.3 2001/07/03 14:42:43 jstrachan Exp $
+ * $Id: NonLazyDocumentFactory.java,v 1.5 2003/04/07 22:13:59 jstrachan Exp $
  */

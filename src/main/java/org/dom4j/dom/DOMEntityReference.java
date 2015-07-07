@@ -4,20 +4,15 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DOMEntityReference.java,v 1.4 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: DOMEntityReference.java,v 1.7 2003/04/07 22:15:13 jstrachan Exp $
  */
 
 package org.dom4j.dom;
 
-import java.util.Map;
-
 import org.dom4j.Element;
-import org.dom4j.Entity;
-import org.dom4j.QName;
 import org.dom4j.tree.DefaultEntity;
-
-import org.w3c.dom.Document;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
@@ -25,7 +20,7 @@ import org.w3c.dom.NodeList;
   * supports the W3C DOM API.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.4 $
+  * @version $Revision: 1.7 $
   */
 public class DOMEntityReference extends DefaultEntity implements org.w3c.dom.EntityReference {
 
@@ -44,6 +39,10 @@ public class DOMEntityReference extends DefaultEntity implements org.w3c.dom.Ent
     
     // org.w3c.dom.Node interface
     //-------------------------------------------------------------------------        
+    public boolean supports(String feature, String version) {
+        return DOMNodeHelper.supports(this, feature, version);
+    }
+        
     public String getNamespaceURI() {
         return DOMNodeHelper.getNamespaceURI(this);
     }
@@ -199,5 +198,5 @@ public class DOMEntityReference extends DefaultEntity implements org.w3c.dom.Ent
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMEntityReference.java,v 1.4 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: DOMEntityReference.java,v 1.7 2003/04/07 22:15:13 jstrachan Exp $
  */

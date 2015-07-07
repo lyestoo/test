@@ -4,17 +4,16 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractProcessingInstruction.java,v 1.10 2001/07/25 10:51:11 jstrachan Exp $
+ * $Id: AbstractProcessingInstruction.java,v 1.12 2003/04/07 22:14:23 jstrachan Exp $
  */
 
 package org.dom4j.tree;
 
 import java.io.IOException;
 import java.io.Writer;
-
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.dom4j.Element;
@@ -25,7 +24,7 @@ import org.dom4j.Visitor;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.10 $
+  * @version $Revision: 1.12 $
   */
 public abstract class AbstractProcessingInstruction extends AbstractNode implements ProcessingInstruction {
 
@@ -194,5 +193,5 @@ public abstract class AbstractProcessingInstruction extends AbstractNode impleme
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractProcessingInstruction.java,v 1.10 2001/07/25 10:51:11 jstrachan Exp $
+ * $Id: AbstractProcessingInstruction.java,v 1.12 2003/04/07 22:14:23 jstrachan Exp $
  */

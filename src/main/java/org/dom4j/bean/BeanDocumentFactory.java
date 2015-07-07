@@ -4,20 +4,16 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BeanDocumentFactory.java,v 1.8 2001/08/09 13:35:14 jstrachan Exp $
+ * $Id: BeanDocumentFactory.java,v 1.10 2003/04/07 22:15:38 jstrachan Exp $
  */
 
 package org.dom4j.bean;
 
-import java.util.Map;
-
-import org.dom4j.DocumentFactory;
 import org.dom4j.Attribute;
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.QName;
 import org.dom4j.tree.DefaultAttribute;
-import org.dom4j.tree.DefaultElement;
-
 import org.xml.sax.Attributes;
 
 /** <p><code>BeanDocumentFactory</code> is a factory of DOM4J objects
@@ -28,7 +24,7 @@ import org.xml.sax.Attributes;
   * tree.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.8 $
+  * @version $Revision: 1.10 $
   */
 public class BeanDocumentFactory extends DocumentFactory {
 
@@ -146,5 +142,5 @@ public class BeanDocumentFactory extends DocumentFactory {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BeanDocumentFactory.java,v 1.8 2001/08/09 13:35:14 jstrachan Exp $
+ * $Id: BeanDocumentFactory.java,v 1.10 2003/04/07 22:15:38 jstrachan Exp $
  */

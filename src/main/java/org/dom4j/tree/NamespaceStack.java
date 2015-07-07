@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: NamespaceStack.java,v 1.6 2001/09/20 10:48:18 jstrachan Exp $
+ * $Id: NamespaceStack.java,v 1.9 2003/04/07 22:14:09 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -12,7 +12,6 @@ package org.dom4j.tree;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
 
 import org.dom4j.DocumentFactory;
 import org.dom4j.Namespace;
@@ -24,7 +23,7 @@ import org.dom4j.QName;
   * document.
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.6 $
+  * @version $Revision: 1.9 $
   */
 public class NamespaceStack {
  
@@ -159,6 +158,11 @@ public class NamespaceStack {
         int index = qualifiedName.indexOf(":");
         if (index > 0) {
             prefix = qualifiedName.substring(0, index);
+            if (localName.trim().length() == 0) {
+                localName = qualifiedName.substring(index+1);
+            }
+        } else if (localName.trim().length() == 0) {
+            localName = qualifiedName;
         }
         Namespace namespace = createNamespace( prefix, namespaceURI );
         return pushQName( localName, qualifiedName, namespace, prefix );
@@ -185,10 +189,16 @@ public class NamespaceStack {
         if (index > 0) {
             prefix = qualifiedName.substring(0, index);
             namespace = createNamespace( prefix, namespaceURI );
+            if ( localName.trim().length() == 0) {
+                localName = qualifiedName.substring(index+1);
+            }
         }
         else {
             // attributes with no prefix have no namespace
             namespace = Namespace.NO_NAMESPACE;
+            if ( localName.trim().length() == 0) {
+                localName = qualifiedName;
+            }
         }
         answer = pushQName( localName, qualifiedName, namespace, prefix );
         map.put( qualifiedName, answer );
@@ -364,5 +374,5 @@ public class NamespaceStack {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: NamespaceStack.java,v 1.6 2001/09/20 10:48:18 jstrachan Exp $
+ * $Id: NamespaceStack.java,v 1.9 2003/04/07 22:14:09 jstrachan Exp $
  */

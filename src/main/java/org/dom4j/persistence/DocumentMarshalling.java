@@ -1,11 +1,6 @@
 package org.dom4j.persistence;
 
-import org.dom4j.Document;
 import org.dom4j.Node;
-import org.dom4j.io.SAXWriter;
-import org.dom4j.io.SAXContentHandler;
-
-import org.dom4j.persistence.MarshallingContext;
 
 /**
  * @author  Tobias Rademacher
@@ -15,9 +10,13 @@ import org.dom4j.persistence.MarshallingContext;
 public abstract class DocumentMarshalling implements MarshallingStrategy {
 
   public static DocumentMarshalling getInstance(MarshallingContext context) throws Exception {
+/*
+ * Temporarily commented out for now... Will try put back when the build works on latest XMLDb
+ *       
     if (context.getMarshallingStrategy().equals("nativ")) {
        return new org.dom4j.persistence.nativ.XMLDBStrategy(context);
     }
+*/  
     return null;
   }
 

@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Mode.java,v 1.4 2001/04/04 18:08:49 jstrachan Exp $
+ * $Id: Mode.java,v 1.5 2002/05/20 08:14:12 jstrachan Exp $
  */
 
 package org.dom4j.rule;
@@ -25,7 +25,7 @@ import org.dom4j.Node;
   * reduce the number of Rule evaluations.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.4 $
+  * @version $Revision: 1.5 $
   */
 public class Mode {
 
@@ -268,5 +268,5 @@ public class Mode {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Mode.java,v 1.4 2001/04/04 18:08:49 jstrachan Exp $
+ * $Id: Mode.java,v 1.5 2002/05/20 08:14:12 jstrachan Exp $
  */

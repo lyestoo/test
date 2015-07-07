@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: ProcessingInstruction.java,v 1.4 2001/01/24 16:52:13 jstrachan Exp $
+ * $Id: ProcessingInstruction.java,v 1.5 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -17,7 +17,7 @@ import java.util.Map;
   * </p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.4 $
+  * @version $Revision: 1.5 $
   */
 public interface ProcessingInstruction extends Node {
 
@@ -103,5 +103,5 @@ public interface ProcessingInstruction extends Node {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: ProcessingInstruction.java,v 1.4 2001/01/24 16:52:13 jstrachan Exp $
+ * $Id: ProcessingInstruction.java,v 1.5 2002/05/20 08:14:11 jstrachan Exp $
  */

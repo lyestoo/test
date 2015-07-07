@@ -4,21 +4,11 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: NonLazyElement.java,v 1.2 2001/06/25 15:57:32 jstrachan Exp $
+ * $Id: NonLazyElement.java,v 1.4 2003/04/07 22:13:57 jstrachan Exp $
  */
 
 package org.dom4j.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.dom4j.Attribute;
-import org.dom4j.Branch;
-import org.dom4j.Element;
-import org.dom4j.Entity;
-import org.dom4j.Node;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.tree.BaseElement;
@@ -27,7 +17,7 @@ import org.dom4j.tree.BaseElement;
   * of an XML element.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.4 $
   */
 public class NonLazyElement extends BaseElement {
 
@@ -102,5 +92,5 @@ public class NonLazyElement extends BaseElement {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: NonLazyElement.java,v 1.2 2001/06/25 15:57:32 jstrachan Exp $
+ * $Id: NonLazyElement.java,v 1.4 2003/04/07 22:13:57 jstrachan Exp $
  */

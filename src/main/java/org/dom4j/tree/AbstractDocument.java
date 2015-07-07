@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractDocument.java,v 1.22 2001/07/25 10:51:11 jstrachan Exp $
+ * $Id: AbstractDocument.java,v 1.24 2003/04/07 22:14:40 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -16,15 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Attribute;
-import org.dom4j.CDATA;
 import org.dom4j.Comment;
 import org.dom4j.Document;
 import org.dom4j.DocumentType;
 import org.dom4j.Element;
 import org.dom4j.IllegalAddException;
 import org.dom4j.Node;
-import org.dom4j.Namespace;
 import org.dom4j.ProcessingInstruction;
 import org.dom4j.QName;
 import org.dom4j.Text;
@@ -35,7 +32,7 @@ import org.dom4j.io.XMLWriter;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.22 $
+  * @version $Revision: 1.24 $
   */
 public abstract class AbstractDocument extends AbstractBranch implements Document {
     
@@ -265,5 +262,5 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractDocument.java,v 1.22 2001/07/25 10:51:11 jstrachan Exp $
+ * $Id: AbstractDocument.java,v 1.24 2003/04/07 22:14:40 jstrachan Exp $
  */

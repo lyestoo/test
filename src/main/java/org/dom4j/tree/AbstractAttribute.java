@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractAttribute.java,v 1.14 2001/07/25 10:51:11 jstrachan Exp $
+ * $Id: AbstractAttribute.java,v 1.16 2003/04/07 22:14:32 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -14,15 +14,15 @@ import java.io.Writer;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.dom4j.Namespace;
+import org.dom4j.Node;
 import org.dom4j.Visitor;
 
 /** <p><code>AbstractNamespace</code> is an abstract base class for 
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.14 $
+  * @version $Revision: 1.16 $
   */
 public abstract class AbstractAttribute extends AbstractNode implements Attribute {
 
@@ -163,5 +163,5 @@ public abstract class AbstractAttribute extends AbstractNode implements Attribut
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractAttribute.java,v 1.14 2001/07/25 10:51:11 jstrachan Exp $
+ * $Id: AbstractAttribute.java,v 1.16 2003/04/07 22:14:32 jstrachan Exp $
  */

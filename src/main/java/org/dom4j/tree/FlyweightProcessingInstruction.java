@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: FlyweightProcessingInstruction.java,v 1.1 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: FlyweightProcessingInstruction.java,v 1.3 2003/04/07 22:14:22 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.dom4j.ProcessingInstruction;
 
 /** <p><code>FlyweightProcessingInstruction</code> is a Flyweight pattern implementation
   * of a singly linked, read-only XML Processing Instruction.</p>
@@ -23,7 +22,7 @@ import org.dom4j.ProcessingInstruction;
   * it does not support the parent relationship.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.3 $
   */
 public class FlyweightProcessingInstruction extends AbstractProcessingInstruction {
 
@@ -139,5 +138,5 @@ public class FlyweightProcessingInstruction extends AbstractProcessingInstructio
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: FlyweightProcessingInstruction.java,v 1.1 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: FlyweightProcessingInstruction.java,v 1.3 2003/04/07 22:14:22 jstrachan Exp $
  */

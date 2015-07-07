@@ -4,7 +4,7 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: SchemaParser.java,v 1.11 2002/02/01 10:54:30 jstrachan Exp $
+ * $Id: SchemaParser.java,v 1.14 2003/04/07 22:15:20 jstrachan Exp $
  */
 
 package org.dom4j.datatype;
@@ -19,16 +19,14 @@ import java.util.Map;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
 import org.dom4j.util.AttributeHelper;
-import org.dom4j.DocumentFactory;
-
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
-
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -36,7 +34,7 @@ import org.xml.sax.InputSource;
  *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
  * @author Yuxin Ruan
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.14 $
  */
 public class SchemaParser {
 
@@ -112,16 +110,16 @@ public class SchemaParser {
                 onDatatypeElement( (Element) iter.next() , documentFactory);
             }
 
-            //hanlde named complex types
-            iter = root.elementIterator( XSD_COMPLEXTYPE );
-            while ( iter.hasNext() ) {
-                onNamedSchemaComplexType((Element) iter.next());
-            }
-
             //handle named simple types
             iter = root.elementIterator( XSD_SIMPLETYPE );
             while ( iter.hasNext() ) {
                 onNamedSchemaSimpleType((Element) iter.next());
+            }
+
+            //hanlde named complex types
+            iter = root.elementIterator( XSD_COMPLEXTYPE );
+            while ( iter.hasNext() ) {
+                onNamedSchemaComplexType((Element) iter.next());
             }
 
             namedTypeResolver.resolveNamedTypes();
@@ -290,7 +288,7 @@ public class SchemaParser {
         return dataType;
     }
 
-    /** processes an named XML Schema &lt;complexTypegt; tag
+    /** processes an named XML Schema &lt;simpleTypegt; tag
       */
     protected void onNamedSchemaSimpleType(Element schemaSimpleType) {
         Attribute nameAttr=schemaSimpleType.attribute("name");
@@ -385,24 +383,33 @@ public class SchemaParser {
     protected XSDatatype getTypeByName( String type ) {
         XSDatatype dataType = (XSDatatype) dataTypeCache.get( type );
         if ( dataType == null ) {
-            try {
-                // maybe a prefix is being used
-                int idx = type.indexOf(':');
-                if (idx >= 0 ) {
-                    String localName = type.substring(idx + 1);
+            // first check to see if it is a built-in type
+            // maybe a prefix is being used
+            int idx = type.indexOf(':');
+            if (idx >= 0 ) {
+                String localName = type.substring(idx + 1);
+                try {
                     dataType = DatatypeFactory.getTypeByName( localName );
-                }
-                if ( dataType == null ) {
+                } catch (DatatypeException e) {}
+            }
+            if ( dataType == null ) {
+                try {
                     dataType = DatatypeFactory.getTypeByName( type );
-                }
+                } catch (DatatypeException e) {}
             }
-            catch (DatatypeException e) {
-            }
+
+            if ( dataType == null ) { 
+                // it's no built-in type, maybe it's a type we defined ourself
+                QName typeQName = getQName(type);
+                dataType = (XSDatatype) namedTypeResolver.simpleTypeMap.get( typeQName );
+            } 
+
             if ( dataType != null ) {
                 // store in cache for later
                 dataTypeCache.put( type, dataType );
             }
         }
+        
         return dataType;
     }    
 
@@ -467,5 +474,5 @@ public class SchemaParser {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SchemaParser.java,v 1.11 2002/02/01 10:54:30 jstrachan Exp $
+ * $Id: SchemaParser.java,v 1.14 2003/04/07 22:15:20 jstrachan Exp $
  */

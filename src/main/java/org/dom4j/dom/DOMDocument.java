@@ -4,24 +4,16 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DOMDocument.java,v 1.7 2002/02/01 10:13:39 jstrachan Exp $
+ * $Id: DOMDocument.java,v 1.12 2003/04/07 22:15:00 jstrachan Exp $
  */
 
 package org.dom4j.dom;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.dom4j.Attribute;
-import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
-import org.dom4j.DocumentType;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.Node;
 import org.dom4j.QName;
 import org.dom4j.tree.DefaultDocument;
-
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -30,7 +22,7 @@ import org.w3c.dom.NodeList;
   * supports the W3C DOM API.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.7 $
+  * @version $Revision: 1.12 $
   */
 public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document {
 
@@ -39,31 +31,44 @@ public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document
     
 
     public DOMDocument() { 
+        init();
     }
 
     public DOMDocument(String name) { 
         super(name);
+        init();
     }
 
-    public DOMDocument(Element rootElement) { 
+    public DOMDocument(DOMElement rootElement) { 
         super(rootElement);
+        init();
     }
 
-    public DOMDocument(DocumentType docType) { 
+    public DOMDocument(DOMDocumentType docType) { 
         super(docType);
+        init();
     }
 
-    public DOMDocument(Element rootElement, DocumentType docType) { 
+    public DOMDocument(DOMElement rootElement, DOMDocumentType docType) { 
         super(rootElement, docType);
+        init();
     }
 
-    public DOMDocument(String name, Element rootElement, DocumentType docType) { 
+    public DOMDocument(String name, DOMElement rootElement, DOMDocumentType docType) { 
         super(name, rootElement, docType);
+        init();
     }
 
+    private void init() {
+        setDocumentFactory(DOCUMENT_FACTORY);
+    }
     
     // org.w3c.dom.Node interface
     //-------------------------------------------------------------------------        
+    public boolean supports(String feature, String version) {
+        return DOMNodeHelper.supports(this, feature, version);
+    }
+        
     public String getNamespaceURI() {
         return DOMNodeHelper.getNamespaceURI(this);
     }
@@ -326,5 +331,5 @@ public class DOMDocument extends DefaultDocument implements org.w3c.dom.Document
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMDocument.java,v 1.7 2002/02/01 10:13:39 jstrachan Exp $
+ * $Id: DOMDocument.java,v 1.12 2003/04/07 22:15:00 jstrachan Exp $
  */

@@ -4,35 +4,21 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: IndexedElement.java,v 1.3 2001/06/29 12:33:02 jstrachan Exp $
+ * $Id: IndexedElement.java,v 1.5 2003/04/07 22:13:56 jstrachan Exp $
  */
 
 package org.dom4j.util;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.dom4j.Attribute;
-import org.dom4j.CDATA;
-import org.dom4j.CharacterData;
-import org.dom4j.Comment;
-import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Entity;
-import org.dom4j.IllegalAddException;
 import org.dom4j.Node;
-import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.Text;
 import org.dom4j.tree.BackedList;
 import org.dom4j.tree.DefaultElement;
 
@@ -41,7 +27,7 @@ import org.dom4j.tree.DefaultElement;
   * optimise lookups via name.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.5 $
   */
 public class IndexedElement extends DefaultElement {
 
@@ -330,5 +316,5 @@ public class IndexedElement extends DefaultElement {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: IndexedElement.java,v 1.3 2001/06/29 12:33:02 jstrachan Exp $
+ * $Id: IndexedElement.java,v 1.5 2003/04/07 22:13:56 jstrachan Exp $
  */

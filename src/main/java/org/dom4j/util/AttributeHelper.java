@@ -4,21 +4,20 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AttributeHelper.java,v 1.1 2001/05/30 22:24:27 jstrachan Exp $
+ * $Id: AttributeHelper.java,v 1.3 2003/04/07 22:13:56 jstrachan Exp $
  */
 
 package org.dom4j.util;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.dom4j.QName;
 
 /** <p><code>AttributeHelper</code> a number of helper methods for 
   * working with attribute values.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.3 $
   */
 public class AttributeHelper {
 
@@ -94,5 +93,5 @@ public class AttributeHelper {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AttributeHelper.java,v 1.1 2001/05/30 22:24:27 jstrachan Exp $
+ * $Id: AttributeHelper.java,v 1.3 2003/04/07 22:13:56 jstrachan Exp $
  */

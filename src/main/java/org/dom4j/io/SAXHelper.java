@@ -4,15 +4,10 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: SAXHelper.java,v 1.9 2001/10/12 11:05:14 jstrachan Exp $
+ * $Id: SAXHelper.java,v 1.12 2003/04/07 22:14:08 jstrachan Exp $
  */
 
 package org.dom4j.io;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import org.dom4j.io.aelfred.SAXDriver;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -24,11 +19,11 @@ import org.xml.sax.helpers.XMLReaderFactory;
   * SAX and XMLReader objects.
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.9 $
+  * @version $Revision: 1.12 $
   */
 class SAXHelper {
 
-    private static boolean loggedWarning = false;
+    private static boolean loggedWarning = true;
     
     public static boolean setParserProperty(XMLReader reader, String propertyName, Object value) {    
         try {
@@ -62,19 +57,44 @@ class SAXHelper {
       * or JAXP if the system property is not set.
       */
     public static XMLReader createXMLReader(boolean validating) throws SAXException {
-        XMLReader reader = createXMLReaderViaJAXP( validating, true );
+        XMLReader reader = null;
+        if ( classNameAvailable( "javax.xml.parsers.SAXParserFactory" ) ) {
+            // don't attempt to use JAXP if it is not in the ClassPath
+            reader = createXMLReaderViaJAXP( validating, true );
+        }
         if ( reader == null ) {
-            String className = null;
-            try {
-                className = System.getProperty( "org.xml.sax.driver" );
-            }
-            catch (Exception e) {
-            }
-            if ( className != null && className.trim().length() > 0 && classNameAvailable( className ) ) {
-                reader = XMLReaderFactory.createXMLReader();
+            if ( reader == null ) {
+                // lets try just use JAXP, maybe its a classloader issue
+                reader = createXMLReaderViaJAXP( validating, true );
             }
             if ( reader == null ) {
-                reader = new SAXDriver();
+                try {
+                    reader = XMLReaderFactory.createXMLReader();
+                }
+                catch (Exception e) {
+                    if ( isVerboseErrorReporting() ) {
+                        // log all exceptions as warnings and carry
+                        // on as we have a default SAX parser we can use
+                        System.out.println( 
+                            "Warning: Caught exception attempting to use SAX to "
+                             + "load a SAX XMLReader " 
+                        );
+                        System.out.println( "Warning: Exception was: " + e );
+                        System.out.println( 
+                            "Warning: I will print the stack trace then carry on "
+                             + "using the default SAX parser" 
+                         );
+                        e.printStackTrace();
+                    }
+                    else {
+                        System.out.println( 
+                            "Warning: Error occurred using SAX to load a SAXParser. Will use Aelfred instead" 
+                        );
+                    }
+                }
+            }
+            if ( reader == null ) {
+                throw new SAXException( "Could not initialize a SAX Parser. Please add a SAX parser to your classpath along with preferably jaxp.jar" );
             }
         }
         return reader;
@@ -86,11 +106,6 @@ class SAXHelper {
       * on the JAXP classes.
       */
     protected static XMLReader createXMLReaderViaJAXP(boolean validating, boolean namespaceAware) {
-        if ( ! classNameAvailable( "javax.xml.parsers.SAXParserFactory" ) ) {
-            // don't attempt to use JAXP if it is not in the ClassPath
-            return null;
-        }
-        
         // try use JAXP to load the XMLReader...
         try {
             return JAXPHelper.createXMLReader( validating, namespaceAware );
@@ -146,7 +161,7 @@ class SAXHelper {
             // in case a security exception
             // happens in an applet or similar JVM
         }
-        return false;
+        return true;
     }
 }
 
@@ -195,5 +210,5 @@ class SAXHelper {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXHelper.java,v 1.9 2001/10/12 11:05:14 jstrachan Exp $
+ * $Id: SAXHelper.java,v 1.12 2003/04/07 22:14:08 jstrachan Exp $
  */

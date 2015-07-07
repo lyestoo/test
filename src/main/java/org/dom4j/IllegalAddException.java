@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: IllegalAddException.java,v 1.1 2001/01/19 05:58:39 jstrachan Exp $
+ * $Id: IllegalAddException.java,v 1.2 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -12,7 +12,7 @@ package org.dom4j;
 /** <p><code>IllegalAddException</code> is thrown when a node
   * is added incorrectly to an <code>{@link Element}</code></p>
   *
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.2 $
   */
 public class IllegalAddException extends IllegalArgumentException {
 
@@ -80,5 +80,5 @@ public class IllegalAddException extends IllegalArgumentException {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: IllegalAddException.java,v 1.1 2001/01/19 05:58:39 jstrachan Exp $
+ * $Id: IllegalAddException.java,v 1.2 2002/05/20 08:14:11 jstrachan Exp $
  */

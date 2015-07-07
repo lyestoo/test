@@ -4,12 +4,10 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: PruningElementStack.java,v 1.5 2001/05/18 18:38:21 drwhite Exp $
+ * $Id: PruningElementStack.java,v 1.7 2003/04/07 22:14:02 jstrachan Exp $
  */
 
 package org.dom4j.io;
-
-import java.util.ArrayList;
 
 import org.dom4j.Element;
 import org.dom4j.ElementHandler;
@@ -21,7 +19,7 @@ import org.dom4j.ElementHandler;
   * in memory at the same time.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.5 $
+  * @version $Revision: 1.7 $
   */
 class PruningElementStack extends ElementStack {
 
@@ -158,5 +156,5 @@ class PruningElementStack extends ElementStack {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: PruningElementStack.java,v 1.5 2001/05/18 18:38:21 drwhite Exp $
+ * $Id: PruningElementStack.java,v 1.7 2003/04/07 22:14:02 jstrachan Exp $
  */

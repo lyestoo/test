@@ -4,42 +4,24 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BaseElement.java,v 1.3 2002/02/01 13:04:32 jstrachan Exp $
+ * $Id: BaseElement.java,v 1.5 2003/04/07 22:14:34 jstrachan Exp $
  */
 
 package org.dom4j.tree;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
-import org.dom4j.Attribute;
 import org.dom4j.Branch;
-import org.dom4j.CDATA;
-import org.dom4j.CharacterData;
-import org.dom4j.Comment;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Entity;
-import org.dom4j.IllegalAddException;
-import org.dom4j.Node;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.Text;
 
 /** <p><code>BaseElement</code> is a useful base class for implemementation
   * inheritence of an XML element.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.5 $
   */
 public class BaseElement extends AbstractElement {
 
@@ -207,5 +189,5 @@ public class BaseElement extends AbstractElement {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BaseElement.java,v 1.3 2002/02/01 13:04:32 jstrachan Exp $
+ * $Id: BaseElement.java,v 1.5 2003/04/07 22:14:34 jstrachan Exp $
  */

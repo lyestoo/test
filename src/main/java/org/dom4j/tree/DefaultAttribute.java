@@ -4,20 +4,20 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultAttribute.java,v 1.7 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: DefaultAttribute.java,v 1.9 2003/04/07 22:14:13 jstrachan Exp $
  */
 
 package org.dom4j.tree;
 
 import org.dom4j.Element;
-import org.dom4j.QName;
 import org.dom4j.Namespace;
+import org.dom4j.QName;
 
 /** <p><code>DefaultAttribute</code> implements a doubly linked node which 
   * supports the parent relationship and is mutable.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.7 $
+  * @version $Revision: 1.9 $
   */
 public class DefaultAttribute extends FlyweightAttribute {
 
@@ -73,7 +73,7 @@ public class DefaultAttribute extends FlyweightAttribute {
     }
 
     public void setValue(String value) {
-	this.value = value;
+    this.value = value;
     }
     
     public Element getParent() {
@@ -139,5 +139,5 @@ public class DefaultAttribute extends FlyweightAttribute {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultAttribute.java,v 1.7 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: DefaultAttribute.java,v 1.9 2003/04/07 22:14:13 jstrachan Exp $
  */

@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: NullAction.java,v 1.2 2001/02/15 12:06:49 jstrachan Exp $
+ * $Id: NullAction.java,v 1.3 2002/05/20 08:14:12 jstrachan Exp $
  */
 
 package org.dom4j.rule;
@@ -15,7 +15,7 @@ import org.dom4j.Node;
 /** <p><code>NullAction</code> represents an empty action that does nothing.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 public class NullAction implements Action {
 
@@ -71,5 +71,5 @@ public class NullAction implements Action {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: NullAction.java,v 1.2 2001/02/15 12:06:49 jstrachan Exp $
+ * $Id: NullAction.java,v 1.3 2002/05/20 08:14:12 jstrachan Exp $
  */

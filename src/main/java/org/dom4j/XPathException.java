@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: XPathException.java,v 1.1 2001/08/01 09:17:21 jstrachan Exp $
+ * $Id: XPathException.java,v 1.2 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -13,7 +13,7 @@ package org.dom4j;
   * occurs while evaluating an XPath expression, usually due to some function 
   * throwing an exception.</p>
   *
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.2 $
   */
 public class XPathException extends RuntimeException {
 
@@ -86,5 +86,5 @@ public class XPathException extends RuntimeException {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: XPathException.java,v 1.1 2001/08/01 09:17:21 jstrachan Exp $
+ * $Id: XPathException.java,v 1.2 2002/05/20 08:14:11 jstrachan Exp $
  */

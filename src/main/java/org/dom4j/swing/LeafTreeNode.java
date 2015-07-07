@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: LeafTreeNode.java,v 1.1 2001/04/10 19:12:08 jstrachan Exp $
+ * $Id: LeafTreeNode.java,v 1.3 2003/04/07 22:14:43 jstrachan Exp $
  */
 
 package org.dom4j.swing;
@@ -12,7 +12,7 @@ package org.dom4j.swing;
 import java.util.Enumeration;
 
 import javax.swing.tree.TreeNode;
-   
+
 import org.dom4j.Node;
 
 /** <p><code>LeafTreeNode</code> implements the Swing TreeNode interface
@@ -20,7 +20,7 @@ import org.dom4j.Node;
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a> (james.strachan@metastuff.com)
   * @author Jakob Jenkov
-  * @version $Revision: 1.1 $ 
+  * @version $Revision: 1.3 $ 
   */
 public class LeafTreeNode implements TreeNode {
 
@@ -147,5 +147,5 @@ public class LeafTreeNode implements TreeNode {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: LeafTreeNode.java,v 1.1 2001/04/10 19:12:08 jstrachan Exp $
+ * $Id: LeafTreeNode.java,v 1.3 2003/04/07 22:14:43 jstrachan Exp $
  */

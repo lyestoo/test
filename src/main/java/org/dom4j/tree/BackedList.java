@@ -4,26 +4,18 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BackedList.java,v 1.3 2001/01/26 11:21:54 jstrachan Exp $
+ * $Id: BackedList.java,v 1.6 2003/04/07 22:14:39 jstrachan Exp $
  */
 
 package org.dom4j.tree;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.dom4j.Branch;
-import org.dom4j.Comment;
-import org.dom4j.CDATA;
-import org.dom4j.Element;
-import org.dom4j.Entity;
 import org.dom4j.IllegalAddException;
-import org.dom4j.Namespace;
 import org.dom4j.Node;
-import org.dom4j.Text;
 
 /** <p><code>BackedList</code> represents a list of content
   * of a {@link Branch}. Changes to the list will
@@ -31,7 +23,7 @@ import org.dom4j.Text;
   * be reflected in this list.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.6 $
   */
 public class BackedList extends ArrayList {
 
@@ -64,11 +56,21 @@ public class BackedList extends ArrayList {
     }
     
     public void add(int index, Object object) {
-        int realIndex = branchContent.indexOf( get(index) );
-        if ( realIndex < 0 ) {
-            realIndex = ( index == 0 ) ? 0 : Integer.MAX_VALUE;
+        int size = branchContent.size();
+        if ( index < 0 ) {
+            throw new IndexOutOfBoundsException( "Index value: " + index + " is less than zero" );
         }
-        if ( realIndex < branchContent.size() ) {
+        else if ( index > size ) {
+            throw new IndexOutOfBoundsException( "Index value: " + index + " cannot be greater than the size: " + size );
+        }
+        int realIndex = size;
+        if (index < realIndex) {
+            realIndex = branchContent.indexOf( get(index) );
+        }
+        if ( realIndex < 0 ) {
+            realIndex = ( index == 0 ) ? 0 :Integer.MAX_VALUE;
+        }
+        if ( realIndex < size ) {
             branchContent.add(realIndex, object);
         }
         else {
@@ -197,5 +199,5 @@ public class BackedList extends ArrayList {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BackedList.java,v 1.3 2001/01/26 11:21:54 jstrachan Exp $
+ * $Id: BackedList.java,v 1.6 2003/04/07 22:14:39 jstrachan Exp $
  */

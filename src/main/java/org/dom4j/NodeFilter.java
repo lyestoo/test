@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: NodeFilter.java,v 1.2 2001/02/26 12:44:40 jstrachan Exp $
+ * $Id: NodeFilter.java,v 1.3 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -14,7 +14,7 @@ package org.dom4j;
   * Instances can be generated from an {@link DocumentFactory}.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 public interface NodeFilter {
 
@@ -72,5 +72,5 @@ public interface NodeFilter {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: NodeFilter.java,v 1.2 2001/02/26 12:44:40 jstrachan Exp $
+ * $Id: NodeFilter.java,v 1.3 2002/05/20 08:14:11 jstrachan Exp $
  */

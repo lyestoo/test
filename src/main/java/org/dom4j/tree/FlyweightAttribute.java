@@ -4,13 +4,11 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: FlyweightAttribute.java,v 1.1 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: FlyweightAttribute.java,v 1.3 2003/04/07 22:14:38 jstrachan Exp $
  */
 
 package org.dom4j.tree;
 
-import org.dom4j.Element;
-import org.dom4j.Node;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 
@@ -21,7 +19,7 @@ import org.dom4j.QName;
   * it does not support the parent relationship.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.3 $
   */
 public class FlyweightAttribute extends AbstractAttribute {
 
@@ -118,5 +116,5 @@ public class FlyweightAttribute extends AbstractAttribute {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: FlyweightAttribute.java,v 1.1 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: FlyweightAttribute.java,v 1.3 2003/04/07 22:14:38 jstrachan Exp $
  */

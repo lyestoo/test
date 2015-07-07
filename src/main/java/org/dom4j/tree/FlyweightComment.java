@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: FlyweightComment.java,v 1.1 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: FlyweightComment.java,v 1.3 2003/04/07 22:14:38 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -12,7 +12,6 @@ package org.dom4j.tree;
 import org.dom4j.Comment;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.dom4j.Visitor;
 
 /** <p><code>FlyweightComment</code> is a Flyweight pattern implementation
   * of a singly linked, read-only XML Comment.</p>
@@ -21,7 +20,7 @@ import org.dom4j.Visitor;
   * it does not support the parent relationship.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.3 $
   */
 public class FlyweightComment extends AbstractComment implements Comment {
 
@@ -31,11 +30,11 @@ public class FlyweightComment extends AbstractComment implements Comment {
     /** @param text is the Comment text
       */
     public FlyweightComment(String text) {
-	this.text = text;
+    this.text = text;
     }
 
     public String getText() {
-	return text;
+    return text;
     }
     
     protected Node createXPathResult(Element parent) {
@@ -88,5 +87,5 @@ public class FlyweightComment extends AbstractComment implements Comment {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: FlyweightComment.java,v 1.1 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: FlyweightComment.java,v 1.3 2003/04/07 22:14:38 jstrachan Exp $
  */

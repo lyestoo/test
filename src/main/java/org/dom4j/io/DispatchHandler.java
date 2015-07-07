@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DispatchHandler.java,v 1.2 2002/02/01 10:55:25 jstrachan Exp $
+ * $Id: DispatchHandler.java,v 1.3 2002/05/20 08:14:16 jstrachan Exp $
  */
 
 package org.dom4j.io;
@@ -25,7 +25,7 @@ import org.dom4j.ElementPath;
   * registered with it to process the elements encountered.
   *
   * @author <a href="mailto:dwhite@equipecom.com">Dave White</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 
 class DispatchHandler implements ElementHandler
@@ -202,5 +202,5 @@ class DispatchHandler implements ElementHandler
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DispatchHandler.java,v 1.2 2002/02/01 10:55:25 jstrachan Exp $
+ * $Id: DispatchHandler.java,v 1.3 2002/05/20 08:14:16 jstrachan Exp $
  */

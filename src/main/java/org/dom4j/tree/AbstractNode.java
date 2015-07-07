@@ -4,14 +4,13 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractNode.java,v 1.23 2001/09/15 14:55:14 jstrachan Exp $
+ * $Id: AbstractNode.java,v 1.25 2003/04/07 22:14:28 jstrachan Exp $
  */
 
 package org.dom4j.tree;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.NodeFilter;
-import org.dom4j.Visitor;
 import org.dom4j.XPath;
 import org.dom4j.rule.Pattern;
 
@@ -28,7 +26,7 @@ import org.dom4j.rule.Pattern;
   * tree implementors to use for implementation inheritence.</p>
  *
  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.25 $
  */
 public abstract class AbstractNode implements Node, Cloneable, Serializable {
     
@@ -278,5 +276,5 @@ public abstract class AbstractNode implements Node, Cloneable, Serializable {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractNode.java,v 1.23 2001/09/15 14:55:14 jstrachan Exp $
+ * $Id: AbstractNode.java,v 1.25 2003/04/07 22:14:28 jstrachan Exp $
  */

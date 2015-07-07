@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractCDATA.java,v 1.6 2001/05/11 14:01:34 jstrachan Exp $
+ * $Id: AbstractCDATA.java,v 1.7 2002/05/20 08:14:10 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -19,7 +19,7 @@ import org.dom4j.Visitor;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.6 $
+  * @version $Revision: 1.7 $
   */
 public abstract class AbstractCDATA extends AbstractCharacterData implements CDATA {
 
@@ -94,5 +94,5 @@ public abstract class AbstractCDATA extends AbstractCharacterData implements CDA
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractCDATA.java,v 1.6 2001/05/11 14:01:34 jstrachan Exp $
+ * $Id: AbstractCDATA.java,v 1.7 2002/05/20 08:14:10 jstrachan Exp $
  */

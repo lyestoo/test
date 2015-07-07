@@ -4,14 +4,13 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: RuleSet.java,v 1.3 2001/08/17 09:45:19 jstrachan Exp $
+ * $Id: RuleSet.java,v 1.5 2003/04/07 22:15:29 jstrachan Exp $
  */
 
 package org.dom4j.rule;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.dom4j.Node;
 
@@ -22,7 +21,7 @@ import org.dom4j.Node;
   * rules can be evaluated in order of priority.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.5 $
   */
 public class RuleSet {
 
@@ -137,5 +136,5 @@ public class RuleSet {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: RuleSet.java,v 1.3 2001/08/17 09:45:19 jstrachan Exp $
+ * $Id: RuleSet.java,v 1.5 2003/04/07 22:15:29 jstrachan Exp $
  */

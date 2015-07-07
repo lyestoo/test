@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractComment.java,v 1.8 2001/07/25 10:51:11 jstrachan Exp $
+ * $Id: AbstractComment.java,v 1.9 2002/05/20 08:14:10 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -20,7 +20,7 @@ import org.dom4j.Visitor;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.8 $
+  * @version $Revision: 1.9 $
   */
 public abstract class AbstractComment extends AbstractCharacterData implements Comment {
 
@@ -110,5 +110,5 @@ public abstract class AbstractComment extends AbstractCharacterData implements C
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractComment.java,v 1.8 2001/07/25 10:51:11 jstrachan Exp $
+ * $Id: AbstractComment.java,v 1.9 2002/05/20 08:14:10 jstrachan Exp $
  */

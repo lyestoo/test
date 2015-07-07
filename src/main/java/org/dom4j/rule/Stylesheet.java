@@ -4,16 +4,13 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Stylesheet.java,v 1.4 2001/08/09 08:22:59 jstrachan Exp $
+ * $Id: Stylesheet.java,v 1.7 2003/04/07 22:15:30 jstrachan Exp $
  */
 
 package org.dom4j.rule;
 
-import java.util.Iterator;
 import java.util.List;
 
-import org.dom4j.Attribute;
-import org.dom4j.Branch;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -25,7 +22,7 @@ import org.dom4j.XPath;
   * stylesheet can be applied to a source document or node.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.4 $
+  * @version $Revision: 1.7 $
   */
 public class Stylesheet {
 
@@ -76,6 +73,16 @@ public class Stylesheet {
     
     
     public void applyTemplates( Object input, XPath xpath ) throws Exception {
+        List list = xpath.selectNodes( input );
+        for ( int i = 0, size = list.size(); i < size; i++ ) {
+            Object object = list.get(i);
+            if ( object != input && object instanceof Node ) {
+                run( (Node) object );
+            }
+        }
+    }
+    
+    public void applyTemplates( Object input, org.jaxen.XPath xpath ) throws Exception {
         List list = xpath.selectNodes( input );
         for ( int i = 0, size = list.size(); i < size; i++ ) {
             Object object = list.get(i);
@@ -201,5 +208,5 @@ public class Stylesheet {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Stylesheet.java,v 1.4 2001/08/09 08:22:59 jstrachan Exp $
+ * $Id: Stylesheet.java,v 1.7 2003/04/07 22:15:30 jstrachan Exp $
  */

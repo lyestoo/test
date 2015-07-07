@@ -4,20 +4,19 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DatatypeAttribute.java,v 1.3 2001/11/30 12:12:32 jstrachan Exp $
+ * $Id: DatatypeAttribute.java,v 1.5 2003/04/07 22:15:25 jstrachan Exp $
  */
 
 package org.dom4j.datatype;
 
 import com.sun.msv.datatype.DatabindableDatatype;
+import com.sun.msv.datatype.SerializationContext;
+import com.sun.msv.datatype.xsd.XSDatatype;
 
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.tree.AbstractAttribute;
-
-import com.sun.msv.datatype.SerializationContext;
-import com.sun.msv.datatype.xsd.XSDatatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 
@@ -26,7 +25,7 @@ import org.relaxng.datatype.ValidationContext;
   * specification.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.5 $
   */
 public class DatatypeAttribute extends AbstractAttribute implements SerializationContext, ValidationContext {
 
@@ -233,5 +232,5 @@ public class DatatypeAttribute extends AbstractAttribute implements Serializatio
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DatatypeAttribute.java,v 1.3 2001/11/30 12:12:32 jstrachan Exp $
+ * $Id: DatatypeAttribute.java,v 1.5 2003/04/07 22:15:25 jstrachan Exp $
  */

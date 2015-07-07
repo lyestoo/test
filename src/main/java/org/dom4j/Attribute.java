@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Attribute.java,v 1.4 2001/03/01 23:07:46 jstrachan Exp $
+ * $Id: Attribute.java,v 1.5 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -13,7 +13,7 @@ package org.dom4j;
   * An attribute may have a name, an optional namespace and a value.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.4 $
+  * @version $Revision: 1.5 $
   */
 public interface Attribute extends Node {
     
@@ -142,5 +142,5 @@ public interface Attribute extends Node {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Attribute.java,v 1.4 2001/03/01 23:07:46 jstrachan Exp $
+ * $Id: Attribute.java,v 1.5 2002/05/20 08:14:11 jstrachan Exp $
  */

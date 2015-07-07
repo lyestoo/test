@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Document.java,v 1.7 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: Document.java,v 1.8 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -16,7 +16,7 @@ import org.xml.sax.EntityResolver;
 /** <p><code>Document</code> defines an XML Document.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.7 $
+  * @version $Revision: 1.8 $
   */
 public interface Document extends Branch {
 
@@ -136,5 +136,5 @@ public interface Document extends Branch {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Document.java,v 1.7 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: Document.java,v 1.8 2002/05/20 08:14:11 jstrachan Exp $
  */

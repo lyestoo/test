@@ -4,17 +4,15 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultDocument.java,v 1.24 2001/08/02 07:09:45 jstrachan Exp $
+ * $Id: DefaultDocument.java,v 1.26 2003/04/07 22:14:37 jstrachan Exp $
  */
 
 package org.dom4j.tree;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.dom4j.Comment;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.DocumentType;
@@ -22,14 +20,13 @@ import org.dom4j.Element;
 import org.dom4j.IllegalAddException;
 import org.dom4j.Node;
 import org.dom4j.ProcessingInstruction;
-
 import org.xml.sax.EntityResolver;
 
 /** <p><code>DefaultDocument</code> is the default DOM4J default implementation
   * of an XML document.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.24 $
+  * @version $Revision: 1.26 $
   */
 public class DefaultDocument extends AbstractDocument {
 
@@ -325,5 +322,5 @@ public class DefaultDocument extends AbstractDocument {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultDocument.java,v 1.24 2001/08/02 07:09:45 jstrachan Exp $
+ * $Id: DefaultDocument.java,v 1.26 2003/04/07 22:14:37 jstrachan Exp $
  */

@@ -4,39 +4,14 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: UserDataElement.java,v 1.4 2002/02/01 13:04:32 jstrachan Exp $
+ * $Id: UserDataElement.java,v 1.6 2003/04/07 22:13:58 jstrachan Exp $
  */
 
 package org.dom4j.util;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.dom4j.Attribute;
-import org.dom4j.CDATA;
-import org.dom4j.CharacterData;
-import org.dom4j.Comment;
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
-import org.dom4j.Entity;
-import org.dom4j.IllegalAddException;
-import org.dom4j.Node;
-import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.Text;
 import org.dom4j.tree.DefaultElement;
-
-import org.xml.sax.Attributes;
 
 /** <p><code>UserDataElement</code> support the adornment of a user 
   * data object on an Element or Attribute instance such that the 
@@ -46,7 +21,7 @@ import org.xml.sax.Attributes;
   * adorn the trees with user defined objects.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.4 $
+  * @version $Revision: 1.6 $
   */
 public class UserDataElement extends DefaultElement {
 
@@ -151,5 +126,5 @@ public class UserDataElement extends DefaultElement {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: UserDataElement.java,v 1.4 2002/02/01 13:04:32 jstrachan Exp $
+ * $Id: UserDataElement.java,v 1.6 2003/04/07 22:13:58 jstrachan Exp $
  */

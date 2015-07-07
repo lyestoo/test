@@ -4,56 +4,44 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: SAXContentHandler.java,v 1.42 2002/03/02 14:23:25 slehmann Exp $
+ * $Id: SAXContentHandler.java,v 1.46 2003/04/07 22:14:02 jstrachan Exp $
  */
 
 package org.dom4j.io;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.dom4j.Attribute;
 import org.dom4j.Branch;
-import org.dom4j.CDATA;
-import org.dom4j.Comment;
 import org.dom4j.Document;
-import org.dom4j.DocumentType;
 import org.dom4j.DocumentFactory;
+import org.dom4j.DocumentType;
 import org.dom4j.Element;
 import org.dom4j.ElementHandler;
-import org.dom4j.Entity;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.dom4j.ProcessingInstruction;
-import org.dom4j.DocumentException;
-
 import org.dom4j.dtd.AttributeDecl;
 import org.dom4j.dtd.ElementDecl;
 import org.dom4j.dtd.ExternalEntityDecl;
 import org.dom4j.dtd.InternalEntityDecl;
-
 import org.dom4j.tree.AbstractElement;
 import org.dom4j.tree.NamespaceStack;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.ext.DeclHandler;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
-/** <p><code>SAXHandler</code> builds a DOM4J tree via SAX events.</p>
+/** <p><code>SAXContentHandler</code> builds a dom4j tree via SAX events.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.42 $
+  * @version $Revision: 1.46 $
   */
 public class SAXContentHandler extends DefaultHandler implements LexicalHandler, DeclHandler, DTDHandler {
 
@@ -122,6 +110,9 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
     /** Have we added text to the buffer */
     private boolean textInTextBuffer = false;
 
+    /** Should we ignore comments */
+    private boolean ignoreComments = false;
+    
     /** Buffer used to concatenate text together */
     private StringBuffer textBuffer;
 
@@ -262,7 +253,6 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
             return;
         }
         if ( currentElement != null ) {
-            String text = new String(ch, start, end);
             if (entity != null) {
                 if ( mergeAdjacentText && textInTextBuffer ) {
                     completeCurrentTextNode();
@@ -379,16 +369,18 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
     }
 
     public void comment(char[] ch, int start, int end) throws SAXException {
-        if ( mergeAdjacentText && textInTextBuffer ) {
-            completeCurrentTextNode();
-        }
-        String text = new String(ch, start, end);
-        if (!insideDTDSection && text.length() > 0) {
-            if ( currentElement != null ) {
-                currentElement.addComment(text);
+        if (!ignoreComments) {
+            if ( mergeAdjacentText && textInTextBuffer ) {
+                completeCurrentTextNode();
             }
-            else {
-                document.addComment(text);
+            String text = new String(ch, start, end);
+            if (!insideDTDSection && text.length() > 0) {
+                if ( currentElement != null ) {
+                    currentElement.addComment(text);
+                }
+                else {
+                    document.addComment(text);
+                }
             }
         }
     }
@@ -667,6 +659,23 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
         this.stripWhitespaceText = stripWhitespaceText;
     }
 
+    /**
+     * Returns whether we should ignore comments or not.
+     * @return boolean
+     */
+    public boolean isIgnoreComments() {
+        return ignoreComments;
+    }
+
+    /**
+     * Sets whether we should ignore comments or not.
+     * @param ignoreComments whether we should ignore comments or not.
+     */
+    public void setIgnoreComments(boolean ignoreComments) {
+        this.ignoreComments = ignoreComments;
+    }
+
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -829,5 +838,5 @@ public class SAXContentHandler extends DefaultHandler implements LexicalHandler,
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXContentHandler.java,v 1.42 2002/03/02 14:23:25 slehmann Exp $
+ * $Id: SAXContentHandler.java,v 1.46 2003/04/07 22:14:02 jstrachan Exp $
  */

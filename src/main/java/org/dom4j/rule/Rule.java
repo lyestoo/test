@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Rule.java,v 1.2 2001/08/17 09:45:19 jstrachan Exp $
+ * $Id: Rule.java,v 1.3 2002/05/20 08:14:12 jstrachan Exp $
  */
 
 package org.dom4j.rule;
@@ -15,7 +15,7 @@ import org.dom4j.Node;
   * can be performed such as in the XSLT processing model.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 public class Rule implements Comparable {
 
@@ -283,5 +283,5 @@ public class Rule implements Comparable {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Rule.java,v 1.2 2001/08/17 09:45:19 jstrachan Exp $
+ * $Id: Rule.java,v 1.3 2002/05/20 08:14:12 jstrachan Exp $
  */

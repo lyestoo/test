@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: ElementDecl.java,v 1.1 2001/10/10 13:55:06 jstrachan Exp $
+ * $Id: ElementDecl.java,v 1.2 2002/05/20 08:14:17 jstrachan Exp $
  */
 
 package org.dom4j.dtd;
@@ -12,7 +12,7 @@ package org.dom4j.dtd;
 /** <p><code>AttributeDecl</code> represents an element declaration in a DTD.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.2 $
   */
 public class ElementDecl {
 
@@ -109,5 +109,5 @@ public class ElementDecl {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: ElementDecl.java,v 1.1 2001/10/10 13:55:06 jstrachan Exp $
+ * $Id: ElementDecl.java,v 1.2 2002/05/20 08:14:17 jstrachan Exp $
  */

@@ -1,10 +1,10 @@
 /*
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
- * 
- * This software is open source. 
+ *
+ * This software is open source.
  * See the bottom of this file for the licence.
- * 
- * $Id: DOMDocumentFactory.java,v 1.10 2001/07/03 14:42:42 jstrachan Exp $
+ *
+ * $Id: DOMDocumentFactory.java,v 1.14 2003/02/27 23:06:26 maartenc Exp $
  */
 
 package org.dom4j.dom;
@@ -28,35 +28,45 @@ import org.dom4j.Text;
   * which implement the W3C DOM API.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.10 $
+  * @version $Revision: 1.14 $
   */
 public class DOMDocumentFactory extends DocumentFactory implements org.w3c.dom.DOMImplementation {
 
     /** The Singleton instance */
-    protected static transient DOMDocumentFactory singleton = new DOMDocumentFactory();
-    
-    
+    //protected static transient DOMDocumentFactory singleton = new DOMDocumentFactory();
+    private final static ThreadLocal singlePerThread=new ThreadLocal();
+    private static String domDocumentFactoryClassName=null;
+
+
+
     /** <p>Access to the singleton instance of this factory.</p>
       *
       * @return the default singleon instance
       */
     public static DocumentFactory getInstance() {
-        return singleton;
+      DOMDocumentFactory fact =(DOMDocumentFactory)singlePerThread.get();
+       if (fact==null) {
+         fact=  new DOMDocumentFactory();
+         singlePerThread.set(fact);
+        }
+       if (fact==null){
+       }
+       return fact;
     }
-    
-    
+
+
     // Factory methods
-    
+
     public Document createDocument() {
         DOMDocument answer = new DOMDocument();
         answer.setDocumentFactory( this );
         return answer;
     }
-    
+
     public DocumentType createDocType(String name, String publicId, String systemId) {
         return new DOMDocumentType( name, publicId, systemId );
     }
-    
+
     public Element createElement(QName qname) {
         return new DOMElement(qname);
     }
@@ -64,27 +74,27 @@ public class DOMDocumentFactory extends DocumentFactory implements org.w3c.dom.D
     public Element createElement(QName qname, int attributeCount) {
         return new DOMElement(qname, attributeCount);
     }
-    
+
     public Attribute createAttribute(Element owner, QName qname, String value) {
         return new DOMAttribute(qname, value);
     }
-    
+
     public CDATA createCDATA(String text) {
         return new DOMCDATA(text);
     }
-    
+
     public Comment createComment(String text) {
         return new DOMComment(text);
     }
-    
+
     public Text createText(String text) {
         return new DOMText(text);
     }
-    
+
     public Entity createEntity(String name) {
         return new DOMEntityReference(name);
     }
-    
+
     public Entity createEntity(String name, String text) {
         return new DOMEntityReference(name, text);
     }
@@ -92,18 +102,18 @@ public class DOMDocumentFactory extends DocumentFactory implements org.w3c.dom.D
     public Namespace createNamespace(String prefix, String uri) {
         return new DOMNamespace(prefix, uri);
     }
-    
-    
+
+
     public ProcessingInstruction createProcessingInstruction(String target, String data) {
         return new DOMProcessingInstruction(target, data);
     }
-    
+
     public ProcessingInstruction createProcessingInstruction(String target, Map data) {
         return new DOMProcessingInstruction(target, data);
     }
-    
+
     // org.w3c.dom.DOMImplementation interface
-    
+
     public boolean hasFeature(String feature, String version) {
         return false;
     }
@@ -115,32 +125,38 @@ public class DOMDocumentFactory extends DocumentFactory implements org.w3c.dom.D
     }
 
     public org.w3c.dom.Document createDocument(
-        String namespaceURI, 
-        String qualifiedName, 
+        String namespaceURI,
+        String qualifiedName,
         org.w3c.dom.DocumentType documentType
     ) throws org.w3c.dom.DOMException {
-        DocumentType docType = asDocumentType( documentType );
-        DOMDocument document = new DOMDocument( docType );
+        DOMDocument document;
+        if (documentType != null) {
+            DOMDocumentType docType = asDocumentType( documentType );
+            document = new DOMDocument( docType );
+        } else {
+            document = new DOMDocument();
+        }
+        
         document.addElement( createQName( qualifiedName, namespaceURI ) );
         return document;
    }
 
 
-    // Implementation methods 
-    
-    protected DocumentType asDocumentType( org.w3c.dom.DocumentType documentType ) {
-        if ( documentType instanceof DocumentType ) {
-            return (DocumentType) documentType;
+    // Implementation methods
+
+    protected DOMDocumentType asDocumentType( org.w3c.dom.DocumentType documentType ) {
+        if ( documentType instanceof DOMDocumentType ) {
+            return (DOMDocumentType) documentType;
         }
         else {
-            return new DOMDocumentType( 
-                documentType.getName(), 
-                documentType.getPublicId(), 
-                documentType.getSystemId() 
+            return new DOMDocumentType(
+                documentType.getName(),
+                documentType.getPublicId(),
+                documentType.getSystemId()
             );
         }
     }
-    
+
 }
 
 
@@ -188,5 +204,5 @@ public class DOMDocumentFactory extends DocumentFactory implements org.w3c.dom.D
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMDocumentFactory.java,v 1.10 2001/07/03 14:42:42 jstrachan Exp $
+ * $Id: DOMDocumentFactory.java,v 1.14 2003/02/27 23:06:26 maartenc Exp $
  */

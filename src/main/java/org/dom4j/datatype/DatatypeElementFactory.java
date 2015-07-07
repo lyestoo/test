@@ -4,7 +4,7 @@
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: DatatypeElementFactory.java,v 1.3 2001/11/02 10:30:22 jstrachan Exp $
+ * $Id: DatatypeElementFactory.java,v 1.5 2003/04/07 22:15:24 jstrachan Exp $
  */
 
 package org.dom4j.datatype;
@@ -14,21 +14,17 @@ import com.sun.msv.datatype.xsd.XSDatatype;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.dom4j.Attribute;
-import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.QName;
-
-import org.xml.sax.Attributes;
 
 /** <p><code>DatatypeElementFactory</code> is a factory for a specific Element
  * in an XML Schema.</p>
  *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
  * @author Yuxin Ruan
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.5 $
  */
 public class DatatypeElementFactory extends DocumentFactory {
     
@@ -157,5 +153,5 @@ public class DatatypeElementFactory extends DocumentFactory {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DatatypeElementFactory.java,v 1.3 2001/11/02 10:30:22 jstrachan Exp $
+ * $Id: DatatypeElementFactory.java,v 1.5 2003/04/07 22:15:24 jstrachan Exp $
  */

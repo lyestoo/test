@@ -4,23 +4,23 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: XMLTableModel.java,v 1.1 2001/12/14 11:32:09 jstrachan Exp $
+ * $Id: XMLTableModel.java,v 1.4 2003/04/07 22:14:44 jstrachan Exp $
  */
 
 package org.dom4j.swing;
 
 import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
-   
+
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.XPath;
 
 /** <p><code>XMLTableDefinition</code> repro.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.1 $ 
+  * @version $Revision: 1.4 $ 
   */
 public class XMLTableModel extends AbstractTableModel {
 
@@ -76,6 +76,11 @@ public class XMLTableModel extends AbstractTableModel {
     }
     
     public String getColumnName(int columnIndex) {
+        XPath xpath = definition.getColumnNameXPath(columnIndex);
+        if ( xpath != null ) {
+            System.out.println("Evaluating column xpath: " + xpath + " value: " + xpath.valueOf(source) );
+            return xpath.valueOf( source );
+        }
         return definition.getColumnName(columnIndex);
     }
     
@@ -181,5 +186,5 @@ public class XMLTableModel extends AbstractTableModel {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: XMLTableModel.java,v 1.1 2001/12/14 11:32:09 jstrachan Exp $
+ * $Id: XMLTableModel.java,v 1.4 2003/04/07 22:14:44 jstrachan Exp $
  */

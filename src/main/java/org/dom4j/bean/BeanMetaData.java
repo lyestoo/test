@@ -4,14 +4,14 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BeanMetaData.java,v 1.4 2001/05/15 18:17:38 jstrachan Exp $
+ * $Id: BeanMetaData.java,v 1.6 2003/04/07 22:15:34 jstrachan Exp $
  */
 
 package org.dom4j.bean;
 
 import java.beans.BeanInfo;
-import java.beans.Introspector;
 import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ import org.dom4j.QName;
 /** <p><code>BeanMetaData</code> contains metadata about a bean class.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.4 $
+  * @version $Revision: 1.6 $
   */
 public class BeanMetaData {
 
@@ -195,5 +195,5 @@ public class BeanMetaData {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BeanMetaData.java,v 1.4 2001/05/15 18:17:38 jstrachan Exp $
+ * $Id: BeanMetaData.java,v 1.6 2003/04/07 22:15:34 jstrachan Exp $
  */

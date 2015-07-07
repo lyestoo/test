@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BeanAttribute.java,v 1.2 2001/03/02 11:43:17 jstrachan Exp $
+ * $Id: BeanAttribute.java,v 1.3 2002/05/20 08:14:12 jstrachan Exp $
  */
 
 package org.dom4j.bean;
@@ -17,7 +17,7 @@ import org.dom4j.tree.AbstractAttribute;
   * is backed by a property of the JavaBean of its parent element.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.3 $
   */
 public class BeanAttribute extends AbstractAttribute {
 
@@ -105,5 +105,5 @@ public class BeanAttribute extends AbstractAttribute {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BeanAttribute.java,v 1.2 2001/03/02 11:43:17 jstrachan Exp $
+ * $Id: BeanAttribute.java,v 1.3 2002/05/20 08:14:12 jstrachan Exp $
  */

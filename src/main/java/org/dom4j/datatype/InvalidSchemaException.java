@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: InvalidSchemaException.java,v 1.1 2001/08/30 19:05:43 jstrachan Exp $
+ * $Id: InvalidSchemaException.java,v 1.2 2002/05/20 08:14:12 jstrachan Exp $
  */
 
 package org.dom4j.datatype;
@@ -12,7 +12,7 @@ package org.dom4j.datatype;
 /** <p><code>InvalidSchemaException</code> is thrown when an invalid
   * XML Schema document is used</p>
   *
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.2 $
   */
 public class InvalidSchemaException extends IllegalArgumentException {
 
@@ -66,5 +66,5 @@ public class InvalidSchemaException extends IllegalArgumentException {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: InvalidSchemaException.java,v 1.1 2001/08/30 19:05:43 jstrachan Exp $
+ * $Id: InvalidSchemaException.java,v 1.2 2002/05/20 08:14:12 jstrachan Exp $
  */

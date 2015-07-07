@@ -4,18 +4,16 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BeanElement.java,v 1.8 2001/11/19 11:14:23 jstrachan Exp $
+ * $Id: BeanElement.java,v 1.10 2003/04/07 22:15:35 jstrachan Exp $
  */
 
 package org.dom4j.bean;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.dom4j.Attribute;
-import org.dom4j.Element;
 import org.dom4j.DocumentFactory;
+import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.tree.DefaultElement;
@@ -23,7 +21,7 @@ import org.dom4j.tree.DefaultElement;
 /** <p><code>BeanElement</code> uses a Java Bean to store its attributes.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.8 $
+  * @version $Revision: 1.10 $
   */
 public class BeanElement extends DefaultElement {
 
@@ -57,7 +55,7 @@ public class BeanElement extends DefaultElement {
         return bean;
     }
     
-    public void setData(Object data) {
+    public void setData(Object bean) {
         this.bean = bean;
         
         // force the attributeList to be lazily
@@ -159,5 +157,5 @@ public class BeanElement extends DefaultElement {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BeanElement.java,v 1.8 2001/11/19 11:14:23 jstrachan Exp $
+ * $Id: BeanElement.java,v 1.10 2003/04/07 22:15:35 jstrachan Exp $
  */

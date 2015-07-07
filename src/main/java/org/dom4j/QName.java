@@ -1,73 +1,74 @@
 /*
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
- * 
- * This software is open source. 
+ *
+ * This software is open source.
  * See the bottom of this file for the licence.
- * 
- * $Id: QName.java,v 1.9 2001/08/15 12:02:00 jstrachan Exp $
+ *
+ * $Id: QName.java,v 1.12 2003/04/07 22:14:56 jstrachan Exp $
  */
 
 package org.dom4j;
 
+
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.dom4j.tree.QNameCache;
 
-/** <p><code>QName</code> represents a qualified name value of an XML element 
-  * or attribute. It consists of a local name and a {@link Namespace} 
+/** <p><code>QName</code> represents a qualified name value of an XML element
+  * or attribute. It consists of a local name and a {@link Namespace}
   * instance. This object is immutable.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.9 $
+  * @version $Revision: 1.12 $
   */
 public class QName implements Serializable {
 
-    protected transient static QNameCache cache = new QNameCache();
-    
-    
+    //protected transient static QNameCache cache = new QNameCache();
+    protected transient static ThreadLocal cachePerThread = new ThreadLocal();
+
     /** The local name of the element or attribute */
     private String name;
-    
+
     /** The qualified name of the element or attribute */
     private String qualifiedName;
-    
+
     /** The Namespace of this element or attribute */
     private transient Namespace namespace;
-    
+
     /** A cached version of the hashcode for efficiency */
     private int hashCode;
-    
+
     /** The document factory used for this QName if specified or null */
     private DocumentFactory documentFactory;
 
-    
-    public static synchronized QName get(String name) {
-        return cache.get(name);
+
+    public static QName get(String name) {
+        return getCache().get(name);
     }
-    
-    public static synchronized QName get(String name, Namespace namespace) {
-        return cache.get(name, namespace);
+
+    public static QName get(String name, Namespace namespace) {
+        return getCache().get(name, namespace);
     }
-    
-    public static synchronized QName get(String name, String prefix, String uri) {
-        return cache.get(name, Namespace.get( prefix, uri ));
+
+    public static QName get(String name, String prefix, String uri) {
+        return getCache().get(name, Namespace.get( prefix, uri ));
     }
-    
-    public static synchronized QName get(String qualifiedName, String uri) {
-        return cache.get(qualifiedName, uri);
+
+    public static QName get(String qualifiedName, String uri) {
+        return getCache().get(qualifiedName, uri);
     }
-    
-    public static synchronized QName get(String localName, Namespace namespace, String qualifiedName) {
-        return cache.get(localName, namespace, qualifiedName);
+
+    public static QName get(String localName, Namespace namespace, String qualifiedName) {
+        return getCache().get(localName, namespace, qualifiedName);
     }
-    
+
     public QName(String name) {
         this( name, Namespace.NO_NAMESPACE );
     }
-    
+
     public QName(String name, Namespace namespace) {
         this.name = (name == null) ? "" : name;
         this.namespace = (namespace == null) ? Namespace.NO_NAMESPACE : namespace;
@@ -79,13 +80,13 @@ public class QName implements Serializable {
         this.namespace = (namespace == null) ? Namespace.NO_NAMESPACE : namespace;
     }
 
-    
+
     /** @return the local name
       */
     public String getName() {
         return name;
     }
-    
+
     /** @return the qualified name in the format <code>prefix:localName</code>
       */
     public String getQualifiedName() {
@@ -100,13 +101,13 @@ public class QName implements Serializable {
         }
         return qualifiedName;
     }
-    
-    /** @return the namespace of this QName 
+
+    /** @return the namespace of this QName
       */
     public Namespace getNamespace() {
         return namespace;
     }
-        
+
     /** @return the namespace URI of this QName
       */
     public String getNamespacePrefix() {
@@ -115,7 +116,7 @@ public class QName implements Serializable {
         }
         return namespace.getPrefix();
     }
-        
+
     /** @return the namespace URI of this QName
       */
     public String getNamespaceURI() {
@@ -124,14 +125,14 @@ public class QName implements Serializable {
         }
         return namespace.getURI();
     }
-        
-    
-    /** @return the hash code based on the qualified name and the URI of the 
+
+
+    /** @return the hash code based on the qualified name and the URI of the
       * namespace.
       */
     public int hashCode() {
         if ( hashCode == 0 ) {
-            hashCode = getName().hashCode() 
+            hashCode = getName().hashCode()
                 ^ getNamespaceURI().hashCode();
             if ( hashCode == 0 ) {
                 hashCode = 0xbabe;
@@ -139,7 +140,7 @@ public class QName implements Serializable {
         }
         return hashCode;
     }
-  
+
     public boolean equals(Object object) {
         if ( this == object ) {
             return true;
@@ -154,9 +155,9 @@ public class QName implements Serializable {
         }
         return false;
     }
-    
+
     public String toString() {
-        return super.toString() + " [name: " + getName() 
+        return super.toString() + " [name: " + getName()
             + " namespace: \"" + getNamespace() + "\"]";
     }
 
@@ -168,27 +169,36 @@ public class QName implements Serializable {
     public void setDocumentFactory(DocumentFactory documentFactory) {
         this.documentFactory = documentFactory;
     }
-    
+
     private void writeObject(ObjectOutputStream out) throws IOException {
 
         // We use writeObject() and not writeUTF() to minimize space
         // This allows for writing pointers to already written strings
         out.writeObject(namespace.getPrefix());
         out.writeObject(namespace.getURI());
-        
+
         out.defaultWriteObject();
     }
-        
+
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        
+
         String prefix = (String) in.readObject();
         String uri = (String) in.readObject();
-        
+
         in.defaultReadObject();
 
         namespace = Namespace.get( prefix, uri );
     }
 
+
+    private static QNameCache getCache() {
+      QNameCache cache = (QNameCache) cachePerThread.get();
+      if (cache==null) {
+        cache = new QNameCache();
+        cachePerThread.set(cache);
+      }
+      return cache;
+    }
 
 }
 
@@ -237,5 +247,5 @@ public class QName implements Serializable {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: QName.java,v 1.9 2001/08/15 12:02:00 jstrachan Exp $
+ * $Id: QName.java,v 1.12 2003/04/07 22:14:56 jstrachan Exp $
  */

@@ -4,14 +4,13 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultProcessingInstruction.java,v 1.7 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: DefaultProcessingInstruction.java,v 1.9 2003/04/07 22:14:15 jstrachan Exp $
  */
 
 package org.dom4j.tree;
 
 import java.util.Map;
 
-import org.dom4j.Node;
 import org.dom4j.Element;
 
 /** <p><code>DefaultProcessingInstruction</code> is the default 
@@ -20,7 +19,7 @@ import org.dom4j.Element;
   * and can be modified in place.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.7 $
+  * @version $Revision: 1.9 $
   */
 public class DefaultProcessingInstruction extends FlyweightProcessingInstruction {
 
@@ -137,5 +136,5 @@ public class DefaultProcessingInstruction extends FlyweightProcessingInstruction
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultProcessingInstruction.java,v 1.7 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: DefaultProcessingInstruction.java,v 1.9 2003/04/07 22:14:15 jstrachan Exp $
  */

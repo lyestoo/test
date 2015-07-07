@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: FlyweightText.java,v 1.1 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: FlyweightText.java,v 1.3 2003/04/07 22:14:32 jstrachan Exp $
  */
 
 package org.dom4j.tree;
@@ -12,7 +12,6 @@ package org.dom4j.tree;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.Text;
-import org.dom4j.Visitor;
 
 /** <p><code>FlyweightText</code> is a Flyweight pattern implementation
   * of a singly linked, read-only XML Text.</p>
@@ -21,7 +20,7 @@ import org.dom4j.Visitor;
   * it does not support the parent relationship.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.3 $
   */
 public class FlyweightText extends AbstractText implements Text {
 
@@ -31,11 +30,11 @@ public class FlyweightText extends AbstractText implements Text {
     /** @param text is the Text text
       */
     public FlyweightText(String text) {
-	this.text = text;
+    this.text = text;
     }
 
     public String getText() {
-	return text;
+    return text;
     }
     
     protected Node createXPathResult(Element parent) {
@@ -88,5 +87,5 @@ public class FlyweightText extends AbstractText implements Text {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: FlyweightText.java,v 1.1 2001/06/20 18:59:23 jstrachan Exp $
+ * $Id: FlyweightText.java,v 1.3 2003/04/07 22:14:32 jstrachan Exp $
  */

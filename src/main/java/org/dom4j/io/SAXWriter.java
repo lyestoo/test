@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: SAXWriter.java,v 1.12 2001/09/13 12:51:30 jstrachan Exp $
+ * $Id: SAXWriter.java,v 1.18 2003/04/07 22:14:05 jstrachan Exp $
  */
 
 package org.dom4j.io;
@@ -20,27 +20,24 @@ import org.dom4j.Branch;
 import org.dom4j.CDATA;
 import org.dom4j.CharacterData;
 import org.dom4j.Comment;
-import org.dom4j.DocumentType;
 import org.dom4j.Document;
+import org.dom4j.DocumentType;
 import org.dom4j.Element;
 import org.dom4j.Entity;
 import org.dom4j.Namespace;
+import org.dom4j.Node;
 import org.dom4j.ProcessingInstruction;
 import org.dom4j.Text;
-
 import org.dom4j.tree.NamespaceStack;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
@@ -49,7 +46,7 @@ import org.xml.sax.helpers.LocatorImpl;
 /** <p><code>SAXWriter</code> writes a DOM4J tree to a SAX ContentHandler.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.12 $
+  * @version $Revision: 1.18 $
   */
 public class SAXWriter implements XMLReader {
 
@@ -100,16 +97,68 @@ public class SAXWriter implements XMLReader {
 
     public SAXWriter(
         ContentHandler contentHandler, 
-        EntityResolver entityResolver, 
         LexicalHandler lexicalHandler
     ) {
         this();
         this.contentHandler = contentHandler;
-        this.entityResolver = entityResolver;
         this.lexicalHandler = lexicalHandler;
     }
 
+    public SAXWriter(
+        ContentHandler contentHandler, 
+        LexicalHandler lexicalHandler,
+        EntityResolver entityResolver
+    ) {
+        this();
+        this.contentHandler = contentHandler;
+        this.lexicalHandler = lexicalHandler;
+        this.entityResolver = entityResolver;
+    }
+
     
+    /**
+     * A polymorphic method to write any Node to this SAX stream
+     */
+    public void write(Node node) throws SAXException {
+        int nodeType = node.getNodeType();
+        switch (nodeType) {
+            case Node.ELEMENT_NODE:
+                write((Element) node);
+                break;
+            case Node.ATTRIBUTE_NODE:
+                write((Attribute) node);
+                break;
+            case Node.TEXT_NODE:
+                write(node.getText());
+                break;
+            case Node.CDATA_SECTION_NODE:
+                write((CDATA) node);
+                break;
+            case Node.ENTITY_REFERENCE_NODE:
+                write((Entity) node);
+                break;
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                write((ProcessingInstruction) node);
+                break;
+            case Node.COMMENT_NODE:
+                write((Comment) node);
+                break;
+            case Node.DOCUMENT_NODE:
+                write((Document) node);
+                break;
+            case Node.DOCUMENT_TYPE_NODE:
+                write((DocumentType) node);
+                break;
+            case Node.NAMESPACE_NODE:
+                // Will be output with attributes
+                //write((Namespace) node);
+                break;
+            default:
+                throw new SAXException( "Invalid node type: " + node );
+        }
+    }
+
+
     /** Generates SAX events for the given Document and all its content
       *
       * @param document is the Document to parse
@@ -138,6 +187,25 @@ public class SAXWriter implements XMLReader {
       */
     public void write( Element element ) throws SAXException {
         write( element, new NamespaceStack() );
+    }
+    
+
+    /** <p>Writes the opening tag of an {@link Element},
+      * including its {@link Attribute}s
+      * but without its content.</p>
+      *
+      * @param element <code>Element</code> to output.
+      */
+    public void writeOpen(Element element) throws SAXException {
+        startElement(element, null);
+    }
+
+    /** <p>Writes the closing tag of an {@link Element}</p>
+      *
+      * @param element <code>Element</code> to output.
+      */
+    public void writeClose(Element element) throws SAXException {
+        endElement(element);
     }
     
     /** Generates SAX events for the given text
@@ -418,7 +486,7 @@ public class SAXWriter implements XMLReader {
                     write( (Comment) object );
                 }
                 else {
-                    throw new SAXException( "Invalid Node in DOM4J content: " + object );
+                    throw new SAXException( "Invalid Node in DOM4J content: " + object + " of type: " + object.getClass() );
                 }
             }
             else if ( object instanceof String ) { 
@@ -455,8 +523,13 @@ public class SAXWriter implements XMLReader {
             publicID = docType.getPublicID();
             systemID = docType.getSystemID();
         }
-        locator.setPublicId(publicID);
-        locator.setSystemId(systemID);
+        if ( publicID != null ) {
+            locator.setPublicId(publicID);
+        }
+        if ( systemID != null ) {
+            locator.setSystemId(systemID);
+        }
+            
         locator.setLineNumber(-1);
         locator.setColumnNumber(-1);
         
@@ -669,5 +742,5 @@ public class SAXWriter implements XMLReader {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXWriter.java,v 1.12 2001/09/13 12:51:30 jstrachan Exp $
+ * $Id: SAXWriter.java,v 1.18 2003/04/07 22:14:05 jstrachan Exp $
  */

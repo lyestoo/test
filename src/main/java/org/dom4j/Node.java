@@ -4,18 +4,20 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Node.java,v 1.23 2001/12/19 09:51:39 jstrachan Exp $
+ * $Id: Node.java,v 1.26 2003/04/07 22:14:54 jstrachan Exp $
  */
 
 package org.dom4j;
 
 import java.io.IOException;
 import java.io.Writer;
-
 import java.util.List;
 
 /** <p><code>Node</code> defines the polymorphic behavior 
-  * for all XML nodes in a DOM4J tree.</p>
+  * for all XML nodes in a dom4j tree.</p>
+  *
+  * <p>A node can be output as its XML format, can be detached from its position in
+  * a document and can have XPath expressions evaluated on itself.</p>
   *
   * <p>A node may optionally support the parent relationship and may be 
   * read only.</p>
@@ -23,8 +25,8 @@ import java.util.List;
   * @see #supportsParent 
   * @see #isReadOnly
   *
-  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.23 $
+  * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
+  * @version $Revision: 1.26 $
   */
 public interface Node extends Cloneable {
 
@@ -388,13 +390,16 @@ public interface Node extends Cloneable {
 
         
     /** <p><code>matches</code> returns true if evaluating the given
-      * XPath expression on this node returns true or a non-empty node set.
-      * So calling this method is equivalent to calling 
-      * <code>&lt;xsl:if test="xpathExpression"/&gt;</code>
-      * in XSLT.</p>
+      * XPath expression on this node returns a non-empty node set containing this node.</p>
+      *
+      * <p>This method does not behave like the &lt;xsl:if&gt; element - if you want
+      * that behaviour, to evaluate if an XPath expression matches something, then
+      * you can use the following code to be equivalent...
+      * </p>
+      * <code>if ( node.selectSingleNode( "/some/path" ) != nulll )</code>
       *
       * @param xpathExpression is an XPath expression
-      * @return true if the given node matches this XSLT Pattern
+      * @return true if this node is returned by the given XPath expression
       */
     public boolean matches(String xpathExpression);
 
@@ -481,5 +486,5 @@ public interface Node extends Cloneable {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Node.java,v 1.23 2001/12/19 09:51:39 jstrachan Exp $
+ * $Id: Node.java,v 1.26 2003/04/07 22:14:54 jstrachan Exp $
  */

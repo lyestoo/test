@@ -4,17 +4,13 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Branch.java,v 1.24 2001/10/24 09:41:15 jstrachan Exp $
+ * $Id: Branch.java,v 1.26 2003/04/07 22:14:45 jstrachan Exp $
  */
 
 package org.dom4j;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import org.xml.sax.Attributes;
 
 
 /** <p><code>Branch</code> interface defines the common behaviour 
@@ -24,7 +20,7 @@ import org.xml.sax.Attributes;
   * polymorphic manner when changing or navigating child nodes (content).</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.24 $
+  * @version $Revision: 1.26 $
   */
 public interface Branch extends Node {
 
@@ -34,7 +30,7 @@ public interface Branch extends Node {
       * @return the <code>Node</code> at the specified position.
       * 
       * @throws IndexOutOfBoundsException if the index is out of range (index
-      * 		  &lt; 0 || index &gt;= {@link #nodeCount}).
+      *           &lt; 0 || index &gt;= {@link #nodeCount}).
       */    
     public Node node(int index);
     
@@ -301,5 +297,5 @@ public interface Branch extends Node {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Branch.java,v 1.24 2001/10/24 09:41:15 jstrachan Exp $
+ * $Id: Branch.java,v 1.26 2003/04/07 22:14:45 jstrachan Exp $
  */

@@ -1,24 +1,9 @@
 package org.dom4j.persistence.nativ;
 
-import java.net.URL;
-
-import org.dom4j.Node;
-import org.dom4j.Document;
+import org.dom4j.io.SAXContentHandler;
+import org.dom4j.io.SAXWriter;
 import org.dom4j.persistence.DocumentMarshalling;
 import org.dom4j.persistence.MarshallingContext;
-import org.dom4j.io.SAXContentHandler;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.SAXWriter;
-
-import org.xmldb.api.base.Database;
-import org.xmldb.api.DatabaseManager;
-import org.xmldb.api.base.*;
-import org.xmldb.api.modules.XMLResource;
-import org.xmldb.api.modules.SAXResource;
-import org.xmldb.api.modules.TransactionService;
-
-import org.xml.sax.*;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 
 /**
@@ -27,11 +12,16 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @version 1.0
  */
 
-public class XMLDBStrategy extends DocumentMarshalling {
+public abstract class XMLDBStrategy extends DocumentMarshalling {
 
   protected SAXContentHandler extractContent;
   protected SAXWriter resolver;
   protected MarshallingContext context;
+  
+/*  
+ * 
+ * temporarily commented out until we get this compiling again...
+ * 
   protected TransactionService transactionService;
   protected Collection collection;
 
@@ -67,6 +57,6 @@ public class XMLDBStrategy extends DocumentMarshalling {
    public void setContext(MarshallingContext aContext) {
     this.context = aContext;
    }
-
+*/
 
 }

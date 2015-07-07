@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultPattern.java,v 1.1 2001/02/07 14:51:18 jstrachan Exp $
+ * $Id: DefaultPattern.java,v 1.2 2002/05/20 08:14:16 jstrachan Exp $
  */
 
 package org.dom4j.rule.pattern;
@@ -25,7 +25,7 @@ import org.dom4j.rule.Pattern;
   * should be overloaded to allow more rule filtering to occur.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.2 $
   */
 public class DefaultPattern implements Pattern {
     
@@ -103,5 +103,5 @@ public class DefaultPattern implements Pattern {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultPattern.java,v 1.1 2001/02/07 14:51:18 jstrachan Exp $
+ * $Id: DefaultPattern.java,v 1.2 2002/05/20 08:14:16 jstrachan Exp $
  */

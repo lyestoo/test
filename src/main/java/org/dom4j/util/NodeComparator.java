@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: NodeComparator.java,v 1.2 2001/05/31 07:20:22 jstrachan Exp $
+ * $Id: NodeComparator.java,v 1.5 2003/04/07 22:13:59 jstrachan Exp $
  */
 
 package org.dom4j.util;
@@ -13,8 +13,8 @@ import java.util.Comparator;
 
 import org.dom4j.Attribute;
 import org.dom4j.Branch;
-import org.dom4j.CharacterData;
 import org.dom4j.CDATA;
+import org.dom4j.CharacterData;
 import org.dom4j.Comment;
 import org.dom4j.Document;
 import org.dom4j.DocumentType;
@@ -30,7 +30,7 @@ import org.dom4j.Text;
   * which is capable of comparing Nodes for equality based on their values.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.2 $
+  * @version $Revision: 1.5 $
   */
 public class NodeComparator implements Comparator {
     
@@ -61,10 +61,10 @@ public class NodeComparator implements Comparator {
      * @param o1 the first object to be compared.
      * @param o2 the second object to be compared.
      * @return a negative integer, zero, or a positive integer as the
-     * 	       first argument is less than, equal to, or greater than the
-     * 	       second. 
+     *         first argument is less than, equal to, or greater than the
+     *         second. 
      * @throws ClassCastException if the arguments' types prevent them from
-     * 	       being compared by this Comparator.
+     *         being compared by this Comparator.
      */
     public int compare(Object o1, Object o2) {
         if ( o1 == o2 ) {
@@ -147,12 +147,9 @@ public class NodeComparator implements Comparator {
     }
     
     public int compare( Document n1, Document n2 ) {
-        int answer = compare( n1.getName(), n2.getName() );
+        int answer = compare( n1.getDocType(), n2.getDocType() );
         if ( answer == 0 ) {
-            answer = compare( n1.getDocType(), n2.getDocType() );
-            if ( answer == 0 ) {
-                answer = compareContent( n1, n2 );
-            }
+            answer = compareContent( n1, n2 );
         }
         return answer;
     }
@@ -321,5 +318,5 @@ public class NodeComparator implements Comparator {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: NodeComparator.java,v 1.2 2001/05/31 07:20:22 jstrachan Exp $
+ * $Id: NodeComparator.java,v 1.5 2003/04/07 22:13:59 jstrachan Exp $
  */

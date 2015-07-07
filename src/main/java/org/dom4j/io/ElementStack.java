@@ -4,16 +4,14 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: ElementStack.java,v 1.5 2001/05/18 18:37:15 drwhite Exp $
+ * $Id: ElementStack.java,v 1.8 2003/04/07 22:14:08 jstrachan Exp $
  */
 
 package org.dom4j.io;
 
-import java.util.ArrayList;
-
 import org.dom4j.Element;
-import org.dom4j.ElementPath;
 import org.dom4j.ElementHandler;
+import org.dom4j.ElementPath;
 
 /** <p><code>ElementStack</code> is used internally inside the 
   * {@link SAXContentHandler} to maintain a stack of {@link Element} 
@@ -22,7 +20,7 @@ import org.dom4j.ElementHandler;
   * when a node is complete.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.5 $
+  * @version $Revision: 1.8 $
   */
 class ElementStack implements ElementPath {
 
@@ -105,7 +103,7 @@ class ElementStack implements ElementPath {
     //
     public int size()
     {
-        return stack.length;
+        return lastElementIndex + 1;
     }
     
     public Element getElement(int depth)
@@ -205,5 +203,5 @@ class ElementStack implements ElementPath {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: ElementStack.java,v 1.5 2001/05/18 18:37:15 drwhite Exp $
+ * $Id: ElementStack.java,v 1.8 2003/04/07 22:14:08 jstrachan Exp $
  */

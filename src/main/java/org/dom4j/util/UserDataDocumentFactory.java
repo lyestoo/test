@@ -4,23 +4,15 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: UserDataDocumentFactory.java,v 1.5 2001/08/14 13:21:10 jstrachan Exp $
+ * $Id: UserDataDocumentFactory.java,v 1.7 2003/04/07 22:13:58 jstrachan Exp $
  */
 
 package org.dom4j.util;
 
-import com.sun.msv.datatype.xsd.XSDatatype;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.dom4j.Attribute;
-import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
-import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.dom4j.io.SAXReader;
 
 /** <p><code>UserDataDocumentFactory</code> is a factory of XML objects which 
   * support the adornment of a user data object on an Element or Attribute
@@ -30,7 +22,7 @@ import org.dom4j.io.SAXReader;
   * adorn the trees with user defined objects.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.5 $
+  * @version $Revision: 1.7 $
   */
 public class UserDataDocumentFactory extends DocumentFactory {
     
@@ -105,5 +97,5 @@ public class UserDataDocumentFactory extends DocumentFactory {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: UserDataDocumentFactory.java,v 1.5 2001/08/14 13:21:10 jstrachan Exp $
+ * $Id: UserDataDocumentFactory.java,v 1.7 2003/04/07 22:13:58 jstrachan Exp $
  */

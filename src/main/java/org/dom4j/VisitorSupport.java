@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: VisitorSupport.java,v 1.1 2001/01/19 05:58:39 jstrachan Exp $
+ * $Id: VisitorSupport.java,v 1.2 2002/05/20 08:14:11 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -15,7 +15,7 @@ package org.dom4j;
   * implementations.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.1 $
+  * @version $Revision: 1.2 $
   */
 public abstract class VisitorSupport implements Visitor {
     
@@ -99,5 +99,5 @@ public abstract class VisitorSupport implements Visitor {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: VisitorSupport.java,v 1.1 2001/01/19 05:58:39 jstrachan Exp $
+ * $Id: VisitorSupport.java,v 1.2 2002/05/20 08:14:11 jstrachan Exp $
  */

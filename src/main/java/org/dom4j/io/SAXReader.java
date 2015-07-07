@@ -4,42 +4,31 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: SAXReader.java,v 1.39 2001/11/15 23:38:29 jstrachan Exp $
+ * $Id: SAXReader.java,v 1.44 2003/04/07 22:14:00 jstrachan Exp $
  */
 
 package org.dom4j.io;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStream;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
 import org.dom4j.ElementHandler;
-import org.dom4j.DocumentException;
-
-import org.xml.sax.ContentHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
-import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
@@ -76,7 +65,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
   * <a href="http://java.sun.com/xml/">Sun's Java &amp; XML site</a></p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.39 $
+  * @version $Revision: 1.44 $
   */
 public class SAXReader {
 
@@ -112,6 +101,9 @@ public class SAXReader {
     
     /** Holds value of property stripWhitespaceText. */
     private boolean stripWhitespaceText = false;
+    
+    /** Should we ignore comments */
+    private boolean ignoreComments = false;
     
     
     //private boolean includeExternalGeneralEntities = false;
@@ -179,7 +171,7 @@ public class SAXReader {
     }
     
     
-    /** Allows a SAX featuer on the underlying SAX parser.
+    /** Sets a SAX feature on the underlying SAX parser.
       * This can be useful to set parser-specific features. 
       * Though use this method with caution as it has the possibility
       * of breaking the standard behaviour.
@@ -204,7 +196,19 @@ public class SAXReader {
       * @throws MalformedURLException if a URL could not be made for the given File
       */
     public Document read(File file) throws DocumentException, MalformedURLException {
-        return read( file.toURL() );
+        try {
+            /*
+             * We cannot convert the file to an URL because if the filename
+             * contains '#' characters, there will be problems with the 
+             * URL in the InputSource (because a URL like 
+             * http://myhost.com/index#anchor is treated the same as
+             * http://myhost.com/index)
+             * Thanks to Christian Oetterli
+             */
+            return read( new InputSource(new FileReader(file)) );
+        } catch (FileNotFoundException e) {
+            throw new MalformedURLException(e.getMessage());
+        }
     }
     
     /** <p>Reads a Document from the given <code>URL</code> using SAX</p>
@@ -316,6 +320,7 @@ public class SAXReader {
             contentHandler.setIncludeExternalDTDDeclarations( isIncludeExternalDTDDeclarations() );
             contentHandler.setMergeAdjacentText( isMergeAdjacentText() );
             contentHandler.setStripWhitespaceText( isStripWhitespaceText() );
+            contentHandler.setIgnoreComments( isIgnoreComments() );
             xmlReader.setContentHandler(contentHandler);
 
             configureReader(xmlReader, contentHandler);
@@ -444,6 +449,22 @@ public class SAXReader {
         this.stripWhitespaceText = stripWhitespaceText;
     }
     
+    /**
+     * Returns whether we should ignore comments or not.
+     * @return boolean
+     */
+    public boolean isIgnoreComments() {
+        return ignoreComments;
+    }
+
+    /**
+     * Sets whether we should ignore comments or not.
+     * @param ignoreComments whether we should ignore comments or not.
+     */
+    public void setIgnoreComments(boolean ignoreComments) {
+        this.ignoreComments = ignoreComments;
+    }
+
     
     /** @return the <code>DocumentFactory</code> used to create document objects
       */
@@ -784,5 +805,5 @@ public class SAXReader {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXReader.java,v 1.39 2001/11/15 23:38:29 jstrachan Exp $
+ * $Id: SAXReader.java,v 1.44 2003/04/07 22:14:00 jstrachan Exp $
  */
