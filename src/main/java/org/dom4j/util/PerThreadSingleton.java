@@ -5,51 +5,64 @@
  * See the bottom of this file for the licence.
  */
 
-package org.dom4j;
+package org.dom4j.util;
+
+import java.lang.ref.WeakReference;
 
 /**
  * <p>
- * <code>VisitorSupport</code> is an abstract base class which is useful for
- * implementation inheritence or when using anonymous inner classes to create
- * simple <code>Visitor</code> implementations.
+ * <code>PerThreadSingleton</code> is an implementation of the
+ * SingletonStrategy used to provide common factory access to a single object
+ * instance based on an implementation strategy for one object instance per
+ * thread. This is useful in replace of the ThreadLocal usage.
  * </p>
  * 
- * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
- * @version $Revision: 1.6 $
+ * @author <a href="mailto:ddlucas@users.sourceforge.net">David Lucas </a>
+ * @version $Revision: 1.2 $
  */
-public abstract class VisitorSupport implements Visitor {
-    public VisitorSupport() {
+
+public class PerThreadSingleton implements SingletonStrategy {
+    private String singletonClassName = null;
+
+    private ThreadLocal perThreadCache = new ThreadLocal();
+
+    public PerThreadSingleton() {
     }
 
-    public void visit(Document document) {
+    public void reset() {
+        perThreadCache = new ThreadLocal();
     }
 
-    public void visit(DocumentType documentType) {
+    public Object instance() {
+        Object singletonInstancePerThread = null;
+        // use weak reference to prevent cyclic reference during GC
+        WeakReference ref = (WeakReference) perThreadCache.get();
+        // singletonInstancePerThread=perThreadCache.get();
+        // if (singletonInstancePerThread==null) {
+        if (ref == null || ref.get() == null) {
+            Class clazz = null;
+            try {
+                clazz = Thread.currentThread().getClass().forName(
+                        singletonClassName);
+                singletonInstancePerThread = clazz.newInstance();
+            } catch (Exception ignore) {
+                try {
+                    clazz = Class.forName(singletonClassName);
+                    singletonInstancePerThread = clazz.newInstance();
+                } catch (Exception ignore2) {
+                }
+            }
+            perThreadCache.set(new WeakReference(singletonInstancePerThread));
+        } else {
+            singletonInstancePerThread = ref.get();
+        }
+        return singletonInstancePerThread;
     }
 
-    public void visit(Element node) {
+    public void setSingletonClassName(String singletonClassName) {
+        this.singletonClassName = singletonClassName;
     }
 
-    public void visit(Attribute node) {
-    }
-
-    public void visit(CDATA node) {
-    }
-
-    public void visit(Comment node) {
-    }
-
-    public void visit(Entity node) {
-    }
-
-    public void visit(Namespace namespace) {
-    }
-
-    public void visit(ProcessingInstruction node) {
-    }
-
-    public void visit(Text node) {
-    }
 }
 
 /*

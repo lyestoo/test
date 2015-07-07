@@ -5,51 +5,55 @@
  * See the bottom of this file for the licence.
  */
 
-package org.dom4j;
+package org.dom4j.util;
 
 /**
  * <p>
- * <code>VisitorSupport</code> is an abstract base class which is useful for
- * implementation inheritence or when using anonymous inner classes to create
- * simple <code>Visitor</code> implementations.
+ * <code>SimpleSingleton</code> is an implementation of the SingletonStrategy
+ * interface used to provide common factory access for the same object instance.
+ * This implementation will create a new instance from the class specified and
+ * will not create a new one unless it is reset.
  * </p>
  * 
- * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
- * @version $Revision: 1.6 $
+ * @author <a href="mailto:ddlucas@users.sourceforge.net">David Lucas </a>
+ * @version $Revision: 1.2 $
  */
-public abstract class VisitorSupport implements Visitor {
-    public VisitorSupport() {
+
+public class SimpleSingleton implements SingletonStrategy {
+    private String singletonClassName = null;
+
+    private Object singletonInstance = null;
+
+    public SimpleSingleton() {
     }
 
-    public void visit(Document document) {
+    public Object instance() {
+        return singletonInstance;
     }
 
-    public void visit(DocumentType documentType) {
+    public void reset() {
+        if (singletonClassName != null) {
+            Class clazz = null;
+            try {
+                clazz = Thread.currentThread().getClass().forName(
+                        singletonClassName);
+                singletonInstance = clazz.newInstance();
+            } catch (Exception ignore) {
+                try {
+                    clazz = Class.forName(singletonClassName);
+                    singletonInstance = clazz.newInstance();
+                } catch (Exception ignore2) {
+                }
+            }
+
+        }
     }
 
-    public void visit(Element node) {
+    public void setSingletonClassName(String singletonClassName) {
+        this.singletonClassName = singletonClassName;
+        reset();
     }
 
-    public void visit(Attribute node) {
-    }
-
-    public void visit(CDATA node) {
-    }
-
-    public void visit(Comment node) {
-    }
-
-    public void visit(Entity node) {
-    }
-
-    public void visit(Namespace namespace) {
-    }
-
-    public void visit(ProcessingInstruction node) {
-    }
-
-    public void visit(Text node) {
-    }
 }
 
 /*

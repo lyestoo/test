@@ -5,51 +5,37 @@
  * See the bottom of this file for the licence.
  */
 
-package org.dom4j;
+package org.dom4j.util;
 
 /**
  * <p>
- * <code>VisitorSupport</code> is an abstract base class which is useful for
- * implementation inheritence or when using anonymous inner classes to create
- * simple <code>Visitor</code> implementations.
+ * <code>SingletonStrategy</code> is an interface used to provide common
+ * factory access for the same object based on an implementation strategy for
+ * singleton. Right now there are two that accompany this interface:
+ * SimpleSingleton and PerThreadSingleton. This will replace previous usage of
+ * ThreadLocal to allow for alternate strategies.
  * </p>
  * 
- * @author <a href="mailto:james.strachan@metastuff.com">James Strachan </a>
- * @version $Revision: 1.6 $
+ * @author <a href="mailto:ddlucas@users.sourceforge.net">David Lucas </a>
+ * @version $Revision: 1.2 $
  */
-public abstract class VisitorSupport implements Visitor {
-    public VisitorSupport() {
-    }
+public interface SingletonStrategy {
+    /**
+     * return a singleton instance of the class specified in setSingletonClass
+     */
+    Object instance();
 
-    public void visit(Document document) {
-    }
+    /**
+     * reset the instance to a new instance for the implemented strategy
+     */
+    void reset();
 
-    public void visit(DocumentType documentType) {
-    }
-
-    public void visit(Element node) {
-    }
-
-    public void visit(Attribute node) {
-    }
-
-    public void visit(CDATA node) {
-    }
-
-    public void visit(Comment node) {
-    }
-
-    public void visit(Entity node) {
-    }
-
-    public void visit(Namespace namespace) {
-    }
-
-    public void visit(ProcessingInstruction node) {
-    }
-
-    public void visit(Text node) {
-    }
+    /**
+     * set a singleton class name that will be used to create the singleton
+     * based on the strategy implementation of this interface. The default
+     * constructor of the class will be used and must be public.
+     */
+    void setSingletonClassName(String singletonClassName);
 }
 
 /*

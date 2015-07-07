@@ -1,6 +1,5 @@
 /*
- * XmlParser.java
- * Copyright (C) 1999,2000,2001 The Free Software Foundation
+ * Copyright (C) 1999-2001 David Brownell
  * 
  * This file is part of GNU JAXP, a library.
  *
@@ -157,17 +156,15 @@ final class XmlParser
 	try {
 	    // pushURL first to ensure locator is correct in startDocument
 	    // ... it might report an IO or encoding exception.
-	    handler.startDocument ();
+	    // FIXME that could call endDocument without startDocument!
 	    pushURL (false, "[document]",
 			// default baseURI: null
 		    new String [] { publicId, systemId, null},
 		    reader, stream, encoding, false);
 
+	    handler.startDocument ();
 	    parseDocument ();
-	} catch (EOFException e){
-	    //empty input
-	    error("empty document, with no root element.");
-	}finally {
+	} finally {
 	    if (reader != null)
 		try { reader.close ();
 		} catch (IOException e) { /* ignore */ }
@@ -474,9 +471,6 @@ final class XmlParser
 
 	expandPE = false;
 	name = readNmtoken (true);
-	//NE08
-	if (name.indexOf(':') >= 0)
-           error ("Illegal character(':') in processing instruction name ", name, null);
 	if ("xml".equalsIgnoreCase (name))
 	    error ("Illegal processing instruction target", name, null);
 	if (!tryRead (endDelimPI)) {
@@ -489,8 +483,6 @@ final class XmlParser
 
 
     static final char	endDelimCDATA [] = { ']', ']', '>' };
-
-	private boolean isDirtyCurrentElement;
 
     /**
      * Parse a CDATA section.
@@ -582,16 +574,9 @@ final class XmlParser
 	require ("version");
 	parseEq ();
 	checkLegalVersion (version = readLiteral (flags));
-	if (!version.equals ("1.0")){
-	    if(version.equals ("1.1")){
-	    	handler.warn ("expected XML version 1.0, not: " + version);
-	    	xmlVersion = XML_11;
-	    }else {
-	    	error("illegal XML version", version, "1.0 or 1.1");
-	    }
-	}
-	else
-	    xmlVersion = XML_10;
+	if (!version.equals ("1.0"))
+	    handler.warn ("expected XML version 1.0, not: " + version);
+
 	// Try reading an encoding declaration.
 	boolean white = tryWhitespace ();
 
@@ -649,16 +634,8 @@ final class XmlParser
 	    String version;
 	    parseEq ();
 	    checkLegalVersion (version = readLiteral (flags));
-	    
-	    if (version.equals ("1.1")){
-	    	if (xmlVersion == XML_10){
-	    	   error ("external subset has later version number.", "1.0", version);    
-	    	}
+	    if (!version.equals ("1.0"))
 		handler.warn ("expected XML version 1.0, not: " + version);
-		xmlVersion = XML_11;
-             }else if(!version.equals ("1.0")) {
-		 error("illegal XML version", version, "1.0 or 1.1");
-	     }
 	    requireWhitespace ();
 	}
 
@@ -1122,19 +1099,11 @@ loop:
 
 	// Read the value, normalizing whitespace
 	// unless it is CDATA.
-  if (handler.getFeature (SAXDriver.FEATURE + "string-interning")) {
-    if (type == "CDATA" || type == null) {
+	if ("CDATA".equals (type) || type == null) {
 	    value = readLiteral (flags);
-    } else {
+	} else {
 	    value = readLiteral (flags | LIT_NORMALIZE);
-    }
-  } else {
-    if (type.equals("CDATA") || type == null) {
-	    value = readLiteral (flags);
-    } else {
-	    value = readLiteral (flags | LIT_NORMALIZE);
-    }
-  }
+	}
 
 	// WFC: no duplicate attributes
 	for (int i = 0; i < tagAttributePos; i++)
@@ -1222,7 +1191,6 @@ loop:
 		    unread (c);
 		    parseEntityRef (true);
 		}
-		isDirtyCurrentElement = true;
 		break;
 
 	      case '<': 			// Found "<"
@@ -1234,11 +1202,9 @@ loop:
 		    switch (c) {
 		      case '-': 		// Found "<!-"
 			require ('-');
-			isDirtyCurrentElement = false;
 			parseComment ();
 			break;
 		      case '[': 		// Found "<!["
-		      	isDirtyCurrentElement = false;
 			require ("CDATA[");
 			handler.startCDATA ();
 			inCDATA = true;
@@ -1248,29 +1214,25 @@ loop:
 			break;
 		      default:
 			error ("expected comment or CDATA section", c, null);
-	                break;
+			break;
 		    }
 		    break;
 
 		  case '?': 		// Found "<?"
-		    isDirtyCurrentElement = false;
 		    parsePI ();
 		    break;
 
 		  case '/': 		// Found "</"
-		    isDirtyCurrentElement = false;
 		    parseETag ();
 		    return;
 
 		  default: 		// Found "<" followed by something else
-		    isDirtyCurrentElement = false;
 		    unread (c);
 		    parseElement (false);
 		    break;
 		}
 	    }
 	}
-	
     }
 
 
@@ -1480,7 +1442,7 @@ loop:
 		handler.verror ("Illegal Group/PE nesting");
 
 	    dataBufferAppend (")*");
-	    tryRead ('*');
+            tryRead ('*');
 	    return;
 	}
 
@@ -1538,7 +1500,7 @@ loop:
     {
 	String name;
 	String type;
-	String enumer = null;
+	String enum = null;
 
 	// Read the attribute name.
 	name = readNmtoken (true);
@@ -1548,70 +1510,50 @@ loop:
 	type = readAttType ();
 
 	// Get the string of enumerated values if necessary.
-  if (handler.getFeature (SAXDriver.FEATURE + "string-interning")) {
-    if ("ENUMERATION" == type || "NOTATION" == type)
-	    enumer = dataBufferToString ();
-  } else {
-    if ("ENUMERATION".equals(type) || "NOTATION".equals(type))
-	    enumer = dataBufferToString ();
-  }
+	if ("ENUMERATION".equals (type) || "NOTATION".equals (type))
+	    enum = dataBufferToString ();
 
 	// Read the default value.
 	requireWhitespace ();
-	parseDefault (elementName, name, type, enumer);
+	parseDefault (elementName, name, type, enum);
     }
 
 
-  /**
-   * Parse the attribute type.
-   * <pre>
-   * [54] AttType ::= StringType | TokenizedType | EnumeratedType
-   * [55] StringType ::= 'CDATA'
-   * [56] TokenizedType ::= 'ID' | 'IDREF' | 'IDREFS' | 'ENTITY'
-   *		| 'ENTITIES' | 'NMTOKEN' | 'NMTOKENS'
-   * [57] EnumeratedType ::= NotationType | Enumeration
-   * </pre>
-   */
-  private String readAttType ()
+    /**
+     * Parse the attribute type.
+     * <pre>
+     * [54] AttType ::= StringType | TokenizedType | EnumeratedType
+     * [55] StringType ::= 'CDATA'
+     * [56] TokenizedType ::= 'ID' | 'IDREF' | 'IDREFS' | 'ENTITY'
+     *		| 'ENTITIES' | 'NMTOKEN' | 'NMTOKENS'
+     * [57] EnumeratedType ::= NotationType | Enumeration
+     * </pre>
+     */
+    private String readAttType ()
     throws Exception
-  {
-    if (tryRead ('(')) {
+    {
+	if (tryRead ('(')) {
 	    parseEnumeration (false);
 	    return "ENUMERATION";
-    } else {
+	} else {
 	    String typeString = readNmtoken (true);
-      if (handler.getFeature (SAXDriver.FEATURE + "string-interning")) {
-        if ("NOTATION" == typeString) {
-          parseNotationType ();
-          return typeString;
-        } else if ("CDATA" == typeString
-                   || "ID" == typeString
-                   || "IDREF" == typeString
-                   || "IDREFS" == typeString
-                   || "ENTITY" == typeString
-                   || "ENTITIES" == typeString
-                   || "NMTOKEN" == typeString
-                   || "NMTOKENS" == typeString)
-          return typeString;
-      } else {
-        if ("NOTATION".equals(typeString)) {
-          parseNotationType ();
-          return typeString;
-        } else if ("CDATA".equals(typeString)
-                   || "ID".equals(typeString)
-                   || "IDREF".equals(typeString)
-                   || "IDREFS".equals(typeString)
-                   || "ENTITY".equals(typeString)
-                   || "ENTITIES".equals(typeString)
-                   || "NMTOKEN".equals(typeString)
-                   || "NMTOKENS".equals(typeString))
-          return typeString;
-      }
+	    if ("NOTATION" == typeString) {
+		parseNotationType ();
+		return typeString;
+	    } else if ("CDATA".equals (typeString)
+                 || "ID".equals (typeString)
+                 || "IDREF".equals (typeString)
+                 || "IDREFS".equals (typeString)
+                 || "ENTITY".equals (typeString)
+                 || "ENTITIES".equals (typeString)
+                 || "NMTOKEN".equals (typeString)
+                 || "NMTOKENS".equals (typeString))
+        return typeString;
 	    error ("illegal attribute type", typeString, null);
 	    return null;
+	}
     }
-  }
-  
+
 
     /**
      * Parse an enumeration.
@@ -1670,7 +1612,7 @@ loop:
 	String elementName,
 	String name,
 	String type,
-	String enumer
+	String enum
     ) throws Exception
     {
 	int	valueType = ATTRIBUTE_DEFAULT_SPECIFIED;
@@ -1684,14 +1626,9 @@ loop:
 	// interfere with char refs expanding to whitespace).
 
 	if (!skippedPE) {
-    flags |= LIT_ENTITY_REF;
-    if (handler.getFeature (SAXDriver.FEATURE + "string-interning")) {
+	    flags |= LIT_ENTITY_REF;
 	    if ("CDATA" != type)
-        flags |= LIT_NORMALIZE;
-    } else {
-	    if (!"CDATA".equals(type))
-        flags |= LIT_NORMALIZE;
-    }
+		flags |= LIT_NORMALIZE;
 	}
 
 	expandPE = false;
@@ -1713,18 +1650,11 @@ loop:
 	} else
 	    value = readLiteral (flags);
 	expandPE = saved;
-	setAttribute (elementName, name, type, enumer, value, valueType);
-  if (handler.getFeature (SAXDriver.FEATURE + "string-interning")) {
-    if ("ENUMERATION" == type)
-	    type = enumer;
-    else if ("NOTATION" == type)
-	    type = "NOTATION " + enumer;
-  } else {
-    if ("ENUMERATION".equals(type))
-	    type = enumer;
-    else if ("NOTATION".equals(type))
-	    type = "NOTATION " + enumer;
-  }
+	setAttribute (elementName, name, type, enum, value, valueType);
+	if ("ENUMERATION".equals (type))
+	    type = enum;
+	else if ("NOTATION".equals (type))
+	    type = "NOTATION " + enum;
 	if (!skippedPE) handler.getDeclHandler ()
 	    .attributeDecl (elementName, name, type, defaultType, value);
     }
@@ -1793,82 +1723,6 @@ loop:
     parseCharRef (true /* do flushDataBuffer by default */);
   }
 
-  /**
-   * Try to read a character reference without consuming data from buffer.
-   * <pre>
-   * [66] CharRef ::= '&#' [0-9]+ ';' | '&#x' [0-9a-fA-F]+ ';'
-   * </pre>
-   * <p>NOTE: the '&#' has already been read.
-   */
-  private void tryReadCharRef ()
-  throws SAXException, IOException
-  {
-  	int value = 0;
-	char c;
-
-	if (tryRead ('x')) {
-loop1:
-	    while (true) {
-		c = readCh ();
-		int n;
-		switch (c) {
-		case '0': case '1': case '2': case '3': case '4':
-		case '5': case '6': case '7': case '8': case '9':
-		    n = c - '0';
-		    break;
-		case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-		    n = (c - 'a') + 10;
-		    break;
-		case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-		    n = (c - 'A') + 10;
-		    break;
-		case ';':
-		    break loop1;
-		default:
-		    error ("illegal character in character reference", c, null);
-		    break loop1;
-		}
-		value *= 16;
-		value += n;
-	    }
-	} else {
-loop2:
-	    while (true) {
-		c = readCh ();
-		switch (c) {
-		case '0': case '1': case '2': case '3': case '4':
-		case '5': case '6': case '7': case '8': case '9':
-		    value *= 10;
-		    value += c - '0';
-		    break;
-		case ';':
-		    break loop2;
-		default:
-		    error ("illegal character in character reference", c, null);
-		    break loop2;
-		}
-	    }
-	}
-
-	// check for character refs being legal XML
-	if ((value < 0x0020
-		&& ! (value == '\n' || value == '\t' || value == '\r'))
-		|| (value >= 0xD800 && value <= 0xDFFF)
-		|| value == 0xFFFE || value == 0xFFFF
-		|| value > 0x0010ffff)
-	    error ("illegal XML character reference U+"
-		    + Integer.toHexString (value));
-
-	// Check for surrogates: 00000000 0000xxxx yyyyyyyy zzzzzzzz
-	//  (1101|10xx|xxyy|yyyy + 1101|11yy|zzzz|zzzz:
-	if (value > 0x0010ffff) {
-	    // too big for surrogate
-	    error ("character reference " + value + " is too large for UTF-16",
-		   new Integer (value).toString (), null);
-	}
-
-  }
-  
     /**
      * Read and interpret a character reference.
      * <pre>
@@ -1987,46 +1841,7 @@ loop2:
 		error (message);
 	    break;
 	case ENTITY_INTERNAL:
-            pushString (name, getEntityValue (name));
-	    
-	    //workaround for possible input pop before marking
-            //the buffer reading position	
-            char t = readCh ();
-            unread (t);
-            int bufferPosMark = readBufferPos;
-           
-            int end = readBufferPos + getEntityValue (name).length();
-            for(int k = readBufferPos; k < end; k++){
-	            t = readCh ();
-	            if (t == '&'){
-	            	t = readCh ();   
-	            	if (t  == '#'){ 
-	            	   //try to match a character ref
-	                   tryReadCharRef ();
-	                   
-	                   //everything has been read
-	                   if (readBufferPos >= end)
-	                      break;
-	                   k = readBufferPos;
-	                   continue;
-	                }
-	                else if (Character.isLetter(t)){
-	            	   //looks like an entity ref
-	            	   unread (t);
-	            	   readNmtoken (true);
-	        	   require (';');
-	        	
-	        	   //everything has been read
-	        	   if (readBufferPos >= end)
-		              break;
-		           k = readBufferPos;
-	                   continue;
-	                }
-	                error(" malformed entity reference");
-	            }
-	           
-            }
-            readBufferPos = bufferPosMark;
+	    pushString (name, getEntityValue (name));
 	    break;
 	case ENTITY_TEXT:
 	    if (externalAllowed) {
@@ -2107,7 +1922,7 @@ loop2:
     throws Exception
     {
 	boolean peFlag = false;
-	int flags = 0;
+	int flags = LIT_DISABLE_CREF;
 
 	// Check for a parameter entity.
 	expandPE = false;
@@ -2121,9 +1936,6 @@ loop2:
 	// Read the entity name, and prepend
 	// '%' if necessary.
 	String name = readNmtoken (true);
-        //NE08
-	if (name.indexOf(':') >= 0)
-           error ("Illegal character(':') in entity name ", name, null);
 	if (peFlag) {
 	    name = "%" + name;
 	}
@@ -2187,9 +1999,7 @@ loop2:
 
 	requireWhitespace ();
 	nname = readNmtoken (true);
-        //NE08
-	if (nname.indexOf(':') >= 0)
-           error ("Illegal character(':') in notation name ", nname, null);
+
 	requireWhitespace ();
 
 	// Read the external identifiers.
@@ -2219,7 +2029,7 @@ loop2:
 	// assert (dataBufferPos == 0);
 
 	// are we expecting pure whitespace?  it might be dirty...
-	if ((currentElementContent == CONTENT_ELEMENTS) && !isDirtyCurrentElement)
+	if (currentElementContent == CONTENT_ELEMENTS);
 	    pureWhite = true;
 
 	// always report right out of readBuffer
@@ -2267,11 +2077,9 @@ loop:
 		    columnAugment++;
 		    break;
 		default:
-			if ((c < 0x0020 || c > 0xFFFD)
-			   || ((c >= 0x007f) && (c <= 0x009f) && (c != 0x0085) 
-			       && xmlVersion == XML_11)) 
-				error ("illegal XML character U+"
-					+ Integer.toHexString (c));
+		    if (c < 0x0020 || c > 0xFFFD)
+			error ("illegal XML character U+"
+				+ Integer.toHexString (c));
 		    // that's not a whitespace char
 		    pureWhite = false;
 		    columnAugment++;
@@ -2305,8 +2113,7 @@ loop:
 	    // pop stack and continue with previous entity
 	    unread (readCh ());
 	}
-        if (!pureWhite)
-           isDirtyCurrentElement = true;
+
 	// finish, maybe with error
 	if (state != 1)	// finish, no error
 	    error ("character data may not contain ']]>'");
@@ -2428,101 +2235,14 @@ loop:
 		  default:
 // FIXME ... per IBM's OASIS test submission, these:
 //   ?		U+06dd 
+// REJECT
+//   BaseChar	U+0132 U+0133 U+013F U+0140 U+0149 U+017F U+01C4 U+01CC
+//		U+01F1 U+01F3 U+0E46 U+1011 U+1104 U+1108 U+110A U+110D
+//		U+113B U+113F U+1141 U+114D U+114F U+1151 U+1156 U+1162
+//		U+1164 U+1166 U+116B U+116F U+1174 U+119F U+11AC U+11B6
+//		U+11B9 U+11BB U+11C3 U+11F1 U+212F U+0587
 //   Combining	U+309B
-		    //these switches are kind of ugly but at least we won't
-		    //have to go over the whole lits for each char
-		    if (isName && i == readBufferPos){
-			    char c2 = (char) (c & 0x00f0);
-	                    switch (c & 0xff00){
-	                    	//starting with 01
-	                    	case 0x0100:
-	                       	    switch (c2){
-	                    	        case 0x0030:
-	                    	            if (c == 0x0132 || c == 0x0133 || c == 0x013f)
-	                    	            	error ("Not a name start character, U+"
-	              				       + Integer.toHexString (c));
-	                    	        break;
-	                    	        case 0x0040:
-	                	            if (c == 0x0140 || c == 0x0149)
-	                	            	error ("Not a name start character, U+"
-	          				       + Integer.toHexString (c));
-	                	        break;
-	                    	        case 0x00c0:
-	            	                    if (c == 0x01c4 || c == 0x01cc)
-	            	            	        error ("Not a name start character, U+"
-	      				               + Integer.toHexString (c));
-	            	                break;
-	                    	        case 0x00f0:
-	        	                    if (c == 0x01f1 || c == 0x01f3)
-	        	            	        error ("Not a name start character, U+"
-	  				               + Integer.toHexString (c));
-	        	                break;
-	                    	        case 0x00b0:
-	    	                            if (c == 0x01f1 || c == 0x01f3)
-	    	            	                error ("Not a name start character, U+"
-					               + Integer.toHexString (c));
-	    	                        break;
-	        	                default:
-	        	                    if (c == 0x017f)
-	                	            	error ("Not a name start character, U+"
-	          				        + Integer.toHexString (c));	
-	                    	    }
-				    
-	                    	break;
-	                    	//starting with 11
-	                    	case 0x1100:
-	                            switch (c2){
-	                                case 0x0000:
-	                                    if (c == 0x1104 || c == 0x1108 ||
-	                                    	c == 0x110a || c == 0x110d)
-	                                      	error ("Not a name start character, U+"
-	                      		             + Integer.toHexString (c));
-	                                break;
-	                                case 0x0030:
-	                                    if (c == 0x113b || c == 0x113f)
-	                                      	error ("Not a name start character, U+"
-	                          	               + Integer.toHexString (c));
-	                                break;
-	                                case 0x0040:
-	                                    if (c == 0x1141 || c == 0x114d
-	                                        || c == 0x114f )
-	                                      	error ("Not a name start character, U+"
-	                          	               + Integer.toHexString (c));
-	                                break;
-	                                case 0x0050:
-	                                     if (c == 0x1151 || c == 0x1156)
-	                                         error ("Not a name start character, U+"
-	                          		        + Integer.toHexString (c));
-	                                break;
-	                                case 0x0060:
-		                             if (c == 0x1162 || c == 0x1164
-		                             	 || c == 0x1166 || c == 0x116b
-						 || c == 0x116f)
-		                                 error ("Not a name start character, U+"
-		                          		 + Integer.toHexString (c));
-		                                break;
-	                                case 0x00b0:
-	                                     if (c == 0x11b6 || c == 0x11b9
-	                                         || c == 0x11bb || c == 0x116f)
-	                                         error ("Not a name start character, U+"
-	                          		        + Integer.toHexString (c));
-	                                break;
-	                                default:
-	                                    if (c == 0x1174 || c == 0x119f
-	                                    	|| c == 0x11ac || c == 0x11c3
-						|| c == 0x11f1)
-	                                        error ("Not a name start character, U+"
-	                                                + Integer.toHexString (c));
-	                            }
-	                        break;
-	                        default:
-	                           if (c == 0x0e46 || c == 0x1011 
-	                               || c == 0x212f || c == 0x0587
-				       || c == 0x0230 )
-	                	       error ("Not a name start character, U+"
-	          		              + Integer.toHexString (c));
-	                    }
-		    }
+
 		    // punt on exact tests from Appendix A; approximate
 		    // them using the Unicode ID start/part rules
 		    if (i == readBufferPos && isName) {
@@ -2639,7 +2359,6 @@ loop:
 	// Read the literal.
 	try {
 	    c = readCh ();
-	    boolean ampRead = false;
 loop:
 	    while (! (c == delim && readBuffer == ourBuf)) {
 		switch (c) {
@@ -2663,21 +2382,20 @@ loop:
 			    dataBufferAppend ('&');
 			    break;
 			}
-                        parseCharRef (false /* Do not do flushDataBuffer */);
+      parseCharRef (false /* Do not do flushDataBuffer */);
 
 			// exotic WFness risk: this is an entity literal,
 			// dataBuffer [dataBufferPos - 1] == '&', and
 			// following chars are a _partial_ entity/char ref
-                   
+
 		    // It looks like an entity ref ...
 		    } else {
 			unread (c);
 			// Expand it?
 			if ((flags & LIT_ENTITY_REF) > 0) {
 			    parseEntityRef (false);
-			    if (String.valueOf (readBuffer).equals("&#38;"))
-			    	ampRead = true;
-                        //Is it just data?
+
+			// Is it just data?
 			} else if ((flags & LIT_DISABLE_EREF) != 0) {
 			    dataBufferAppend ('&');
 
@@ -3474,15 +3192,9 @@ loop:
 	    entity [3] = value;
 	    entityInfo.put (eName, entity);
 	}
-  if (handler.getFeature (SAXDriver.FEATURE + "string-interning")) {
-    if ("lt" == eName || "gt" == eName || "quot" == eName
-        || "apos" == eName || "amp" == eName)
+	if ("lt".equals (eName) || "gt".equals (eName) || "quot".equals (eName)
+		|| "apos".equals (eName) || "amp".equals (eName))
 	    return;
-  } else {
-    if ("lt".equals(eName) || "gt".equals(eName) || "quot".equals(eName)
-        || "apos".equals(eName) || "amp".equals(eName))
-	    return;
-  }
 	handler.getDeclHandler ()
 	    .internalEntityDecl (eName, value);
     }
@@ -3600,16 +3312,14 @@ loop:
 	}
 
 	char c = readBuffer [readBufferPos++];
-       
+
 	if (c == '\n') {
 	    line++;
 	    column = 0;
 	} else {
 	    if (c == '<') {
 		/* the most common return to parseContent () ... NOP */
-	    } else if (((c < 0x0020 && (c != '\t') && (c != '\r')) || c > 0xFFFD)
-	    		|| ((c >= 0x007f) && (c <= 0x009f) && (c != 0x0085) 
-	    		   && xmlVersion == XML_11)) 
+	    } else if ((c < 0x0020 && (c != '\t') && (c != '\r')) || c > 0xFFFD)
 		error ("illegal XML character U+"
 			+ Integer.toHexString (c));
 
@@ -3751,13 +3461,8 @@ loop:
 	    scratch.setEncoding (encoding);
 	    source = scratch;
 	    systemId = ids [1];
-      if (handler.getFeature (SAXDriver.FEATURE + "string-interning")) {
-        handler.startExternalEntity (ename, systemId,
-                                     "[document]" == ename);
-      } else {
-        handler.startExternalEntity (ename, systemId,
-                                     "[document]".equals(ename));
-      }
+	    handler.startExternalEntity (ename, systemId,
+		    "[document]".equals (ename));
 	}
 
 	// we may have been given I/O streams directly
@@ -4635,17 +4340,6 @@ loop:
 		    if (c < 0x0080)
 			encodingError ("Illegal two byte UTF-8 sequence",
 				c, 0);
-		    //Sec 2.11
-		    // [1] the two-character sequence #xD #xA
-		    // [2] the two-character sequence #xD #x85
-		    if ((c == 0x0085 || c == 0x000a) && sawCR)
-		       	continue;
-		    
-		    // Sec 2.11
-		    // [3] the single character #x85
-		    
-		    if(c == 0x0085  && xmlVersion == XML_11)
-		    	readBuffer[j++] = '\r';
 		} else if ((b1 & 0xf0) == 0xe0) {
 		    // 3-byte sequence:
 		    // zzzzyyyyyyxxxxxx = 1110zzzz 10yyyyyy 10xxxxxx
@@ -4653,13 +4347,6 @@ loop:
 		    c = (char) (((b1 & 0x0f) << 12) |
 				   (getNextUtf8Byte (i++, count) << 6) |
 				   getNextUtf8Byte (i++, count));
-                    //sec 2.11
-		    //[4] the single character #x2028
-		    if(c == 0x2028 && xmlVersion == XML_11){
-		       	readBuffer[j++] = '\r';
-		       	sawCR = true;
-		       	continue;
-		    }
 		    if (c < 0x0800 || (c >= 0xd800 && c <= 0xdfff))
 			encodingError ("Illegal three byte UTF-8 sequence",
 				c, 0);
@@ -4771,8 +4458,6 @@ loop:
 	    if ((c & mask) != 0)
 		throw new CharConversionException ("non-ASCII character U+"
 						    + Integer.toHexString (c));
-	    if (c == 0x0085 && xmlVersion == XML_11)
-	       c = '\r';	
 	    readBuffer [j] = c;
 	    if (c == '\r') {
 		sawCR = true;
@@ -5073,11 +4758,4 @@ loop:
     // Utility flag: are we in CDATA?  If so, whitespace isn't ignorable.
     // 
     private boolean	inCDATA;
-    
-    //
-    // Xml version.
-    //  
-    private static final int XML_10 = 0; 
-    private static final int XML_11 = 1; 
-    private int 	xmlVersion = XML_10;
 }

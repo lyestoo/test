@@ -1,44 +1,45 @@
 /*
- * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2005 (C) MetaStuff, Ltd. All Rights Reserved.
  *
  * This software is open source.
  * See the bottom of this file for the licence.
- *
- * $Id: DOMEntityReference.java,v 1.10 2004/06/25 08:03:35 maartenc Exp $
  */
 
 package org.dom4j.dom;
 
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultEntity;
+
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-/** <p><code>DOMEntity</code> implements a Entity node which
-  * supports the W3C DOM API.</p>
-  *
-  * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.10 $
-  */
-public class DOMEntityReference extends DefaultEntity implements org.w3c.dom.EntityReference {
-
+/**
+ * <p>
+ * <code>DOMEntity</code> implements a Entity node which supports the W3C DOM
+ * API.
+ * </p>
+ * 
+ * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
+ * @version $Revision: 1.12 $
+ */
+public class DOMEntityReference extends DefaultEntity implements
+        org.w3c.dom.EntityReference {
     public DOMEntityReference(String name) {
-        super( name );
+        super(name);
     }
 
     public DOMEntityReference(String name, String text) {
-        super( name, text );
+        super(name, text);
     }
 
     public DOMEntityReference(Element parent, String name, String text) {
-        super( parent, name, text );
+        super(parent, name, text);
     }
 
-
     // org.w3c.dom.Node interface
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public boolean supports(String feature, String version) {
         return DOMNodeHelper.supports(this, feature, version);
     }
@@ -63,19 +64,15 @@ public class DOMEntityReference extends DefaultEntity implements org.w3c.dom.Ent
         return getName();
     }
 
-    //already part of API
+    // already part of API
     //
-    //public short getNodeType();
-
-
-
+    // public short getNodeType();
     public String getNodeValue() throws DOMException {
         return null;
     }
 
     public void setNodeValue(String nodeValue) throws DOMException {
     }
-
 
     public org.w3c.dom.Node getParentNode() {
         return DOMNodeHelper.getParentNode(this);
@@ -109,45 +106,47 @@ public class DOMEntityReference extends DefaultEntity implements org.w3c.dom.Ent
         return DOMNodeHelper.getOwnerDocument(this);
     }
 
-    public org.w3c.dom.Node insertBefore(
-        org.w3c.dom.Node newChild,
-        org.w3c.dom.Node refChild
-    ) throws DOMException {
+    public org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild,
+            org.w3c.dom.Node refChild) throws DOMException {
         checkNewChildNode(newChild);
+
         return DOMNodeHelper.insertBefore(this, newChild, refChild);
     }
 
-    public org.w3c.dom.Node replaceChild(
-        org.w3c.dom.Node newChild,
-        org.w3c.dom.Node oldChild
-    ) throws DOMException {
+    public org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild,
+            org.w3c.dom.Node oldChild) throws DOMException {
         checkNewChildNode(newChild);
+
         return DOMNodeHelper.replaceChild(this, newChild, oldChild);
     }
 
-    public org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild) throws DOMException {
+    public org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild)
+            throws DOMException {
         return DOMNodeHelper.removeChild(this, oldChild);
     }
 
-    public org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild) throws DOMException {
+    public org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild)
+            throws DOMException {
         checkNewChildNode(newChild);
+
         return DOMNodeHelper.appendChild(this, newChild);
     }
 
-    private void checkNewChildNode(org.w3c.dom.Node newChild) throws DOMException {
+    private void checkNewChildNode(org.w3c.dom.Node newChild)
+            throws DOMException {
         final int nodeType = newChild.getNodeType();
-        if (!(nodeType == org.w3c.dom.Node.ELEMENT_NODE ||
-              nodeType == org.w3c.dom.Node.TEXT_NODE ||
-              nodeType == org.w3c.dom.Node.COMMENT_NODE ||
-              nodeType == org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE ||
-              nodeType == org.w3c.dom.Node.CDATA_SECTION_NODE ||
-              nodeType == org.w3c.dom.Node.ENTITY_REFERENCE_NODE)) {
+
+        if (!((nodeType == org.w3c.dom.Node.ELEMENT_NODE)
+                || (nodeType == org.w3c.dom.Node.TEXT_NODE)
+                || (nodeType == org.w3c.dom.Node.COMMENT_NODE)
+                || (nodeType == org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE)
+                || (nodeType == org.w3c.dom.Node.CDATA_SECTION_NODE) 
+                || (nodeType == org.w3c.dom.Node.ENTITY_REFERENCE_NODE))) {
             throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-               "Specified node cannot be a child of an entity reference");
+                    "Given node cannot be a child of an entity " + "reference");
         }
     }
-    
-    
+
     public boolean hasChildNodes() {
         return DOMNodeHelper.hasChildNodes(this);
     }
@@ -169,50 +168,39 @@ public class DOMEntityReference extends DefaultEntity implements org.w3c.dom.Ent
     }
 }
 
-
-
-
 /*
  * Redistribution and use of this software and associated documentation
- * ("Software"), with or without modification, are permitted provided
- * that the following conditions are met:
- *
- * 1. Redistributions of source code must retain copyright
- *    statements and notices.  Redistributions must also contain a
- *    copy of this document.
- *
- * 2. Redistributions in binary form must reproduce the
- *    above copyright notice, this list of conditions and the
- *    following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 3. The name "DOM4J" must not be used to endorse or promote
- *    products derived from this Software without prior written
- *    permission of MetaStuff, Ltd.  For written permission,
- *    please contact dom4j-info@metastuff.com.
- *
- * 4. Products derived from this Software may not be called "DOM4J"
- *    nor may "DOM4J" appear in their names without prior written
- *    permission of MetaStuff, Ltd. DOM4J is a registered
- *    trademark of MetaStuff, Ltd.
- *
- * 5. Due credit should be given to the DOM4J Project - 
- *    http://www.dom4j.org
- *
- * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
- * NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL
- * METASTUFF, LTD. OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
- *
- * $Id: DOMEntityReference.java,v 1.10 2004/06/25 08:03:35 maartenc Exp $
+ * ("Software"), with or without modification, are permitted provided that the
+ * following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain copyright statements and
+ * notices. Redistributions must also contain a copy of this document.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * 
+ * 3. The name "DOM4J" must not be used to endorse or promote products derived
+ * from this Software without prior written permission of MetaStuff, Ltd. For
+ * written permission, please contact dom4j-info@metastuff.com.
+ * 
+ * 4. Products derived from this Software may not be called "DOM4J" nor may
+ * "DOM4J" appear in their names without prior written permission of MetaStuff,
+ * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
+ * 
+ * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 
+ * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL METASTUFF, LTD. OR ITS CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * Copyright 2001-2005 (C) MetaStuff, Ltd. All Rights Reserved.
  */

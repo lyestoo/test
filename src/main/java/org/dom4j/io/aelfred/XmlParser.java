@@ -1453,7 +1453,7 @@ loop:
     {
     String name;
     int type;
-    String enumer = null;
+    String enum = null;
 
     // Read the attribute name.
     name = readNmtoken (true);
@@ -1465,12 +1465,12 @@ loop:
     // Get the string of enumerated values
     // if necessary.
     if (type == ATTRIBUTE_ENUMERATED || type == ATTRIBUTE_NOTATION) {
-        enumer = dataBufferToString ();
+        enum = dataBufferToString ();
     }
 
     // Read the default value.
     requireWhitespace ();
-    parseDefault (elementName, name, type, enumer);
+    parseDefault (elementName, name, type, enum);
     }
 
 
@@ -1568,7 +1568,7 @@ loop:
     String elementName,
     String name,
     int type,
-    String enumer
+    String enum
     ) throws Exception
     {
     int valueType = ATTRIBUTE_DEFAULT_SPECIFIED;
@@ -1598,7 +1598,7 @@ loop:
         }
     } else
         value = readLiteral (flags);
-    setAttribute (elementName, name, type, enumer, value, valueType);
+    setAttribute (elementName, name, type, enum, value, valueType);
     }
 
 

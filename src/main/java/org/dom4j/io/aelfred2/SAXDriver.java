@@ -1,6 +1,5 @@
 /*
- * SAXDriver.java
- * Copyright (C) 1999,2000,2001 The Free Software Foundation
+ * Copyright (C) 1999-2001 David Brownell
  * 
  * This file is part of GNU JAXP, a library.
  *
@@ -57,17 +56,12 @@ import java.util.Stack;
 
 // maintaining 1.1 compatibility for now ... more portable, PJava, etc
 // Iterator, Hashmap and ArrayList ought to be faster
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 
 import org.xml.sax.*;
 import org.xml.sax.ext.*;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.NamespaceSupport;
 
 
@@ -129,24 +123,27 @@ import org.xml.sax.helpers.NamespaceSupport;
  * @see org.xml.sax.Parser
  */
 final public class SAXDriver
-    implements Locator, Attributes, XMLReader, Parser, AttributeList
+    implements Locator, Attributes2, XMLReader, Parser, AttributeList
 {
     private final DefaultHandler2	base = new DefaultHandler2 ();
     private XmlParser			parser;
 
     private EntityResolver		entityResolver = base;
+    private EntityResolver2		resolver2 = null;
     private ContentHandler		contentHandler = base;
     private DTDHandler			dtdHandler = base;
     private ErrorHandler 		errorHandler = base;
     private DeclHandler			declHandler = base;
     private LexicalHandler		lexicalHandler = base;
 
-    private String			elementName;
-    private Stack			entityStack;
+    private String			elementName = null;
+    private Stack			entityStack = new Stack ();
 
-    // one vector (of object/struct): faster, smaller
-    private List			attributesList = Collections.synchronizedList(new ArrayList());
-  
+    // could use just one vector (of object/struct): faster, smaller
+    private Vector			attributeNames = new Vector ();
+    private Vector			attributeNamespaces = new Vector ();
+    private Vector			attributeLocalNames = new Vector ();
+    private Vector			attributeValues = new Vector ();
     private boolean			attributeSpecified [] = new boolean[10];
     private boolean			attributeDeclared [] = new boolean[10];
 
@@ -155,12 +152,11 @@ final public class SAXDriver
     private boolean			extGE = true;
     private boolean			extPE = true;
     private boolean			resolveAll = true;
-    private boolean			useResolver2 = false;
-    private boolean                     stringInterning = true;
+    private boolean			useResolver2 = true;
 
-    private int				attributeCount;
+    private int				attributeCount = 0;
     private boolean			attributes;
-    private String			nsTemp [];
+    private String			nsTemp [] = new String [3];
     private NamespaceSupport		prefixStack;
 
     //
@@ -168,23 +164,7 @@ final public class SAXDriver
     //
 
     /** Constructs a SAX Parser.  */
-    public SAXDriver ()
-    {
-      reset ();
-    }
-
-    private void reset ()
-    {
-      elementName = null;
-      entityStack = new Stack ();
-      attributesList = Collections.synchronizedList(new ArrayList());
-      attributeSpecified = new boolean[10];
-      attributeDeclared = new boolean[10];
-      attributeCount = 0;
-      attributes = false;
-      nsTemp = new String[3];
-      prefixStack = null;
-    }
+    public SAXDriver () {}
 
 
     //
@@ -217,10 +197,14 @@ final public class SAXDriver
 
     /**
      * <b>SAX1, SAX2</b>: Set the entity resolver for this parser.
-     * @param resolver The object to receive entity events.
+     * @param handler The object to receive entity events.
      */
     public void setEntityResolver (EntityResolver resolver)
     {
+	if (resolver instanceof EntityResolver2)
+	    resolver2 = (EntityResolver2) resolver;
+	else
+	    resolver2 = null;
 	if (resolver == null)
 	    resolver = base;
 	entityResolver = resolver;
@@ -355,7 +339,9 @@ final public class SAXDriver
 		throw new SAXParseException (e.getMessage (), this, e);
 	    } finally {
 		contentHandler.endDocument ();
-                reset();
+		entityStack.removeAllElements ();
+		parser = null;
+		prefixStack = null;
 	    }
 	}
     }
@@ -407,15 +393,15 @@ final public class SAXDriver
 	if ((FEATURE + "lexical-handler/parameter-entities").equals (featureId))
 	    return true;
 
-	// default is true
+	// always interns
 	if ((FEATURE + "string-interning").equals (featureId))
-	    return stringInterning;
+	    return true;
 	
 	// EXTENSIONS 1.1
 
 	// always returns isSpecified info
 	if ((FEATURE + "use-attributes2").equals (featureId))
-	    return false;
+	    return true;
 	
 	// meaningful between startDocument/endDocument
 	if ((FEATURE + "is-standalone").equals (featureId)) {
@@ -430,7 +416,7 @@ final public class SAXDriver
 
 	// optionally use resolver2 interface methods, if possible
 	if ((FEATURE + "use-entity-resolver2").equals (featureId))
-	    return false;
+	    return useResolver2;
 	
 	throw new SAXNotRecognizedException (featureId);
     }
@@ -562,7 +548,8 @@ final public class SAXDriver
     {
 	contentHandler.setDocumentLocator (this);
 	contentHandler.startDocument ();
-	attributesList.clear ();
+	attributeNames.removeAllElements ();
+	attributeValues.removeAllElements ();
     }
 
     void skippedEntity (String name)
@@ -572,7 +559,9 @@ final public class SAXDriver
     InputSource getExternalSubset (String name, String baseURI)
     throws SAXException, IOException
     {
+	if (resolver2 == null || !useResolver2 || !extPE)
 	    return null;
+	return resolver2.getExternalSubset (name, baseURI);
     }
 
     InputSource resolveEntity (boolean isPE, String name,
@@ -589,11 +578,21 @@ final public class SAXDriver
 
 	// ... or not
 	lexicalHandler.startEntity (name);
+	if (resolver2 != null && useResolver2) {
+	    source = resolver2.resolveEntity (name, in.getPublicId (),
+			baseURI, in.getSystemId ());
+	    if (source == null) {
+		in.setSystemId (absolutize (baseURI,
+				in.getSystemId (), false));
+		source = in;
+	    }
+	} else {
 	    in.setSystemId (absolutize (baseURI, in.getSystemId (), false));
 	    source = entityResolver.resolveEntity (in.getPublicId (),
 			in.getSystemId ());
 	    if (source == null)
 		source = in;
+	}
 	startExternalEntity (name, source.getSystemId (), true);
 	return source;
     }
@@ -725,30 +724,7 @@ final public class SAXDriver
 
 	// FIXME:  char [0] must be ascii alpha; chars [1..index]
 	// must be ascii alphanumeric or in "+-." [RFC 2396]
-	
-	//Namespace Constraints
-	//name for xml prefix must be http://www.w3.org/XML/1998/namespace
-	boolean prefixEquality = prefix.equals("xml");
-	boolean uriEquality = uri.equals("http://www.w3.org/XML/1998/namespace");
-	if ((prefixEquality || uriEquality) && !(prefixEquality && uriEquality))
-	   fatal ("xml is by definition bound to the namespace name " +
-	   		"http://www.w3.org/XML/1998/namespace");
-	
-        //xmlns prefix declaration is illegal but xml prefix declaration is llegal...
-	if (prefixEquality && uriEquality)
-	   return;
-	
-        //name for xmlns prefix must be http://www.w3.org/2000/xmlns/
-	prefixEquality = prefix.equals("xmlns");
-	uriEquality = uri.equals("http://www.w3.org/2000/xmlns/");
-	if ((prefixEquality || uriEquality) && !(prefixEquality && uriEquality))
-	   fatal("http://www.w3.org/2000/xmlns/ is by definition bound" +
-	   		" to prefix xmlns");
-	
-	//even if the uri is http://www.w3.org/2000/xmlns/ it is illegal to declare it
-	if (prefixEquality && uriEquality)
-	   fatal ("declaring the xmlns prefix is illegal");
-		
+
 	uri = uri.intern ();
 	prefixStack.declarePrefix (prefix, uri);
 	contentHandler.startPrefixMapping (prefix, uri);
@@ -768,49 +744,28 @@ final public class SAXDriver
 	if (namespaces) {
 	    int	index;
 
-      // default NS declaration?
-      if (getFeature (FEATURE + "string-interning")) {
-        if ("xmlns" == qname) {
-          declarePrefix ("", value);
-          if (!xmlNames)
-            return;
-        }
-        // NS prefix declaration?
-        else if ((index = qname.indexOf (':')) == 5
-                 && qname.startsWith ("xmlns")) {
-          String		prefix = qname.substring (6);
-          
-          if (prefix.equals(""))
-          	fatal ("missing prefix in namespace declaration attribute");	
-          if (value.length () == 0) {
-            verror ("missing URI in namespace declaration attribute: "
-                    + qname);
-          } else
-            declarePrefix (prefix, value);
-          if (!xmlNames)
-            return;
-        }
-      } else {
-        if ("xmlns".equals(qname)) {
-          declarePrefix ("", value);
-          if (!xmlNames)
-            return;
-        }
-        // NS prefix declaration?
-        else if ((index = qname.indexOf (':')) == 5
-                 && qname.startsWith ("xmlns")) {
-          String		prefix = qname.substring (6);
-          
-          if (value.length () == 0) {
-            verror ("missing URI in namespace decl attribute: "
-                    + qname);
-          } else
-            declarePrefix (prefix, value);
-          if (!xmlNames)
-            return;
-        }
-      }
-  }
+	    // default NS declaration?
+	    if ("xmlns".equals (qname)) {
+		declarePrefix ("", value);
+		if (!xmlNames)
+		    return;
+	    }
+
+	    // NS prefix declaration?
+	    else if ((index = qname.indexOf (':')) == 5
+		    && qname.startsWith ("xmlns")) {
+		String		prefix = qname.substring (6);
+
+		if (value.length () == 0) {
+		    verror ("missing URI in namespace decl attribute: "
+				+ qname);
+		} else
+		    declarePrefix (prefix, value);
+		if (!xmlNames)
+		    return;
+	    }
+	}
+
 	// remember this attribute ...
 
 	if (attributeCount == attributeSpecified.length) { 	// grow array?
@@ -821,10 +776,13 @@ final public class SAXDriver
 	attributeSpecified [attributeCount] = isSpecified;
 
 	attributeCount++;
-	
+	attributeNames.addElement (qname);
 	// attribute type comes from querying parser's DTD records
-	attributesList.add(new Attribute(qname, value));
+	attributeValues.addElement (value);
 
+	// ... patching {lname, uri} later, if needed
+	attributeNamespaces.addElement ("");
+	attributeLocalNames.addElement ("");
     }
 
     void startElement (String elname)
@@ -852,26 +810,14 @@ final public class SAXDriver
 
 	    // now we can patch up namespace refs; we saw all the
 	    // declarations, so now we'll do the Right Thing
-	    Iterator itt = attributesList.iterator ();
-	    while(itt.hasNext())
-	    {
-	    	Attribute attribute = (Attribute) itt.next();
-	    	String	qname = attribute.name;
+	    for (int i = 0; i < attributeCount; i++) {
+		String	qname = (String) attributeNames.elementAt (i);
 		int	index;
 
-    // default NS declaration?
-    if (getFeature (FEATURE + "string-interning")) {
-      if ("xmlns" == qname)
+		// default NS declaration?
+		if ("xmlns".equals (qname))
 		    continue;
-    } else {
-      if ("xmlns".equals(qname))
-		    continue;
-    }
-               //Illegal in the new Namespaces Draft
-               //should it be only in 1.1 docs??
-               if (qname.equals (":"))
-                   fatal ("namespace names consisting of a single colon " +
-                   		"character are invalid");
+
 		index = qname.indexOf (':');
 
 		// NS prefix declaration?
@@ -880,10 +826,10 @@ final public class SAXDriver
 
 		// it's not a NS decl; patch namespace info items
 		if (prefixStack.processName (qname, nsTemp, true) == null)
-		    fatal ("undeclared attribute prefix in: " + qname);
+		    verror ("undeclared attribute prefix in: " + qname);
 		else {
-		    attribute.nameSpace = nsTemp[0];
-		    attribute.localName = nsTemp[1];
+		    attributeNamespaces.setElementAt (nsTemp [0], i);
+		    attributeLocalNames.setElementAt (nsTemp [1], i);
 		}
 	    }
 	}
@@ -892,7 +838,7 @@ final public class SAXDriver
 	elementName = elname;
 	if (namespaces) {
 	    if (prefixStack.processName (elname, nsTemp, false) == null) {
-		fatal ("undeclared element prefix in: " + elname);
+		verror ("undeclared element prefix in: " + elname);
 		nsTemp [0] = nsTemp [1] = "";
 	    }
 	    handler.startElement (nsTemp [0], nsTemp [1], elname, this);
@@ -902,7 +848,10 @@ final public class SAXDriver
 
 	// elements with no attributes are pretty common!
 	if (attributes) {
-	    attributesList.clear();
+	    attributeNames.removeAllElements ();
+	    attributeNamespaces.removeAllElements ();
+	    attributeLocalNames.removeAllElements ();
+	    attributeValues.removeAllElements ();
 	    attributeCount = 0;
 	    attributes = false;
 	}
@@ -1007,7 +956,7 @@ final public class SAXDriver
      */
     public int getLength ()
     {
-	return attributesList.size ();
+	return attributeNames.size ();
     }
 
     /**
@@ -1015,7 +964,7 @@ final public class SAXDriver
      */
     public String getURI (int index)
     {
-	return ((Attribute) attributesList.get (index)).nameSpace;
+	return (String) (attributeNamespaces.elementAt (index));
     }
 
     /**
@@ -1023,7 +972,7 @@ final public class SAXDriver
      */
     public String getLocalName (int index)
     {
-        return ((Attribute) attributesList.get (index)).localName;
+	return (String) (attributeLocalNames.elementAt (index));
     }
 
     /**
@@ -1031,7 +980,7 @@ final public class SAXDriver
      */
     public String getQName (int i)
     {
-    	return ((Attribute) attributesList.get (i)).name;
+	return (String) (attributeNames.elementAt (i));
     }
 
     /**
@@ -1039,7 +988,7 @@ final public class SAXDriver
      */
     public String getName (int i)
     {
-    	return ((Attribute) attributesList.get (i)).name;
+	return (String) (attributeNames.elementAt (i));
     }
 
     /**
@@ -1052,8 +1001,8 @@ final public class SAXDriver
 	if (type == null)
 	    return "CDATA";
 	// ... use DeclHandler.attributeDecl to see enumerations
-      if (type == "ENUMERATION")
-        return "NMTOKEN";
+	if ("ENUMERATION".equals (type))
+	    return "NMTOKEN";
 	return type;
     }
 
@@ -1064,7 +1013,7 @@ final public class SAXDriver
      */
     public String getValue (int i)
     {
-    	return ((Attribute) attributesList.get (i)).value;
+	return (String) (attributeValues.elementAt (i));
     }
 
 
@@ -1319,20 +1268,5 @@ final public class SAXDriver
 
 	public void endDocument () throws SAXException
 	    { docHandler.endDocument (); }
-    }
-}
-
-class Attribute
-{
-
-    String name;
-    String value;
-    String nameSpace;
-    String localName;
-
-    Attribute(String name, String value)
-    {
-        this.name = name;
-        this.value = value;
     }
 }
