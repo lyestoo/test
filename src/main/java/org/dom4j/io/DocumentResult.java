@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DocumentResult.java,v 1.3 2003/04/07 22:14:03 jstrachan Exp $
+ * $Id: DocumentResult.java,v 1.6 2004/06/25 12:34:47 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -15,16 +15,16 @@ import org.dom4j.Document;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ext.LexicalHandler;
 
-/** <p><code>DocumentResult</code> implements a JAXP {@link Result}
-  * for a {@link Document}.</p>
-  *
-  * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
-  */
+/**
+ * <p><code>DocumentResult</code> implements a JAXP {@link SAXResult} 
+ * for a {@link Document}.</p>
+ *
+ * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
+ * @version $Revision: 1.6 $
+ */
 public class DocumentResult extends SAXResult {
 
     private SAXContentHandler contentHandler;
-
     
     public DocumentResult() {
         this( new SAXContentHandler() );
@@ -91,8 +91,8 @@ public class DocumentResult extends SAXResult {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -107,7 +107,7 @@ public class DocumentResult extends SAXResult {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DocumentResult.java,v 1.3 2003/04/07 22:14:03 jstrachan Exp $
+ * $Id: DocumentResult.java,v 1.6 2004/06/25 12:34:47 maartenc Exp $
  */

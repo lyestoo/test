@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultElement.java,v 1.50 2003/04/07 22:14:18 jstrachan Exp $
+ * $Id: DefaultElement.java,v 1.56 2004/08/04 18:22:39 maartenc Exp $
  */
 
 package org.dom4j.tree;
@@ -24,1772 +24,1813 @@ import org.dom4j.Node;
 import org.dom4j.ProcessingInstruction;
 import org.dom4j.QName;
 
-/** <p><code>DefaultElement</code> is the default DOM4J default implementation
-  * of an XML element.</p>
-  *
-  * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.50 $
-  */
+/**
+ * <p>
+ * <code>DefaultElement</code> is the default DOM4J default implementation of
+ * an XML element.
+ * </p>
+ * 
+ * @author <a href="mailto:jstrachan@apache.org">James Strachan </a>
+ * @version $Revision: 1.56 $
+ */
 
 public class DefaultElement extends AbstractElement {
 
-    /** The <code>DocumentFactory</code> instance used by default */
+	/** The <code>DocumentFactory</code> instance used by default */
 
-    private static transient final DocumentFactory DOCUMENT_FACTORY =
-        DocumentFactory.getInstance();
+	private static transient final DocumentFactory DOCUMENT_FACTORY = DocumentFactory
+			.getInstance();
 
-    /** The <code>QName</code> for this element */
+	/** The <code>QName</code> for this element */
 
-    private QName qname;
+	private QName qname;
 
-    /** Stores the parent branch of this node which is either a Document 
-      * if this element is the root element in a document, or another Element 
-      * if it is a child of the root document, or null if it has not been added
-      * to a document yet. 
-       */
+	/**
+	 * Stores the parent branch of this node which is either a Document if this
+	 * element is the root element in a document, or another Element if it is a
+	 * child of the root document, or null if it has not been added to a
+	 * document yet.
+	 */
 
-    private Branch parentBranch;
+	private Branch parentBranch;
 
-    /** Stores null for no content, a Node for a single content node
-      * or a List for multiple content nodes. 
-      * The List will be lazily constructed when required. */
+	/**
+	 * Stores null for no content, a Node for a single content node or a List
+	 * for multiple content nodes. The List will be lazily constructed when
+	 * required.
+	 */
 
-    private Object content;
+	private Object content;
 
-    /** Lazily constructes list of attributes */
+	/** Lazily constructes list of attributes */
 
-    private Object attributes;
+	private Object attributes;
 
-    public DefaultElement(String name) {
+	public DefaultElement(String name) {
 
-        this.qname = DOCUMENT_FACTORY.createQName(name);
+		this.qname = DOCUMENT_FACTORY.createQName(name);
 
-    }
+	}
 
-    public DefaultElement(QName qname) {
+	public DefaultElement(QName qname) {
 
-        this.qname = qname;
+		this.qname = qname;
 
-    }
+	}
 
-    public DefaultElement(QName qname, int attributeCount) {
+	public DefaultElement(QName qname, int attributeCount) {
 
-        this.qname = qname;
+		this.qname = qname;
 
-        if (attributeCount > 1) {
+		if (attributeCount > 1) {
 
-            this.attributes = new ArrayList(attributeCount);
+			this.attributes = new ArrayList(attributeCount);
 
-        }
+		}
 
-    }
+	}
 
-    public DefaultElement(String name, Namespace namespace) {
+	public DefaultElement(String name, Namespace namespace) {
 
-        this.qname = DOCUMENT_FACTORY.createQName(name, namespace);
+		this.qname = DOCUMENT_FACTORY.createQName(name, namespace);
 
-    }
+	}
 
-    public Element getParent() {
+	public Element getParent() {
 
-        return (parentBranch instanceof Element) ? (Element) parentBranch : null;
+		return (parentBranch instanceof Element) ? (Element) parentBranch
+				: null;
 
-    }
+	}
 
-    public void setParent(Element parent) {
+	public void setParent(Element parent) {
 
-        if (parentBranch instanceof Element || parent != null) {
+		if (parentBranch instanceof Element || parent != null) {
 
-            parentBranch = parent;
+			parentBranch = parent;
 
-        }
+		}
 
-    }
+	}
 
-    public Document getDocument() {
+	public Document getDocument() {
 
-        if (parentBranch instanceof Document) {
+		if (parentBranch instanceof Document) {
 
-            return (Document) parentBranch;
+			return (Document) parentBranch;
 
-        }
+		}
 
-        else if (parentBranch instanceof Element) {
+		else if (parentBranch instanceof Element) {
 
-            Element parent = (Element) parentBranch;
+			Element parent = (Element) parentBranch;
 
-            return parent.getDocument();
+			return parent.getDocument();
 
-        }
+		}
 
-        return null;
+		return null;
 
-    }
+	}
 
-    public void setDocument(Document document) {
+	public void setDocument(Document document) {
 
-        if (parentBranch instanceof Document || document != null) {
+		if (parentBranch instanceof Document || document != null) {
 
-            parentBranch = document;
+			parentBranch = document;
 
-        }
+		}
 
-    }
+	}
 
-    public boolean supportsParent() {
+	public boolean supportsParent() {
 
-        return true;
+		return true;
 
-    }
+	}
 
-    public QName getQName() {
+	public QName getQName() {
 
-        return qname;
+		return qname;
 
-    }
+	}
 
-    public void setQName(QName qname) {
+	public void setQName(QName qname) {
 
-        this.qname = qname;
+		this.qname = qname;
 
-    }
+	}
 
-    public String getText() {
+	public String getText() {
+		final Object contentShadow = content;
+		if (contentShadow instanceof List) {
 
-        if (content instanceof List) {
+			return super.getText();
 
-            return super.getText();
+		}
 
-        }
+		else {
 
-        else {
+			if (contentShadow != null) {
 
-            if (content != null) {
+				return getContentAsText(contentShadow);
 
-                return getContentAsText(content);
+			}
 
-            }
+			else {
 
-            else {
+				return "";
 
-                return "";
+			}
 
-            }
+		}
 
-        }
+	}
 
-    }
+	public String getStringValue() {
+		final Object contentShadow = content;
 
-    public String getStringValue() {
+		if (contentShadow instanceof List) {
 
-        if (content instanceof List) {
+			List list = (List) contentShadow;
 
-            List list = (List) content;
+			int size = list.size();
 
-            int size = list.size();
+			if (size > 0) {
 
-            if (size > 0) {
+				if (size == 1) {
 
-                if (size == 1) {
+					// optimised to avoid StringBuffer creation
 
-                    // optimised to avoid StringBuffer creation
+					return getContentAsStringValue(list.get(0));
 
-                    return getContentAsStringValue(list.get(0));
+				}
 
-                }
+				else {
 
-                else {
+					StringBuffer buffer = new StringBuffer();
 
-                    StringBuffer buffer = new StringBuffer();
+					for (int i = 0; i < size; i++) {
 
-                    for (int i = 0; i < size; i++) {
+						Object node = list.get(i);
 
-                        Object node = list.get(i);
+						String string = getContentAsStringValue(node);
 
-                        String string = getContentAsStringValue(node);
+						if (string.length() > 0) {
 
-                        if (string.length() > 0) {
+							if (USE_STRINGVALUE_SEPARATOR) {
 
-                            if (USE_STRINGVALUE_SEPARATOR) {
+								if (buffer.length() > 0) {
 
-                                if (buffer.length() > 0) {
+									buffer.append(' ');
 
-                                    buffer.append(' ');
+								}
 
-                                }
+							}
 
-                            }
+							buffer.append(string);
 
-                            buffer.append(string);
+						}
 
-                        }
+					}
 
-                    }
+					return buffer.toString();
 
-                    return buffer.toString();
+				}
 
-                }
+			}
 
-            }
+		}
 
-        }
+		else {
 
-        else {
+			if (contentShadow != null) {
 
-            if (content != null) {
+				return getContentAsStringValue(contentShadow);
 
-                return getContentAsStringValue(content);
+			}
 
-            }
+		}
 
-        }
+		return "";
 
-        return "";
+	}
 
-    }
+	public Object clone() {
 
-    public Object clone() {
+		DefaultElement answer = (DefaultElement) super.clone();
 
-        DefaultElement answer = (DefaultElement) super.clone();
+		if (answer != this) {
 
-        if (answer != this) {
+			answer.content = null;
 
-            answer.content = null;
+			answer.attributes = null;
 
-            answer.attributes = null;
+			answer.appendAttributes(this);
 
-            answer.appendAttributes(this);
+			answer.appendContent(this);
 
-            answer.appendContent(this);
+		}
 
-        }
+		return answer;
 
-        return answer;
+	}
 
-    }
+	public Namespace getNamespaceForPrefix(String prefix) {
 
-    public Namespace getNamespaceForPrefix(String prefix) {
+		if (prefix == null) {
 
-        if (prefix == null) {
+			prefix = "";
 
-            prefix = "";
+		}
 
-        }
+		if (prefix.equals(getNamespacePrefix())) {
 
-        if (prefix.equals(getNamespacePrefix())) {
+			return getNamespace();
 
-            return getNamespace();
+		}
 
-        }
+		else if (prefix.equals("xml")) {
 
-        else if (prefix.equals("xml")) {
+			return Namespace.XML_NAMESPACE;
 
-            return Namespace.XML_NAMESPACE;
+		}
 
-        }
+		else {
+			final Object contentShadow = content;
 
-        else {
+			if (contentShadow instanceof List) {
 
-            if (content instanceof List) {
+				List list = (List) contentShadow;
 
-                List list = (List) content;
+				int size = list.size();
 
-                int size = list.size();
+				for (int i = 0; i < size; i++) {
 
-                for (int i = 0; i < size; i++) {
+					Object object = list.get(i);
 
-                    Object object = list.get(i);
+					if (object instanceof Namespace) {
 
-                    if (object instanceof Namespace) {
+						Namespace namespace = (Namespace) object;
 
-                        Namespace namespace = (Namespace) object;
+						if (prefix.equals(namespace.getPrefix())) {
 
-                        if (prefix.equals(namespace.getPrefix())) {
+							return namespace;
 
-                            return namespace;
+						}
 
-                        }
+					}
 
-                    }
+				}
 
-                }
+			}
 
-            }
+			else if (contentShadow instanceof Namespace) {
 
-            else if (content instanceof Namespace) {
+				Namespace namespace = (Namespace) contentShadow;
 
-                Namespace namespace = (Namespace) content;
+				if (prefix.equals(namespace.getPrefix())) {
 
-                if (prefix.equals(namespace.getPrefix())) {
+					return namespace;
 
-                    return namespace;
+				}
 
-                }
+			}
 
-            }
+		}
 
-        }
+		Element parent = getParent();
 
-        Element parent = getParent();
+		if (parent != null) {
 
-        if (parent != null) {
+			Namespace answer = parent.getNamespaceForPrefix(prefix);
 
-            Namespace answer = parent.getNamespaceForPrefix(prefix);
+			if (answer != null) {
 
-            if (answer != null) {
+				return answer;
 
-                return answer;
+			}
 
-            }
+		}
 
-        }
+		if (prefix == null || prefix.length() <= 0) {
 
-        if (prefix == null || prefix.length() <= 0) {
+			return Namespace.NO_NAMESPACE;
 
-            return Namespace.NO_NAMESPACE;
+		}
 
-        }
+		return null;
 
-        return null;
+	}
 
-    }
+	public Namespace getNamespaceForURI(String uri) {
 
-    public Namespace getNamespaceForURI(String uri) {
+		if (uri == null || uri.length() <= 0) {
 
-        if (uri == null || uri.length() <= 0) {
+			return Namespace.NO_NAMESPACE;
 
-            return Namespace.NO_NAMESPACE;
+		}
 
-        }
+		else if (uri.equals(getNamespaceURI())) {
 
-        else if (uri.equals(getNamespaceURI())) {
+			return getNamespace();
 
-            return getNamespace();
+		}
 
-        }
+		else {
+			final Object contentShadow = content;
 
-        else {
+			if (contentShadow instanceof List) {
 
-            if (content instanceof List) {
+				List list = (List) contentShadow;
 
-                List list = (List) content;
+				int size = list.size();
 
-                int size = list.size();
+				for (int i = 0; i < size; i++) {
 
-                for (int i = 0; i < size; i++) {
+					Object object = list.get(i);
 
-                    Object object = list.get(i);
+					if (object instanceof Namespace) {
 
-                    if (object instanceof Namespace) {
+						Namespace namespace = (Namespace) object;
 
-                        Namespace namespace = (Namespace) object;
+						if (uri.equals(namespace.getURI())) {
 
-                        if (uri.equals(namespace.getURI())) {
+							return namespace;
 
-                            return namespace;
+						}
 
-                        }
+					}
 
-                    }
+				}
 
-                }
+			}
 
-            }
+			else if (contentShadow instanceof Namespace) {
 
-            else if (content instanceof Namespace) {
+				Namespace namespace = (Namespace) contentShadow;
 
-                Namespace namespace = (Namespace) content;
+				if (uri.equals(namespace.getURI())) {
 
-                if (uri.equals(namespace.getURI())) {
+					return namespace;
 
-                    return namespace;
+				}
 
-                }
+			}
 
-            }
+			Element parent = getParent();
 
-            Element parent = getParent();
+			if (parent != null) {
 
-            if (parent != null) {
+				return parent.getNamespaceForURI(uri);
 
-                return parent.getNamespaceForURI(uri);
+			}
 
-            }
+			return null;
 
-            return null;
+		}
 
-        }
+	}
 
-    }
+	public List declaredNamespaces() {
 
-    public List declaredNamespaces() {
+		BackedList answer = createResultList();
 
-        BackedList answer = createResultList();
+		//        if (getNamespaceURI().length() > 0) {
+		//
+		//            answer.addLocal(getNamespace());
+		//
+		//        }
 
-        if (getNamespaceURI().length() > 0) {
+		final Object contentShadow = content;
+		if (contentShadow instanceof List) {
 
-            answer.addLocal(getNamespace());
+			List list = (List) contentShadow;
 
-        }
+			int size = list.size();
 
-        if (content instanceof List) {
+			for (int i = 0; i < size; i++) {
 
-            List list = (List) content;
+				Object object = list.get(i);
 
-            int size = list.size();
+				if (object instanceof Namespace) {
 
-            for (int i = 0; i < size; i++) {
+					answer.addLocal(object);
 
-                Object object = list.get(i);
+				}
 
-                if (object instanceof Namespace) {
+			}
 
-                    answer.addLocal(object);
+		}
 
-                }
+		else {
 
-            }
+			if (contentShadow instanceof Namespace) {
 
-        }
+				answer.addLocal(contentShadow);
 
-        else {
+			}
 
-            if (content instanceof Namespace) {
+		}
 
-                answer.addLocal(content);
+		return answer;
 
-            }
+	}
 
-        }
+	public List additionalNamespaces() {
+		final Object contentShadow = content;
 
-        return answer;
+		if (contentShadow instanceof List) {
 
-    }
+			List list = (List) contentShadow;
 
-    public List additionalNamespaces() {
+			int size = list.size();
 
-        if (content instanceof List) {
+			BackedList answer = createResultList();
 
-            List list = (List) content;
+			for (int i = 0; i < size; i++) {
 
-            int size = list.size();
+				Object object = list.get(i);
 
-            BackedList answer = createResultList();
+				if (object instanceof Namespace) {
 
-            for (int i = 0; i < size; i++) {
+					Namespace namespace = (Namespace) object;
 
-                Object object = list.get(i);
+					if (!namespace.equals(getNamespace())) {
 
-                if (object instanceof Namespace) {
+						answer.addLocal(namespace);
+					}
 
-                    Namespace namespace = (Namespace) object;
+				}
 
-                    answer.addLocal(namespace);
+			}
 
-                }
+			return answer;
 
-            }
+		}
 
-            return answer;
+		else {
 
-        }
+			if (contentShadow instanceof Namespace) {
 
-        else {
+				Namespace namespace = (Namespace) contentShadow;
 
-            if (content instanceof Namespace) {
+				if (namespace.equals(getNamespace())) {
 
-                Namespace namespace = (Namespace) content;
+					return createEmptyList();
 
-                return createSingleResultList(namespace);
+				}
 
-            }
+				return createSingleResultList(namespace);
 
-            else {
+			}
 
-                return createEmptyList();
+			else {
 
-            }
+				return createEmptyList();
 
-        }
+			}
 
-    }
+		}
 
-    public List additionalNamespaces(String defaultNamespaceURI) {
+	}
 
-        if (content instanceof List) {
+	public List additionalNamespaces(String defaultNamespaceURI) {
 
-            List list = (List) content;
+		final Object contentShadow = content;
+		if (contentShadow instanceof List) {
 
-            BackedList answer = createResultList();
+			List list = (List) contentShadow;
 
-            int size = list.size();
+			BackedList answer = createResultList();
 
-            for (int i = 0; i < size; i++) {
+			int size = list.size();
 
-                Object object = list.get(i);
+			for (int i = 0; i < size; i++) {
 
-                if (object instanceof Namespace) {
+				Object object = list.get(i);
 
-                    Namespace namespace = (Namespace) object;
+				if (object instanceof Namespace) {
 
-                    if (!defaultNamespaceURI.equals(namespace.getURI())) {
+					Namespace namespace = (Namespace) object;
 
-                        answer.addLocal(namespace);
+					if (!defaultNamespaceURI.equals(namespace.getURI())) {
 
-                    }
+						answer.addLocal(namespace);
 
-                }
+					}
 
-            }
+				}
 
-            return answer;
+			}
 
-        }
+			return answer;
 
-        else {
+		}
 
-            if (content instanceof Namespace) {
+		else {
 
-                Namespace namespace = (Namespace) content;
+			if (contentShadow instanceof Namespace) {
 
-                if (!defaultNamespaceURI.equals(namespace.getURI())) {
+				Namespace namespace = (Namespace) contentShadow;
 
-                    return createSingleResultList(namespace);
+				if (!defaultNamespaceURI.equals(namespace.getURI())) {
 
-                }
+					return createSingleResultList(namespace);
 
-            }
+				}
 
-        }
+			}
 
-        return createEmptyList();
+		}
 
-    }
+		return createEmptyList();
 
-    // Processing instruction API
+	}
 
-    public List processingInstructions() {
+	// Processing instruction API
 
-        if (content instanceof List) {
+	public List processingInstructions() {
 
-            List list = (List) content;
+		final Object contentShadow = content;
+		if (contentShadow instanceof List) {
 
-            BackedList answer = createResultList();
+			List list = (List) contentShadow;
 
-            int size = list.size();
+			BackedList answer = createResultList();
 
-            for (int i = 0; i < size; i++) {
+			int size = list.size();
 
-                Object object = list.get(i);
+			for (int i = 0; i < size; i++) {
 
-                if (object instanceof ProcessingInstruction) {
+				Object object = list.get(i);
 
-                    answer.addLocal(object);
+				if (object instanceof ProcessingInstruction) {
 
-                }
+					answer.addLocal(object);
 
-            }
+				}
 
-            return answer;
+			}
 
-        }
+			return answer;
 
-        else {
+		}
 
-            if (content instanceof ProcessingInstruction) {
+		else {
 
-                return createSingleResultList(content);
+			if (contentShadow instanceof ProcessingInstruction) {
 
-            }
+				return createSingleResultList(contentShadow);
 
-            return createEmptyList();
+			}
 
-        }
+			return createEmptyList();
 
-    }
+		}
 
-    public List processingInstructions(String target) {
+	}
 
-        if (content instanceof List) {
+	public List processingInstructions(String target) {
 
-            List list = (List) content;
+		final Object contentShadow = content;
+		if (contentShadow instanceof List) {
 
-            BackedList answer = createResultList();
+			List list = (List) contentShadow;
 
-            int size = list.size();
+			BackedList answer = createResultList();
 
-            for (int i = 0; i < size; i++) {
+			int size = list.size();
 
-                Object object = list.get(i);
+			for (int i = 0; i < size; i++) {
 
-                if (object instanceof ProcessingInstruction) {
+				Object object = list.get(i);
 
-                    ProcessingInstruction pi = (ProcessingInstruction) object;
+				if (object instanceof ProcessingInstruction) {
 
-                    if (target.equals(pi.getName())) {
+					ProcessingInstruction pi = (ProcessingInstruction) object;
 
-                        answer.addLocal(pi);
+					if (target.equals(pi.getName())) {
 
-                    }
+						answer.addLocal(pi);
 
-                }
+					}
 
-            }
+				}
 
-            return answer;
+			}
 
-        }
+			return answer;
 
-        else {
+		}
 
-            if (content instanceof ProcessingInstruction) {
+		else {
 
-                ProcessingInstruction pi = (ProcessingInstruction) content;
+			if (contentShadow instanceof ProcessingInstruction) {
 
-                if (target.equals(pi.getName())) {
+				ProcessingInstruction pi = (ProcessingInstruction) contentShadow;
 
-                    return createSingleResultList(pi);
+				if (target.equals(pi.getName())) {
 
-                }
+					return createSingleResultList(pi);
 
-            }
+				}
 
-            return createEmptyList();
+			}
 
-        }
+			return createEmptyList();
 
-    }
+		}
 
-    public ProcessingInstruction processingInstruction(String target) {
+	}
 
-        if (content instanceof List) {
+	public ProcessingInstruction processingInstruction(String target) {
+		final Object contentShadow = content;
 
-            List list = (List) content;
+		if (contentShadow instanceof List) {
 
-            int size = list.size();
+			List list = (List) contentShadow;
 
-            for (int i = 0; i < size; i++) {
+			int size = list.size();
 
-                Object object = list.get(i);
+			for (int i = 0; i < size; i++) {
 
-                if (object instanceof ProcessingInstruction) {
+				Object object = list.get(i);
 
-                    ProcessingInstruction pi = (ProcessingInstruction) object;
+				if (object instanceof ProcessingInstruction) {
 
-                    if (target.equals(pi.getName())) {
+					ProcessingInstruction pi = (ProcessingInstruction) object;
 
-                        return pi;
+					if (target.equals(pi.getName())) {
 
-                    }
+						return pi;
 
-                }
+					}
 
-            }
+				}
 
-        }
+			}
 
-        else {
+		}
 
-            if (content instanceof ProcessingInstruction) {
+		else {
 
-                ProcessingInstruction pi = (ProcessingInstruction) content;
+			if (contentShadow instanceof ProcessingInstruction) {
 
-                if (target.equals(pi.getName())) {
+				ProcessingInstruction pi = (ProcessingInstruction) contentShadow;
 
-                    return pi;
+				if (target.equals(pi.getName())) {
 
-                }
+					return pi;
 
-            }
+				}
 
-        }
+			}
 
-        return null;
+		}
 
-    }
+		return null;
 
-    public boolean removeProcessingInstruction(String target) {
+	}
 
-        if (content instanceof List) {
+	public boolean removeProcessingInstruction(String target) {
+		final Object contentShadow = content;
 
-            List list = (List) content;
+		if (contentShadow instanceof List) {
 
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
+			List list = (List) contentShadow;
 
-                Object object = iter.next();
+			for (Iterator iter = list.iterator(); iter.hasNext();) {
 
-                if (object instanceof ProcessingInstruction) {
+				Object object = iter.next();
 
-                    ProcessingInstruction pi = (ProcessingInstruction) object;
+				if (object instanceof ProcessingInstruction) {
 
-                    if (target.equals(pi.getName())) {
+					ProcessingInstruction pi = (ProcessingInstruction) object;
 
-                        iter.remove();
+					if (target.equals(pi.getName())) {
 
-                        return true;
+						iter.remove();
 
-                    }
+						return true;
 
-                }
+					}
 
-            }
+				}
 
-        }
+			}
 
-        else {
+		}
 
-            if (content instanceof ProcessingInstruction) {
+		else {
 
-                ProcessingInstruction pi = (ProcessingInstruction) content;
+			if (contentShadow instanceof ProcessingInstruction) {
 
-                if (target.equals(pi.getName())) {
+				ProcessingInstruction pi = (ProcessingInstruction) contentShadow;
 
-                    content = null;
+				if (target.equals(pi.getName())) {
 
-                    return true;
+					this.content = null;
 
-                }
+					return true;
 
-            }
+				}
 
-        }
+			}
 
-        return false;
+		}
 
-    }
+		return false;
 
-    public Element element(String name) {
+	}
 
-        if (content instanceof List) {
+	public Element element(String name) {
+		final Object contentShadow = content;
 
-            List list = (List) content;
+		if (contentShadow instanceof List) {
 
-            int size = list.size();
+			List list = (List) contentShadow;
 
-            for (int i = 0; i < size; i++) {
+			int size = list.size();
 
-                Object object = list.get(i);
+			for (int i = 0; i < size; i++) {
 
-                if (object instanceof Element) {
+				Object object = list.get(i);
 
-                    Element element = (Element) object;
+				if (object instanceof Element) {
 
-                    if (name.equals(element.getName())) {
+					Element element = (Element) object;
 
-                        return element;
+					if (name.equals(element.getName())) {
 
-                    }
+						return element;
 
-                }
+					}
 
-            }
+				}
 
-        }
+			}
 
-        else {
+		}
 
-            if (content instanceof Element) {
+		else {
 
-                Element element = (Element) content;
+			if (contentShadow instanceof Element) {
 
-                if (name.equals(element.getName())) {
+				Element element = (Element) contentShadow;
 
-                    return element;
+				if (name.equals(element.getName())) {
 
-                }
+					return element;
 
-            }
+				}
 
-        }
+			}
 
-        return null;
+		}
 
-    }
+		return null;
 
-    public Element element(QName qName) {
+	}
 
-        if (content instanceof List) {
+	public Element element(QName qName) {
+		final Object contentShadow = content;
 
-            List list = (List) content;
+		if (contentShadow instanceof List) {
 
-            int size = list.size();
+			List list = (List) contentShadow;
 
-            for (int i = 0; i < size; i++) {
+			int size = list.size();
 
-                Object object = list.get(i);
+			for (int i = 0; i < size; i++) {
 
-                if (object instanceof Element) {
+				Object object = list.get(i);
 
-                    Element element = (Element) object;
+				if (object instanceof Element) {
 
-                    if (qName.equals(element.getQName())) {
+					Element element = (Element) object;
 
-                        return element;
+					if (qName.equals(element.getQName())) {
 
-                    }
+						return element;
 
-                }
+					}
 
-            }
+				}
 
-        }
+			}
 
-        else {
+		}
 
-            if (content instanceof Element) {
+		else {
 
-                Element element = (Element) content;
+			if (contentShadow instanceof Element) {
 
-                if (qName.equals(element.getQName())) {
+				Element element = (Element) contentShadow;
 
-                    return element;
+				if (qName.equals(element.getQName())) {
 
-                }
+					return element;
 
-            }
+				}
 
-        }
+			}
 
-        return null;
+		}
 
-    }
+		return null;
 
-    public Element element(String name, Namespace namespace) {
+	}
 
-        return element(getDocumentFactory().createQName(name, namespace));
+	public Element element(String name, Namespace namespace) {
 
-    }
+		return element(getDocumentFactory().createQName(name, namespace));
 
-    public List elements() {
+	}
 
-        if (content instanceof List) {
+	//    public List elements() {
+	//        final Object contentShadow = content;
+	//
+	//        if (contentShadow instanceof List) {
+	//
+	//            List list = (List) contentShadow;
+	//
+	//            BackedList answer = createResultList();
+	//
+	//            int size = list.size();
+	//
+	//            for (int i = 0; i < size; i++) {
+	//
+	//                Object object = list.get(i);
+	//
+	//                if (object instanceof Element) {
+	//
+	//                    answer.addLocal(object);
+	//
+	//                }
+	//
+	//            }
+	//
+	//            return answer;
+	//
+	//        }
+	//
+	//        else {
+	//
+	//            if (contentShadow instanceof Element) {
+	//
+	//                Element element = (Element) contentShadow;
+	//
+	//                return createSingleResultList(element);
+	//
+	//            }
+	//
+	//            return createEmptyList();
+	//
+	//        }
+	//
+	//    }
+	//
+	//    public List elements(String name) {
+	//        final Object contentShadow = content;
+	//
+	//        if (contentShadow instanceof List) {
+	//
+	//            List list = (List) contentShadow;
+	//
+	//            BackedList answer = createResultList();
+	//
+	//            int size = list.size();
+	//
+	//            for (int i = 0; i < size; i++) {
+	//
+	//                Object object = list.get(i);
+	//
+	//                if (object instanceof Element) {
+	//
+	//                    Element element = (Element) object;
+	//
+	//                    if (name.equals(element.getName())) {
+	//
+	//                        answer.addLocal(element);
+	//
+	//                    }
+	//
+	//                }
+	//
+	//            }
+	//
+	//            return answer;
+	//
+	//        }
+	//
+	//        else {
+	//
+	//            if (contentShadow instanceof Element) {
+	//
+	//                Element element = (Element) contentShadow;
+	//
+	//                if (name.equals(element.getName())) {
+	//
+	//                    return createSingleResultList(element);
+	//
+	//                }
+	//
+	//            }
+	//
+	//            return createEmptyList();
+	//
+	//        }
+	//
+	//    }
+	//
+	//    public List elements(QName qName) {
+	//        final Object contentShadow = content;
+	//
+	//        if (contentShadow instanceof List) {
+	//
+	//            List list = (List) contentShadow;
+	//
+	//            BackedList answer = createResultList();
+	//
+	//            int size = list.size();
+	//
+	//            for (int i = 0; i < size; i++) {
+	//
+	//                Object object = list.get(i);
+	//
+	//                if (object instanceof Element) {
+	//
+	//                    Element element = (Element) object;
+	//
+	//                    if (qName.equals(element.getQName())) {
+	//
+	//                        answer.addLocal(element);
+	//
+	//                    }
+	//
+	//                }
+	//
+	//            }
+	//
+	//            return answer;
+	//
+	//        }
+	//
+	//        else {
+	//
+	//            if (contentShadow instanceof Element) {
+	//
+	//                Element element = (Element) contentShadow;
+	//
+	//                if (qName.equals(element.getQName())) {
+	//
+	//                    return createSingleResultList(element);
+	//
+	//                }
+	//
+	//            }
+	//
+	//            return createEmptyList();
+	//
+	//        }
+	//
+	//    }
+	//
+	//    public List elements(String name, Namespace namespace) {
+	//
+	//        return elements(getDocumentFactory().createQName(name, namespace));
+	//
+	//    }
+	//
+	//    public Iterator elementIterator() {
+	//        final Object contentShadow = content;
+	//
+	//        if (contentShadow instanceof List) {
+	//
+	//            List list = (List) contentShadow;
+	//
+	//            return new ElementIterator(list.iterator());
+	//
+	//        }
+	//
+	//        else {
+	//
+	//            if (contentShadow instanceof Element) {
+	//
+	//                Element element = (Element) contentShadow;
+	//
+	//                return createSingleIterator(element);
+	//
+	//            }
+	//
+	//            return EMPTY_ITERATOR;
+	//
+	//        }
+	//
+	//    }
+	//
+	//    public Iterator elementIterator(String name) {
+	//        final Object contentShadow = content;
+	//
+	//        if (contentShadow instanceof List) {
+	//
+	//            List list = (List) contentShadow;
+	//
+	//            return new ElementNameIterator(list.iterator(), name);
+	//
+	//        }
+	//
+	//        else {
+	//
+	//            if (contentShadow instanceof Element) {
+	//
+	//                Element element = (Element) contentShadow;
+	//
+	//                if (name.equals(element.getName())) {
+	//
+	//                    return createSingleIterator(element);
+	//
+	//                }
+	//
+	//            }
+	//
+	//            return EMPTY_ITERATOR;
+	//
+	//        }
+	//
+	//    }
+	//
+	//    public Iterator elementIterator(QName qName) {
+	//        final Object contentShadow = content;
+	//
+	//        if (contentShadow instanceof List) {
+	//
+	//            List list = (List) contentShadow;
+	//
+	//            return new ElementQNameIterator(list.iterator(), qName);
+	//
+	//        }
+	//
+	//        else {
+	//
+	//            if (contentShadow instanceof Element) {
+	//
+	//                Element element = (Element) contentShadow;
+	//
+	//                if (qName.equals(element.getQName())) {
+	//
+	//                    return createSingleIterator(element);
+	//
+	//                }
+	//
+	//            }
+	//
+	//            return EMPTY_ITERATOR;
+	//
+	//        }
+	//
+	//    }
+	//
+	//    public Iterator elementIterator(String name, Namespace namespace) {
+	//
+	//        return elementIterator(getDocumentFactory().createQName(name,
+	// namespace));
+	//
+	//    }
+	//
+	public void setContent(List content) {
 
-            List list = (List) content;
+		if (content instanceof ContentListFacade) {
 
-            BackedList answer = createResultList();
+			content = ((ContentListFacade) content).getBackingList();
 
-            int size = list.size();
+		}
 
-            for (int i = 0; i < size; i++) {
+		if (content == null) {
 
-                Object object = list.get(i);
+			this.content = null;
 
-                if (object instanceof Element) {
+		}
 
-                    answer.addLocal(object);
+		else {
 
-                }
+			int size = content.size();
 
-            }
+			List newContent = createContentList(size);
 
-            return answer;
+			for (int i = 0; i < size; i++) {
 
-        }
+				Object object = content.get(i);
 
-        else {
+				if (object instanceof Node) {
 
-            if (content instanceof Element) {
+					Node node = (Node) object;
 
-                Element element = (Element) content;
+					Element parent = node.getParent();
 
-                return createSingleResultList(element);
+					if (parent != null && parent != this) {
 
-            }
+						node = (Node) node.clone();
 
-            return createEmptyList();
+					}
 
-        }
+					newContent.add(node);
 
-    }
+					childAdded(node);
 
-    public List elements(String name) {
+				}
 
-        if (content instanceof List) {
+				else if (object != null) {
 
-            List list = (List) content;
+					String text = object.toString();
 
-            BackedList answer = createResultList();
+					Node node = getDocumentFactory().createText(text);
 
-            int size = list.size();
+					newContent.add(node);
 
-            for (int i = 0; i < size; i++) {
+					childAdded(node);
 
-                Object object = list.get(i);
+				}
 
-                if (object instanceof Element) {
+			}
 
-                    Element element = (Element) object;
+			contentRemoved();
 
-                    if (name.equals(element.getName())) {
+			this.content = newContent;
 
-                        answer.addLocal(element);
+		}
 
-                    }
+	}
 
-                }
+	public void clearContent() {
 
-            }
+		if (content != null) {
 
-            return answer;
+			contentRemoved();
 
-        }
+			content = null;
 
-        else {
+		}
 
-            if (content instanceof Element) {
+	}
 
-                Element element = (Element) content;
+	public Node node(int index) {
 
-                if (name.equals(element.getName())) {
+		if (index >= 0) {
 
-                    return createSingleResultList(element);
+			final Object contentShadow = content;
+			Object node;
 
-                }
+			if (contentShadow instanceof List) {
 
-            }
+				List list = (List) contentShadow;
 
-            return createEmptyList();
+				if (index >= list.size()) {
 
-        }
+					return null;
 
-    }
+				}
 
-    public List elements(QName qName) {
+				node = list.get(index);
 
-        if (content instanceof List) {
+			} else {
+				node = (index == 0) ? contentShadow : null;
+			}
 
-            List list = (List) content;
+			if (node != null) {
 
-            BackedList answer = createResultList();
+				if (node instanceof Node) {
 
-            int size = list.size();
+					return (Node) node;
 
-            for (int i = 0; i < size; i++) {
+				}
 
-                Object object = list.get(i);
+				else {
 
-                if (object instanceof Element) {
+					return new DefaultText(node.toString());
 
-                    Element element = (Element) object;
+				}
 
-                    if (qName.equals(element.getQName())) {
+			}
 
-                        answer.addLocal(element);
+		}
 
-                    }
+		return null;
 
-                }
+	}
 
-            }
+	public int indexOf(Node node) {
+		final Object contentShadow = content;
 
-            return answer;
+		if (contentShadow instanceof List) {
 
-        }
+			List list = (List) contentShadow;
 
-        else {
+			return list.indexOf(node);
 
-            if (content instanceof Element) {
+		}
 
-                Element element = (Element) content;
+		else {
 
-                if (qName.equals(element.getQName())) {
+			return (contentShadow != null && contentShadow.equals(node)) ? 0
+					: -1;
 
-                    return createSingleResultList(element);
+		}
 
-                }
+	}
 
-            }
+	public int nodeCount() {
+		final Object contentShadow = content;
 
-            return createEmptyList();
+		if (contentShadow instanceof List) {
 
-        }
+			List list = (List) contentShadow;
 
-    }
+			return list.size();
 
-    public List elements(String name, Namespace namespace) {
+		}
 
-        return elements(getDocumentFactory().createQName(name, namespace));
+		else {
 
-    }
+			return (contentShadow != null) ? 1 : 0;
 
-    public Iterator elementIterator() {
+		}
 
-        if (content instanceof List) {
+	}
 
-            List list = (List) content;
+	public Iterator nodeIterator() {
+		final Object contentShadow = content;
 
-            return new ElementIterator(list.iterator());
+		if (contentShadow instanceof List) {
 
-        }
+			List list = (List) contentShadow;
 
-        else {
+			return list.iterator();
 
-            if (content instanceof Element) {
+		}
 
-                Element element = (Element) content;
+		else {
 
-                return createSingleIterator(element);
+			if (contentShadow != null) {
 
-            }
+				return createSingleIterator(contentShadow);
 
-            return EMPTY_ITERATOR;
+			}
 
-        }
+			else {
 
-    }
+				return EMPTY_ITERATOR;
 
-    public Iterator elementIterator(String name) {
+			}
 
-        if (content instanceof List) {
+		}
 
-            List list = (List) content;
+	}
 
-            return new ElementNameIterator(list.iterator(), name);
+	public List attributes() {
 
-        }
+		return new ContentListFacade(this, attributeList());
 
-        else {
+	}
 
-            if (content instanceof Element) {
+	public void setAttributes(List attributes) {
 
-                Element element = (Element) content;
+		if (attributes instanceof ContentListFacade) {
 
-                if (name.equals(element.getName())) {
+			attributes = ((ContentListFacade) attributes).getBackingList();
 
-                    return createSingleIterator(element);
+		}
+		this.attributes = attributes;
 
-                }
+	}
 
-            }
+	public Iterator attributeIterator() {
+		final Object attributesShadow = this.attributes;
+		if (attributesShadow instanceof List) {
 
-            return EMPTY_ITERATOR;
+			List list = (List) attributesShadow;
 
-        }
+			return list.iterator();
 
-    }
+		}
 
-    public Iterator elementIterator(QName qName) {
+		else if (attributesShadow != null) {
 
-        if (content instanceof List) {
+			return createSingleIterator(attributesShadow);
 
-            List list = (List) content;
+		}
 
-            return new ElementQNameIterator(list.iterator(), qName);
+		else {
 
-        }
+			return EMPTY_ITERATOR;
 
-        else {
+		}
 
-            if (content instanceof Element) {
+	}
 
-                Element element = (Element) content;
+	public Attribute attribute(int index) {
+		final Object attributesShadow = this.attributes;
+		if (attributesShadow instanceof List) {
 
-                if (qName.equals(element.getQName())) {
+			List list = (List) attributesShadow;
 
-                    return createSingleIterator(element);
+			return (Attribute) list.get(index);
 
-                }
+		}
 
-            }
+		else if (attributesShadow != null && index == 0) {
 
-            return EMPTY_ITERATOR;
+			return (Attribute) attributesShadow;
 
-        }
+		}
 
-    }
+		else {
 
-    public Iterator elementIterator(String name, Namespace namespace) {
+			return null;
 
-        return elementIterator(getDocumentFactory().createQName(name, namespace));
+		}
 
-    }
+	}
 
-    public void setContent(List content) {
+	public int attributeCount() {
+		final Object attributesShadow = this.attributes;
 
-        if (content instanceof ContentListFacade) {
+		if (attributesShadow instanceof List) {
 
-            content = ((ContentListFacade) content).getBackingList();
+			List list = (List) attributesShadow;
 
-        }
+			return list.size();
 
-        if (content == null) {
+		}
 
-            this.content = null;
+		else {
 
-        }
+			return (attributesShadow != null) ? 1 : 0;
 
-        else {
+		}
 
-            int size = content.size();
+	}
 
-            List newContent = createContentList(size);
+	public Attribute attribute(String name) {
+		final Object attributesShadow = this.attributes;
 
-            for (int i = 0; i < size; i++) {
+		if (attributesShadow instanceof List) {
 
-                Object object = content.get(i);
+			List list = (List) attributesShadow;
 
-                if (object instanceof Node) {
+			int size = list.size();
 
-                    Node node = (Node) object;
+			for (int i = 0; i < size; i++) {
 
-                    Element parent = node.getParent();
+				Attribute attribute = (Attribute) list.get(i);
 
-                    if (parent != null && parent != this) {
+				if (name.equals(attribute.getName())) {
 
-                        node = (Node) node.clone();
+					return attribute;
 
-                    }
+				}
 
-                    newContent.add(node);
+			}
 
-                    childAdded(node);
+		}
 
-                }
+		else if (attributesShadow != null) {
 
-                else if (object != null) {
+			Attribute attribute = (Attribute) attributesShadow;
 
-                    String text = object.toString();
+			if (name.equals(attribute.getName())) {
 
-                    Node node = getDocumentFactory().createText(text);
+				return attribute;
 
-                    newContent.add(node);
+			}
 
-                    childAdded(node);
+		}
 
-                }
+		return null;
 
-            }
+	}
 
-            contentRemoved();
+	public Attribute attribute(QName qName) {
+		final Object attributesShadow = this.attributes;
 
-            this.content = newContent;
+		if (attributesShadow instanceof List) {
 
-        }
+			List list = (List) attributesShadow;
 
-    }
+			int size = list.size();
 
-    public void clearContent() {
+			for (int i = 0; i < size; i++) {
 
-        if (content != null) {
+				Attribute attribute = (Attribute) list.get(i);
 
-            contentRemoved();
+				if (qName.equals(attribute.getQName())) {
 
-        }
+					return attribute;
 
-        content = null;
+				}
 
-    }
+			}
 
-    public Node node(int index) {
+		}
 
-        if (index >= 0) {
+		else if (attributesShadow != null) {
 
-            Object node = content;
+			Attribute attribute = (Attribute) attributesShadow;
 
-            if (content instanceof List) {
+			if (qName.equals(attribute.getQName())) {
 
-                List list = (List) content;
+				return attribute;
 
-                if (index >= list.size()) {
+			}
 
-                    return null;
+		}
 
-                }
+		return null;
 
-                node = list.get(index);
+	}
 
-            }
+	public Attribute attribute(String name, Namespace namespace) {
 
-            if (node != null) {
+		return attribute(getDocumentFactory().createQName(name, namespace));
 
-                if (node instanceof Node) {
+	}
 
-                    return (Node) node;
+	public void add(Attribute attribute) {
 
-                }
+		if (attribute.getParent() != null) {
 
-                else {
+			String message = "The Attribute already has an existing parent \""
+					+ attribute.getParent().getQualifiedName() + "\"";
 
-                    return new DefaultText(node.toString());
+			throw new IllegalAddException(this, attribute, message);
 
-                }
+		}
 
-            }
+		if (attribute.getValue() == null) {
 
-        }
+			// try remove a previous attribute with the same
 
-        return null;
+			// name since adding an attribute with a null value
 
-    }
+			// is equivalent to removing it.
 
-    public int indexOf(Node node) {
+			Attribute oldAttribute = attribute(attribute.getQName());
 
-        if (content instanceof List) {
+			if (oldAttribute != null) {
 
-            List list = (List) content;
+				remove(oldAttribute);
 
-            return list.indexOf(node);
+			}
 
-        }
+		}
 
-        else {
+		else {
 
-            return (content != null && content.equals(node)) ? 0 : -1;
+			if (attributes == null) {
 
-        }
+				attributes = attribute;
 
-    }
+			}
 
-    public int nodeCount() {
+			else {
 
-        if (content instanceof List) {
+				attributeList().add(attribute);
 
-            List list = (List) content;
+			}
 
-            return list.size();
+			childAdded(attribute);
 
-        }
+		}
 
-        else {
+	}
 
-            return (content != null) ? 1 : 0;
+	public boolean remove(Attribute attribute) {
 
-        }
+		boolean answer = false;
+		final Object attributesShadow = this.attributes;
 
-    }
+		if (attributesShadow instanceof List) {
 
-    public Iterator nodeIterator() {
+			List list = (List) attributesShadow;
 
-        if (content instanceof List) {
+			answer = list.remove(attribute);
 
-            List list = (List) content;
+			if (!answer) {
 
-            return list.iterator();
+				// we may have a copy of the attribute
 
-        }
+				Attribute copy = attribute(attribute.getQName());
 
-        else {
+				if (copy != null) {
 
-            if (content != null) {
+					list.remove(copy);
 
-                return createSingleIterator(content);
+					answer = true;
 
-            }
+				}
 
-            else {
+			}
 
-                return EMPTY_ITERATOR;
+		}
 
-            }
+		else if (attributesShadow != null) {
 
-        }
+			if (attribute.equals(attributesShadow)) {
 
-    }
+				this.attributes = null;
 
-    public List attributes() {
+				answer = true;
 
-        return new ContentListFacade(this, attributeList());
+			}
 
-    }
+			else {
 
-    public void setAttributes(List attributes) {
+				// we may have a copy of the attribute
 
-        this.attributes = attributes;
+				Attribute other = (Attribute) attributesShadow;
 
-        if (attributes instanceof ContentListFacade) {
+				if (attribute.getQName().equals(other.getQName())) {
 
-            this.attributes = ((ContentListFacade) attributes).getBackingList();
+					attributes = null;
 
-        }
+					answer = true;
 
-    }
+				}
 
-    public Iterator attributeIterator() {
+			}
 
-        if (attributes instanceof List) {
+		}
 
-            List list = (List) attributes;
+		if (answer) {
 
-            return list.iterator();
+			childRemoved(attribute);
 
-        }
+		}
 
-        else if (attributes != null) {
+		return answer;
 
-            return createSingleIterator(attributes);
+	}
 
-        }
+	// Implementation methods
 
-        else {
+	//-------------------------------------------------------------------------
 
-            return EMPTY_ITERATOR;
+	protected void addNewNode(Node node) {
+		final Object contentShadow = content;
 
-        }
+		if (contentShadow == null) {
 
-    }
+			this.content = node;
 
-    public Attribute attribute(int index) {
+		}
 
-        if (attributes instanceof List) {
+		else {
 
-            List list = (List) attributes;
+			if (contentShadow instanceof List) {
 
-            return (Attribute) list.get(index);
+				List list = (List) contentShadow;
 
-        }
+				list.add(node);
 
-        else if (attributes != null && index == 0) {
+			}
 
-            return (Attribute) attributes;
+			else {
 
-        }
+				List list = createContentList();
 
-        else {
+				list.add(contentShadow);
 
-            return null;
+				list.add(node);
 
-        }
+				this.content = list;
 
-    }
+			}
 
-    public int attributeCount() {
+		}
 
-        if (attributes instanceof List) {
+		childAdded(node);
 
-            List list = (List) attributes;
+	}
 
-            return list.size();
+	protected boolean removeNode(Node node) {
 
-        }
+		boolean answer = false;
+		final Object contentShadow = content;
 
-        else {
+		if (contentShadow != null) {
 
-            return (attributes != null) ? 1 : 0;
+			if (contentShadow == node) {
 
-        }
+				this.content = null;
 
-    }
+				answer = true;
 
-    public Attribute attribute(String name) {
+			}
 
-        if (attributes instanceof List) {
+			else if (contentShadow instanceof List) {
 
-            List list = (List) attributes;
+				List list = (List) contentShadow;
 
-            int size = list.size();
+				answer = list.remove(node);
 
-            for (int i = 0; i < size; i++) {
+			}
 
-                Attribute attribute = (Attribute) list.get(i);
+		}
 
-                if (name.equals(attribute.getName())) {
+		if (answer) {
 
-                    return attribute;
+			childRemoved(node);
 
-                }
+		}
 
-            }
+		return answer;
 
-        }
+	}
 
-        else if (attributes != null) {
+	protected List contentList() {
+		final Object contentShadow = content;
 
-            Attribute attribute = (Attribute) attributes;
+		if (contentShadow instanceof List) {
 
-            if (name.equals(attribute.getName())) {
+			return (List) contentShadow;
 
-                return attribute;
+		}
 
-            }
+		else {
 
-        }
+			List list = createContentList();
 
-        return null;
+			if (contentShadow != null) {
 
-    }
+				list.add(contentShadow);
 
-    public Attribute attribute(QName qName) {
+			}
 
-        if (attributes instanceof List) {
+			this.content = list;
 
-            List list = (List) attributes;
+			return list;
 
-            int size = list.size();
+		}
 
-            for (int i = 0; i < size; i++) {
+	}
 
-                Attribute attribute = (Attribute) list.get(i);
+	protected List attributeList() {
+		final Object attributesShadow = this.attributes;
 
-                if (qName.equals(attribute.getQName())) {
+		if (attributesShadow instanceof List) {
 
-                    return attribute;
+			return (List) attributesShadow;
 
-                }
+		}
 
-            }
+		else if (attributesShadow != null) {
 
-        }
+			List list = createAttributeList();
 
-        else if (attributes != null) {
+			list.add(attributesShadow);
 
-            Attribute attribute = (Attribute) attributes;
+			this.attributes = list;
 
-            if (qName.equals(attribute.getQName())) {
+			return list;
 
-                return attribute;
+		}
 
-            }
+		else {
 
-        }
+			List list = createAttributeList();
 
-        return null;
+			this.attributes = list;
 
-    }
+			return list;
 
-    public Attribute attribute(String name, Namespace namespace) {
+		}
 
-        return attribute(getDocumentFactory().createQName(name, namespace));
+	}
 
-    }
+	protected List attributeList(int size) {
+		final Object attributesShadow = this.attributes;
+		if (attributesShadow instanceof List) {
 
-    public void add(Attribute attribute) {
+			return (List) attributesShadow;
 
-        if (attribute.getParent() != null) {
+		}
 
-            String message =
-                "The Attribute already has an existing parent \""
-                    + attribute.getParent().getQualifiedName()
-                    + "\"";
+		else if (attributesShadow != null) {
 
-            throw new IllegalAddException(this, attribute, message);
+			List list = createAttributeList(size);
 
-        }
+			list.add(attributesShadow);
 
-        if (attribute.getValue() == null) {
+			this.attributes = list;
 
-            // try remove a previous attribute with the same
+			return list;
 
-            // name since adding an attribute with a null value
+		}
 
-            // is equivalent to removing it.
+		else {
 
-            Attribute oldAttribute = attribute(attribute.getQName());
+			List list = createAttributeList(size);
 
-            if (oldAttribute != null) {
+			this.attributes = list;
 
-                remove(oldAttribute);
+			return list;
 
-            }
+		}
 
-        }
+	}
 
-        else {
+	protected void setAttributeList(List attributes) {
 
-            if (attributes == null) {
+		this.attributes = attributes;
 
-                attributes = attribute;
+	}
 
-            }
+	protected DocumentFactory getDocumentFactory() {
 
-            else {
+		DocumentFactory factory = qname.getDocumentFactory();
 
-                attributeList().add(attribute);
+		return (factory != null) ? factory : DOCUMENT_FACTORY;
 
-            }
-
-            childAdded(attribute);
-
-        }
-
-    }
-
-    public boolean remove(Attribute attribute) {
-
-        boolean answer = false;
-
-        if (attributes instanceof List) {
-
-            List list = (List) attributes;
-
-            answer = list.remove(attribute);
-
-            if (!answer) {
-
-                // we may have a copy of the attribute
-
-                Attribute copy = attribute(attribute.getQName());
-
-                if (copy != null) {
-
-                    list.remove(copy);
-
-                    answer = true;
-
-                }
-
-            }
-
-        }
-
-        else if (attributes != null) {
-
-            if (attribute.equals(attributes)) {
-
-                attributes = null;
-
-                answer = true;
-
-            }
-
-            else {
-
-                // we may have a copy of the attribute
-
-                Attribute other = (Attribute) attributes;
-
-                if (attribute.getQName().equals(other.getQName())) {
-
-                    attributes = null;
-
-                    answer = true;
-
-                }
-
-            }
-
-        }
-
-        if (answer) {
-
-            childRemoved(attribute);
-
-        }
-
-        return answer;
-
-    }
-
-    // Implementation methods
-
-    //-------------------------------------------------------------------------    
-
-    protected void addNewNode(Node node) {
-
-        if (content == null) {
-
-            content = node;
-
-        }
-
-        else {
-
-            if (content instanceof List) {
-
-                List list = (List) content;
-
-                list.add(node);
-
-            }
-
-            else {
-
-                List list = createContentList();
-
-                list.add(content);
-
-                list.add(node);
-
-                content = list;
-
-            }
-
-        }
-
-        childAdded(node);
-
-    }
-
-    protected boolean removeNode(Node node) {
-
-        boolean answer = false;
-
-        if (content != null) {
-
-            if (content == node) {
-
-                content = null;
-
-                answer = true;
-
-            }
-
-            else if (content instanceof List) {
-
-                List list = (List) content;
-
-                answer = list.remove(node);
-
-            }
-
-        }
-
-        if (answer) {
-
-            childRemoved(node);
-
-        }
-
-        return answer;
-
-    }
-
-    protected List contentList() {
-
-        if (content instanceof List) {
-
-            return (List) content;
-
-        }
-
-        else {
-
-            List list = createContentList();
-
-            if (content != null) {
-
-                list.add(content);
-
-            }
-
-            content = list;
-
-            return list;
-
-        }
-
-    }
-
-    protected List attributeList() {
-
-        if (attributes instanceof List) {
-
-            return (List) attributes;
-
-        }
-
-        else if (attributes != null) {
-
-            List list = createAttributeList();
-
-            list.add(attributes);
-
-            attributes = list;
-
-            return list;
-
-        }
-
-        else {
-
-            List list = createAttributeList();
-
-            attributes = list;
-
-            return list;
-
-        }
-
-    }
-
-    protected List attributeList(int size) {
-
-        if (attributes instanceof List) {
-
-            return (List) attributes;
-
-        }
-
-        else if (attributes != null) {
-
-            List list = createAttributeList(size);
-
-            list.add(attributes);
-
-            attributes = list;
-
-            return list;
-
-        }
-
-        else {
-
-            List list = createAttributeList(size);
-
-            attributes = list;
-
-            return list;
-
-        }
-
-    }
-
-    protected void setAttributeList(List attributes) {
-
-        this.attributes = attributes;
-
-    }
-
-    protected DocumentFactory getDocumentFactory() {
-
-        DocumentFactory factory = qname.getDocumentFactory();
-
-        return (factory != null) ? factory : DOCUMENT_FACTORY;
-
-    }
+	}
 
 }
 
 /*
  * Redistribution and use of this software and associated documentation
- * ("Software"), with or without modification, are permitted provided
- * that the following conditions are met:
- *
- * 1. Redistributions of source code must retain copyright
- *    statements and notices.  Redistributions must also contain a
- *    copy of this document.
- *
- * 2. Redistributions in binary form must reproduce the
- *    above copyright notice, this list of conditions and the
- *    following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 3. The name "DOM4J" must not be used to endorse or promote
- *    products derived from this Software without prior written
- *    permission of MetaStuff, Ltd.  For written permission,
- *    please contact dom4j-info@metastuff.com.
- *
- * 4. Products derived from this Software may not be called "DOM4J"
- *    nor may "DOM4J" appear in their names without prior written
- *    permission of MetaStuff, Ltd. DOM4J is a registered
- *    trademark of MetaStuff, Ltd.
- *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
- *
- * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
- * NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL
- * METASTUFF, LTD. OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
- *
- * $Id: DefaultElement.java,v 1.50 2003/04/07 22:14:18 jstrachan Exp $
+ * ("Software"), with or without modification, are permitted provided that the
+ * following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain copyright statements and
+ * notices. Redistributions must also contain a copy of this document.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * 
+ * 3. The name "DOM4J" must not be used to endorse or promote products derived
+ * from this Software without prior written permission of MetaStuff, Ltd. For
+ * written permission, please contact dom4j-info@metastuff.com.
+ * 
+ * 4. Products derived from this Software may not be called "DOM4J" nor may
+ * "DOM4J" appear in their names without prior written permission of MetaStuff,
+ * Ltd. DOM4J is a registered trademark of MetaStuff, Ltd.
+ * 
+ * 5. Due credit should be given to the DOM4J Project - http://www.dom4j.org
+ * 
+ * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL METASTUFF, LTD. OR ITS CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
+ * 
+ * $Id: DefaultElement.java,v 1.56 2004/08/04 18:22:39 maartenc Exp $
  */

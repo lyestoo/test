@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
- * 
- * This software is open source. 
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
+ *
+ * This software is open source.
  * See the bottom of this file for the licence.
- * 
- * $Id: DOMCDATA.java,v 1.7 2003/04/07 22:15:14 jstrachan Exp $
+ *
+ * $Id: DOMCDATA.java,v 1.10 2004/06/25 08:03:35 maartenc Exp $
  */
 
 package org.dom4j.dom;
@@ -17,11 +17,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-/** <p><code>DOMCDATA</code> implements a CDATA Section which 
+/** <p><code>DOMCDATA</code> implements a CDATA Section which
   * supports the W3C DOM API.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.7 $
+  * @version $Revision: 1.10 $
   */
 public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
 
@@ -34,13 +34,13 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
     }
 
 
-    
+
     // org.w3c.dom.Node interface
-    //-------------------------------------------------------------------------        
+    //-------------------------------------------------------------------------
     public boolean supports(String feature, String version) {
         return DOMNodeHelper.supports(this, feature, version);
     }
-        
+
     public String getNamespaceURI() {
         return DOMNodeHelper.getNamespaceURI(this);
     }
@@ -48,7 +48,7 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
     public String getPrefix() {
         return DOMNodeHelper.getPrefix(this);
     }
-    
+
     public void setPrefix(String prefix) throws DOMException {
         DOMNodeHelper.setPrefix(this, prefix);
     }
@@ -58,28 +58,28 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
     }
 
     public String getNodeName() {
-        return getName();
+        return "#cdata-section";
     }
-    
-    //already part of API  
+
+    //already part of API
     //
     //public short getNodeType();
-    
 
-    
+
+
     public String getNodeValue() throws DOMException {
         return DOMNodeHelper.getNodeValue(this);
     }
-    
+
     public void setNodeValue(String nodeValue) throws DOMException {
         DOMNodeHelper.setNodeValue(this, nodeValue);
     }
-        
+
 
     public org.w3c.dom.Node getParentNode() {
         return DOMNodeHelper.getParentNode(this);
     }
-    
+
     public NodeList getChildNodes() {
         return DOMNodeHelper.getChildNodes(this);
     }
@@ -101,7 +101,7 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
     }
 
     public NamedNodeMap getAttributes() {
-        return DOMNodeHelper.getAttributes(this);
+        return null;
     }
 
     public Document getOwnerDocument() {
@@ -109,16 +109,18 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
     }
 
     public org.w3c.dom.Node insertBefore(
-        org.w3c.dom.Node newChild, 
+        org.w3c.dom.Node newChild,
         org.w3c.dom.Node refChild
     ) throws DOMException {
+        checkNewChildNode(newChild);
         return DOMNodeHelper.insertBefore(this, newChild, refChild);
     }
 
     public org.w3c.dom.Node replaceChild(
-        org.w3c.dom.Node newChild, 
+        org.w3c.dom.Node newChild,
         org.w3c.dom.Node oldChild
     ) throws DOMException {
+        checkNewChildNode(newChild);
         return DOMNodeHelper.replaceChild(this, newChild, oldChild);
     }
 
@@ -127,9 +129,16 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
     }
 
     public org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild) throws DOMException {
+        checkNewChildNode(newChild);
         return DOMNodeHelper.appendChild(this, newChild);
     }
 
+    private void checkNewChildNode(org.w3c.dom.Node newChild) throws DOMException {
+        throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
+            "CDATASection nodes cannot have children");
+    }
+    
+    
     public boolean hasChildNodes() {
         return DOMNodeHelper.hasChildNodes(this);
     }
@@ -149,13 +158,13 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
     public boolean hasAttributes() {
         return DOMNodeHelper.hasAttributes(this);
     }
-    
+
     // org.w3c.dom.CharacterData interface
-    //-------------------------------------------------------------------------        
+    //-------------------------------------------------------------------------
     public String getData() throws DOMException {
         return DOMNodeHelper.getData(this);
     }
-    
+
     public void setData(String data) throws DOMException {
         DOMNodeHelper.setData(this, data);
     }
@@ -180,17 +189,17 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
         DOMNodeHelper.deleteData(this, offset, count);
     }
 
-    public void replaceData( 
-        int offset, int count, String arg 
+    public void replaceData(
+        int offset, int count, String arg
     ) throws DOMException {
         DOMNodeHelper.replaceData(this, offset, count, arg);
     }
-    
+
     // org.w3c.dom.Text interface
-    //-------------------------------------------------------------------------            
+    //-------------------------------------------------------------------------
     public org.w3c.dom.Text splitText(int offset) throws DOMException {
         if ( isReadOnly() ) {
-            throw new DOMException( 
+            throw new DOMException(
                 DOMException.NO_MODIFICATION_ALLOWED_ERR,
                 "CharacterData node is read only: " + this
             );
@@ -199,8 +208,8 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
             String text = getText();
             int length = (text != null) ? text.length() : 0;
             if ( offset < 0 || offset >= length ) {
-                throw new DOMException( 
-                    DOMException.INDEX_SIZE_ERR, 
+                throw new DOMException(
+                    DOMException.INDEX_SIZE_ERR,
                     "No text at offset: " + offset
                 );
             }
@@ -217,9 +226,9 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
             }
         }
     }
-    
+
     // Implementation methods
-    //-------------------------------------------------------------------------            
+    //-------------------------------------------------------------------------
     protected CDATA createCDATA(String text) {
         return new DOMCDATA( text );
     }
@@ -252,8 +261,8 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -268,7 +277,7 @@ public class DOMCDATA extends DefaultCDATA implements org.w3c.dom.CDATASection {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMCDATA.java,v 1.7 2003/04/07 22:15:14 jstrachan Exp $
+ * $Id: DOMCDATA.java,v 1.10 2004/06/25 08:03:35 maartenc Exp $
  */

@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: QName.java,v 1.12 2003/04/07 22:14:56 jstrachan Exp $
+ * $Id: QName.java,v 1.15 2004/06/25 08:03:33 maartenc Exp $
  */
 
 package org.dom4j;
@@ -22,7 +22,7 @@ import org.dom4j.tree.QNameCache;
   * instance. This object is immutable.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.12 $
+  * @version $Revision: 1.15 $
   */
 public class QName implements Serializable {
 
@@ -54,11 +54,23 @@ public class QName implements Serializable {
     }
 
     public static QName get(String name, String prefix, String uri) {
-        return getCache().get(name, Namespace.get( prefix, uri ));
+        if ((prefix == null || prefix.length() == 0) && (uri == null)) {
+            return QName.get(name);
+        } else if (prefix == null || prefix.length() == 0) {
+            return getCache().get(name, Namespace.get(uri));
+        } else if (uri == null) {
+            return QName.get(name);
+        } else {
+            return getCache().get(name, Namespace.get(prefix, uri));
+        }
     }
 
     public static QName get(String qualifiedName, String uri) {
-        return getCache().get(qualifiedName, uri);
+        if (uri == null) {
+            return getCache().get(qualifiedName);
+        } else {
+            return getCache().get(qualifiedName, uri);
+        }
     }
 
     public static QName get(String localName, Namespace namespace, String qualifiedName) {
@@ -229,8 +241,8 @@ public class QName implements Serializable {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -245,7 +257,7 @@ public class QName implements Serializable {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: QName.java,v 1.12 2003/04/07 22:14:56 jstrachan Exp $
+ * $Id: QName.java,v 1.15 2004/06/25 08:03:33 maartenc Exp $
  */

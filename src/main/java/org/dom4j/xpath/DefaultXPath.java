@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultXPath.java,v 1.27 2003/04/07 22:15:45 jstrachan Exp $
+ * $Id: DefaultXPath.java,v 1.31 2004/06/25 08:03:42 maartenc Exp $
  */
 
 package org.dom4j.xpath;
@@ -29,7 +29,6 @@ import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.VariableContext;
 import org.jaxen.XPath;
 import org.jaxen.dom4j.Dom4jXPath;
-import org.saxpath.SAXPathException;
 
 
 /** <p>Default implementation of {@link org.dom4j.XPath} which uses the
@@ -184,6 +183,17 @@ public class DefaultXPath implements org.dom4j.XPath, NodeFilter, Serializable {
         }
     }
     
+    public boolean booleanValueOf(Object context) {
+        try {
+            setNSContext(context);
+            return xpath.booleanValueOf(context);
+        }
+        catch(JaxenException e) {
+            handleJaxenException(e);
+            return false;
+        }
+    }
+
     /** <p><code>sort</code> sorts the given List of Nodes
       * using this XPath expression as a {@link Comparator}.</p>
       *
@@ -301,7 +311,7 @@ public class DefaultXPath implements org.dom4j.XPath, NodeFilter, Serializable {
         try {
             return new Dom4jXPath( text );
         }
-        catch (SAXPathException e) {
+        catch (JaxenException e) {
             throw new InvalidXPathException( text, e.getMessage() );
         }
         catch (RuntimeException e) {
@@ -347,8 +357,8 @@ public class DefaultXPath implements org.dom4j.XPath, NodeFilter, Serializable {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -363,7 +373,7 @@ public class DefaultXPath implements org.dom4j.XPath, NodeFilter, Serializable {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultXPath.java,v 1.27 2003/04/07 22:15:45 jstrachan Exp $
+ * $Id: DefaultXPath.java,v 1.31 2004/06/25 08:03:42 maartenc Exp $
  */

@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: BackedList.java,v 1.6 2003/04/07 22:14:39 jstrachan Exp $
+ * $Id: BackedList.java,v 1.12 2004/08/10 11:18:49 maartenc Exp $
  */
 
 package org.dom4j.tree;
@@ -18,12 +18,12 @@ import org.dom4j.IllegalAddException;
 import org.dom4j.Node;
 
 /** <p><code>BackedList</code> represents a list of content
-  * of a {@link Branch}. Changes to the list will
+  * of a {@link org.dom4j.Branch}. Changes to the list will
   * be reflected in the branch, though changes to the branch will not 
   * be reflected in this list.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.6 $
+  * @version $Revision: 1.12 $
   */
 public class BackedList extends ArrayList {
 
@@ -56,27 +56,21 @@ public class BackedList extends ArrayList {
     }
     
     public void add(int index, Object object) {
-        int size = branchContent.size();
+        int size = size();
         if ( index < 0 ) {
             throw new IndexOutOfBoundsException( "Index value: " + index + " is less than zero" );
         }
         else if ( index > size ) {
             throw new IndexOutOfBoundsException( "Index value: " + index + " cannot be greater than the size: " + size );
         }
-        int realIndex = size;
-        if (index < realIndex) {
-            realIndex = branchContent.indexOf( get(index) );
-        }
-        if ( realIndex < 0 ) {
-            realIndex = ( index == 0 ) ? 0 :Integer.MAX_VALUE;
-        }
-        if ( realIndex < size ) {
-            branchContent.add(realIndex, object);
-        }
-        else {
-            branchContent.add(object);
-        }
-        branch.childAdded( asNode( object ) );
+        
+        int realIndex = size == 0
+                ? branchContent.size()                   // Insert at the end of branch
+                : index < size
+                ? branchContent.indexOf(get(index))      // Normal case: get position of element in branch
+                : (branchContent.indexOf(get(size - 1)) + 1);  // Insert after last item
+        
+        branch.addNode(realIndex, asNode( object ) );
         super.add(index, object);
     }
     
@@ -86,10 +80,12 @@ public class BackedList extends ArrayList {
             realIndex = ( index == 0 ) ? 0 : Integer.MAX_VALUE;
         }
         if ( realIndex < branchContent.size() ) {
-            branchContent.set(realIndex, object);
+            branch.removeNode( asNode( get(index) ) );
+            branch.addNode(realIndex, asNode( object ) );
         }
         else {
-            branchContent.add(object);
+            branch.removeNode( asNode( get(index) ) );
+            branch.addNode( asNode( object ) );
         }
         branch.childAdded( asNode( object ) );
         return super.set(index, object);
@@ -181,8 +177,8 @@ public class BackedList extends ArrayList {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -197,7 +193,7 @@ public class BackedList extends ArrayList {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: BackedList.java,v 1.6 2003/04/07 22:14:39 jstrachan Exp $
+ * $Id: BackedList.java,v 1.12 2004/08/10 11:18:49 maartenc Exp $
  */

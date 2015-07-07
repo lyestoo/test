@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DOMAttributeNodeMap.java,v 1.3 2003/04/07 22:15:15 jstrachan Exp $
+ * $Id: DOMAttributeNodeMap.java,v 1.6 2004/06/25 08:03:34 maartenc Exp $
  */
 
 package org.dom4j.dom;
@@ -17,7 +17,7 @@ import org.w3c.dom.Node;
   * for the attributes of an element.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.6 $
   */
 public class DOMAttributeNodeMap implements org.w3c.dom.NamedNodeMap {
 
@@ -49,10 +49,11 @@ public class DOMAttributeNodeMap implements org.w3c.dom.NamedNodeMap {
 
     public Node removeNamedItem(String name) throws DOMException {
         org.w3c.dom.Attr attr = element.getAttributeNode(name);
-        if ( attr != null ) {
-            return element.removeAttributeNode( attr );
+        if ( attr == null ) {
+            throw new DOMException(DOMException.NOT_FOUND_ERR,
+            	"No attribute named " + name);
         }
-        return attr;
+        return element.removeAttributeNode( attr );
     }
 
     public Node item(int index) {
@@ -113,8 +114,8 @@ public class DOMAttributeNodeMap implements org.w3c.dom.NamedNodeMap {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -129,7 +130,7 @@ public class DOMAttributeNodeMap implements org.w3c.dom.NamedNodeMap {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMAttributeNodeMap.java,v 1.3 2003/04/07 22:15:15 jstrachan Exp $
+ * $Id: DOMAttributeNodeMap.java,v 1.6 2004/06/25 08:03:34 maartenc Exp $
  */

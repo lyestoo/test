@@ -1,16 +1,16 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractDocument.java,v 1.24 2003/04/07 22:14:40 jstrachan Exp $
+ * $Id: AbstractDocument.java,v 1.29 2004/07/11 10:49:37 maartenc Exp $
  */
 
 package org.dom4j.tree;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.dom4j.io.XMLWriter;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.24 $
+  * @version $Revision: 1.29 $
   */
 public abstract class AbstractDocument extends AbstractBranch implements Document {
     
@@ -55,6 +55,10 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
         return this;
     }
     
+    public String getXMLEncoding() {
+        return null;
+    }
+
     public String getStringValue() {
         Element root = getRootElement();
         return ( root != null ) ? root.getStringValue() : "";
@@ -62,13 +66,13 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
     
     public String asXML() {
         try {
-            StringWriter out = new StringWriter();
-            XMLWriter writer = new XMLWriter( out, outputFormat );
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            XMLWriter writer = new XMLWriter(out, outputFormat);
             writer.write(this);
             return out.toString();
         } 
         catch (IOException e) {
-            throw new RuntimeException("Wierd IOException while generating textual representation: " + e.getMessage());
+            throw new RuntimeException("IOException while generating textual representation: " + e.getMessage());
         }
     }
 
@@ -137,24 +141,21 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
     }
     
     public Element addElement(String name) {
-        checkAddElementAllowed();
-        Element node = super.addElement(name);
-        rootElementAdded(node);
-        return node;
+        Element element = getDocumentFactory().createElement(name);
+        add(element);
+        return element;
     }
     
     public Element addElement(String qualifiedName, String namespaceURI) {
-        checkAddElementAllowed();
-        Element node = super.addElement(qualifiedName, namespaceURI);
-        rootElementAdded(node);
-        return node;
+        Element element = getDocumentFactory().createElement(qualifiedName, namespaceURI);
+        add(element);
+        return element;
     }
     
     public Element addElement(QName qName) {
-        checkAddElementAllowed();
-        Element node = super.addElement(qName);
-        rootElementAdded(node);
-        return node;
+        Element element = getDocumentFactory().createElement(qName);
+        add(element);
+        return element;
     }
 
     public void setRootElement(Element rootElement) {
@@ -166,7 +167,7 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
     }
 
     public void add(Element element) {
-        checkAddElementAllowed();
+        checkAddElementAllowed(element);
         super.add(element);
         rootElementAdded(element);
     }
@@ -185,9 +186,6 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
         return this;
     }
     
-    
-    
-    
     protected void childAdded(Node node) {
         if (node != null ) {
             node.setDocument(this);
@@ -200,12 +198,12 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
         }
     }     
 
-    protected void checkAddElementAllowed() {
+    protected void checkAddElementAllowed(Element element) {
         Element root = getRootElement();
         if ( root != null ) {
             throw new IllegalAddException(  
                 this, 
-                root, 
+                element, 
                 "Cannot add another element to this Document as it already has "
                 + " a root element of: " + root.getQualifiedName()
             );
@@ -244,8 +242,8 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -260,7 +258,7 @@ public abstract class AbstractDocument extends AbstractBranch implements Documen
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractDocument.java,v 1.24 2003/04/07 22:14:40 jstrachan Exp $
+ * $Id: AbstractDocument.java,v 1.29 2004/07/11 10:49:37 maartenc Exp $
  */

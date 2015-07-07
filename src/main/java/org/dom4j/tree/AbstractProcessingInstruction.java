@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractProcessingInstruction.java,v 1.12 2003/04/07 22:14:23 jstrachan Exp $
+ * $Id: AbstractProcessingInstruction.java,v 1.15 2004/06/25 08:03:41 maartenc Exp $
  */
 
 package org.dom4j.tree;
@@ -24,7 +24,7 @@ import org.dom4j.Visitor;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.12 $
+  * @version $Revision: 1.15 $
   */
 public abstract class AbstractProcessingInstruction extends AbstractNode implements ProcessingInstruction {
 
@@ -125,24 +125,53 @@ public abstract class AbstractProcessingInstruction extends AbstractNode impleme
     protected Map parseValues(String text) {
         Map data = new HashMap();
 
-        // Break up name/value pairs
-        StringTokenizer s =
-            new StringTokenizer(text);
-
-        // Iterate through the pairs
+        StringTokenizer s = new StringTokenizer(text, " =\'\"", true);
         while (s.hasMoreTokens()) {
-            // Now break up pair on the = and (" or ') characters
-            StringTokenizer t =
-                new StringTokenizer(s.nextToken(), "='\"");
-
-            if (t.countTokens() >= 2) {
-                String name = t.nextToken();
-                String value = t.nextToken();
-
+            String name = getName(s);
+            if (s.hasMoreTokens()) {
+                String value = getValue(s);
                 data.put(name, value);
             }
         }
+        
         return data;
+    }
+    
+    private String getName(StringTokenizer tokenizer) {
+        String token = tokenizer.nextToken();
+        StringBuffer name = new StringBuffer(token);
+        while (tokenizer.hasMoreTokens()) {
+            token = tokenizer.nextToken();
+            if (!token.equals("=")) {
+                name.append(token);
+            } else {
+                break;
+            }
+        }
+        
+        return name.toString().trim();
+    }
+    
+    private String getValue(StringTokenizer tokenizer) {
+        String token = tokenizer.nextToken();
+        StringBuffer value = new StringBuffer();
+        
+        /* get the quote */
+        while (tokenizer.hasMoreTokens() && !token.equals("\'") && !token.equals("\"")) {
+            token = tokenizer.nextToken();
+        }
+        
+        String quote = token;
+        while (tokenizer.hasMoreTokens()) {
+            token = tokenizer.nextToken();
+            if (!quote.equals(token)) {
+                value.append(token);
+            } else {
+                break;
+            }
+        }
+        
+        return value.toString();
     }
 }
 
@@ -175,8 +204,8 @@ public abstract class AbstractProcessingInstruction extends AbstractNode impleme
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -191,7 +220,7 @@ public abstract class AbstractProcessingInstruction extends AbstractNode impleme
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractProcessingInstruction.java,v 1.12 2003/04/07 22:14:23 jstrachan Exp $
+ * $Id: AbstractProcessingInstruction.java,v 1.15 2004/06/25 08:03:41 maartenc Exp $
  */

@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: InternalEntityDecl.java,v 1.3 2002/05/20 08:14:17 jstrachan Exp $
+ * $Id: InternalEntityDecl.java,v 1.7 2004/06/25 08:03:36 maartenc Exp $
  */
 
 package org.dom4j.dtd;
@@ -12,7 +12,7 @@ package org.dom4j.dtd;
 /** <p><code>InternalEntityDecl</code> represents an internal entity declaration in a DTD.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.7 $
   */
 public class InternalEntityDecl {
 
@@ -60,8 +60,56 @@ public class InternalEntityDecl {
     }
     
     public String toString() {
-        return "<!ENTITY " + name + " \"" + value + "\">";
+        StringBuffer buffer = new StringBuffer( "<!ENTITY " );
+        
+        if (name.startsWith("%")) {
+            buffer.append("% ");
+            buffer.append(name.substring(1));
+        } 
+        else {
+            buffer.append(name);
+        }
+
+        buffer.append(" \"");
+        buffer.append(escapeEntityValue(value));
+        buffer.append("\">");
+        
+        return buffer.toString();
     }
+    
+    private String escapeEntityValue(String text) {
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            switch (c) {
+                case '<':
+                    result.append("&#38;#60;");
+                    break;
+                case '>':
+                    result.append("&#62;");
+                    break;
+                case '&':
+                    result.append("&#38;#38;");
+                    break;
+                case '\'':
+                    result.append("&#39;");
+                    break;
+                case '\"':
+                    result.append("&#34;");
+                    break;
+                default:
+                    if (c < 32) {
+                        result.append("&#" + (int) c + ";");
+                    } else {
+                        result.append(c);
+                    }
+                    break;
+            }
+        }
+        
+        return result.toString();
+    }
+    
 }
 
 
@@ -91,8 +139,8 @@ public class InternalEntityDecl {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -107,7 +155,7 @@ public class InternalEntityDecl {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: InternalEntityDecl.java,v 1.3 2002/05/20 08:14:17 jstrachan Exp $
+ * $Id: InternalEntityDecl.java,v 1.7 2004/06/25 08:03:36 maartenc Exp $
  */

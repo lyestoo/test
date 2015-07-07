@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Element.java,v 1.37 2003/04/07 22:14:48 jstrachan Exp $
+ * $Id: Element.java,v 1.45 2004/06/25 12:34:46 maartenc Exp $
  */
 
 package org.dom4j;
@@ -24,7 +24,7 @@ import java.util.Map;
   *
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.37 $
+  * @version $Revision: 1.45 $
   */
 public interface Element extends Branch {
 
@@ -52,8 +52,6 @@ public interface Element extends Branch {
       */
     public Namespace getNamespace();
 
-    
- 
     /** <p>Returns the <code>QName</code> for the given qualified name, using
       * the namespace URI in scope for the given prefix of the qualified name
       * or the default namespace if the qualified name has no prefix.</p>
@@ -70,12 +68,24 @@ public interface Element extends Branch {
       */
     public Namespace getNamespaceForPrefix(String prefix);
 
-    /** <p>Returns the <code>Namespace</code> which is mapped to the given
-      * URI or null if it could not be found.</p>
-      *
-      * @return the <code>Namespace</code> associated with the given URI
-      */
+    /**
+     * <p>Returns the <code>Namespace</code> which is mapped to the given
+     * URI or null if it could not be found. If there is more than one
+     * <code>Namespace</code> mapped to the URI, which of them will be 
+     * returned is undetermined.</p>
+     *
+     * @return the <code>Namespace</code> associated with the given URI
+     */
     public Namespace getNamespaceForURI(String uri);
+    
+    /**
+     * <p>Returns the all namespaces which are mapped to the given
+     * URI or an empty list if no such namespaces could be found.
+     *
+     * @return the namespaces associated with the given URI
+     * @since 1.5
+     */
+    public List getNamespacesForURI(String uri);
     
     /** <p>Returns the namespace prefix of this element if one exists 
       * otherwise an empty <code>String</code> is returned.</p>
@@ -224,7 +234,7 @@ public interface Element extends Branch {
     
     /** Adds the given <code>Attribute</code> to this element.
       * If the given node already has a parent defined then an
-      * <code>InvalidAddNodeException</code> will be thrown.
+      * <code>IllegalAddException</code> will be thrown.
       * Attributes with null values are silently ignored.
       * If the value of the attribute is null then this method call will 
       * remove any attributes with the QName of this attribute.</p>
@@ -236,7 +246,7 @@ public interface Element extends Branch {
     
     /** Adds the given <code>CDATA</code> to this element.
       * If the given node already has a parent defined then an
-      * <code>InvalidAddNodeException</code> will be thrown.
+      * <code>IllegalAddException</code> will be thrown.
       *
       * @param cdata is the CDATA to be added
       */
@@ -244,7 +254,7 @@ public interface Element extends Branch {
     
     /** Adds the given <code>Entity</code> to this element.
       * If the given node already has a parent defined then an
-      * <code>InvalidAddNodeException</code> will be thrown.
+      * <code>IllegalAddException</code> will be thrown.
       *
       * @param entity is the entity to be added
       */
@@ -252,7 +262,7 @@ public interface Element extends Branch {
     
     /** Adds the given <code>Text</code> to this element.
       * If the given node already has a parent defined then an
-      * <code>InvalidAddNodeException</code> will be thrown.
+      * <code>IllegalAddException</code> will be thrown.
       *
       * @param text is the text to be added
       */
@@ -260,7 +270,7 @@ public interface Element extends Branch {
     
     /** Adds the given <code>Namespace</code> to this element.
       * If the given node already has a parent defined then an
-      * <code>InvalidAddNodeException</code> will be thrown.
+      * <code>IllegalAddException</code> will be thrown.
       *
       * @param namespace is the namespace to be added
       */
@@ -328,11 +338,12 @@ public interface Element extends Branch {
       * and appends the text values together.
       * 
       * @return the textual content of this Element. Child elements are not navigated.
+      * This method does not return null;
       */
     public String getText();    
    
     /** @return the trimmed text value where whitespace is trimmed and
-      * normalised into single spaces
+      * normalised into single spaces. This method does not return null.
       */
     public String getTextTrim();
 
@@ -385,7 +396,7 @@ public interface Element extends Branch {
       */
     public int attributeCount();
     
-    /** @returns an iterator over the attributes of this element
+    /** @return an iterator over the attributes of this element
       */
     public Iterator attributeIterator();
     
@@ -410,7 +421,7 @@ public interface Element extends Branch {
       * @return the attribute for the given fully qualified name or null if 
       * it could not be found.
       */
-    public Attribute attribute(QName qname);
+    public Attribute attribute(QName qName);
 
     /** <p>This returns the attribute value for the attribute with the 
       * given name and any namespace or null if there is no such 
@@ -464,7 +475,8 @@ public interface Element extends Branch {
       * @param value is the attribute's value
       *
       * @deprecated As of version 0.5. Please use 
-      *    {@link #addAttribute(String,String)} instead.
+      *    {@link #addAttribute(String,String)} instead. 
+      *    WILL BE REMOVED IN dom4j-1.6 !!
       */
     public void setAttributeValue(String name, String value);
     
@@ -476,6 +488,7 @@ public interface Element extends Branch {
       *
       * @deprecated As of version 0.5. Please use 
       *    {@link #addAttribute(QName,String)} instead.
+      *    WILL BE REMOVED IN dom4j-1.6 !!
       */
     public void setAttributeValue(QName qName, String value);
 
@@ -495,7 +508,7 @@ public interface Element extends Branch {
       * @param qName is the fully qualified name to search for
       * @return the first element with the given fully qualified name
       */
-    public Element element(QName qname);
+    public Element element(QName qName);
 
     /** <p>Returns the elements contained in this element. 
       * If this element does not contain any elements then this method returns
@@ -554,7 +567,7 @@ public interface Element extends Branch {
       * @return an iterator over the contained elements matching the given 
       * fully qualified name
       */
-    public Iterator elementIterator(QName qname);
+    public Iterator elementIterator(QName qName);
         
     
 
@@ -582,7 +595,7 @@ public interface Element extends Branch {
         
     
     /** Appends the attributes of the given element to me.
-      * This method behaves like the {@link Collection#addAll(java.util.Collection)} 
+      * This method behaves like the {@link java.util.Collection#addAll(java.util.Collection)} 
       * method.
       *
       * @param element is the element whose attributes will be added to me.
@@ -657,8 +670,8 @@ public interface Element extends Branch {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -673,7 +686,7 @@ public interface Element extends Branch {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Element.java,v 1.37 2003/04/07 22:14:48 jstrachan Exp $
+ * $Id: Element.java,v 1.45 2004/06/25 12:34:46 maartenc Exp $
  */

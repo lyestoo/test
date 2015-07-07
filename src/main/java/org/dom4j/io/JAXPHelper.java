@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: JAXPHelper.java,v 1.3 2002/05/20 08:14:14 jstrachan Exp $
+ * $Id: JAXPHelper.java,v 1.5 2004/06/25 08:03:37 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -21,7 +21,7 @@ import org.xml.sax.XMLReader;
   * issues, such that dom4j can work without JAXP on the CLASSPATH
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.5 $
   */
 class JAXPHelper {
 
@@ -74,8 +74,8 @@ class JAXPHelper {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -90,7 +90,7 @@ class JAXPHelper {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: JAXPHelper.java,v 1.3 2002/05/20 08:14:14 jstrachan Exp $
+ * $Id: JAXPHelper.java,v 1.5 2004/06/25 08:03:37 maartenc Exp $
  */

@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
- * 
- * This software is open source. 
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
+ *
+ * This software is open source.
  * See the bottom of this file for the licence.
- * 
- * $Id: DOMNodeHelper.java,v 1.12 2003/04/07 22:15:01 jstrachan Exp $
+ *
+ * $Id: DOMNodeHelper.java,v 1.18 2004/06/25 08:03:35 maartenc Exp $
  */
 
 package org.dom4j.dom;
@@ -25,12 +25,12 @@ import org.w3c.dom.NodeList;
   * for use across Node implementations.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.12 $
+  * @version $Revision: 1.18 $
   */
 public class DOMNodeHelper {
 
     public static final NodeList EMPTY_NODE_LIST = new EmptyNodeList();
-    
+
     public static class EmptyNodeList implements NodeList {
         public org.w3c.dom.Node item(int index) {
             return null;
@@ -39,10 +39,10 @@ public class DOMNodeHelper {
             return 0;
         }
     }
-    
-    
+
+
     // Node API
-    //-------------------------------------------------------------------------        
+    //-------------------------------------------------------------------------
     public static boolean supports(Node node, String feature, String version) {
         return false;
     }
@@ -54,19 +54,19 @@ public class DOMNodeHelper {
     public static String getPrefix(Node node) {
         return null;
     }
-    
+
     public static String getLocalName(Node node) {
         return null;
     }
-    
+
     public static void setPrefix(Node node, String prefix) throws DOMException {
         notSupported();
     }
-    
+
     public static String getNodeValue(Node node) throws DOMException {
         return node.getText();
     }
-    
+
     public static void setNodeValue(Node node, String nodeValue) throws DOMException {
         node.setText(nodeValue);
     }
@@ -122,8 +122,8 @@ public class DOMNodeHelper {
     }
 
     public static org.w3c.dom.Node insertBefore(
-        Node node, 
-        org.w3c.dom.Node newChild, 
+        Node node,
+        org.w3c.dom.Node newChild,
         org.w3c.dom.Node refChild
     ) throws DOMException {
         if ( node instanceof Branch ) {
@@ -144,8 +144,8 @@ public class DOMNodeHelper {
     }
 
     public static org.w3c.dom.Node replaceChild(
-        Node node, 
-        org.w3c.dom.Node newChild, 
+        Node node,
+        org.w3c.dom.Node newChild,
         org.w3c.dom.Node oldChild
     ) throws DOMException {
         if ( node instanceof Branch ) {
@@ -158,13 +158,13 @@ public class DOMNodeHelper {
             list.set(index, newChild);
             return oldChild;
         }
-        else {        
+        else {
             throw new DOMException( DOMException.HIERARCHY_REQUEST_ERR, "Children not allowed for this node: " + node );
         }
     }
 
     public static org.w3c.dom.Node removeChild(
-        Node node, 
+        Node node,
         org.w3c.dom.Node oldChild
     ) throws DOMException {
         if ( node instanceof Branch ) {
@@ -176,11 +176,15 @@ public class DOMNodeHelper {
     }
 
     public static org.w3c.dom.Node appendChild(
-        Node node, 
+        Node node,
         org.w3c.dom.Node newChild
     ) throws DOMException {
         if ( node instanceof Branch ) {
             Branch branch = (Branch) node;
+            org.w3c.dom.Node previousParent = newChild.getParentNode();
+            if (previousParent != null) {
+              previousParent.removeChild(newChild);
+            }
             branch.add( (Node) newChild );
             return newChild;
         }
@@ -204,17 +208,21 @@ public class DOMNodeHelper {
     }
 
     public static boolean hasAttributes(Node node) {
-        return false;
+        if (node != null && node instanceof Element) {
+            return ((Element) node).attributeCount() > 0;
+        } else {
+            return false;
+        }
     }
 
 
     // CharacterData API
-    //-------------------------------------------------------------------------        
-    
+    //-------------------------------------------------------------------------
+
     public static String getData(CharacterData charData) throws DOMException {
         return charData.getText();
     }
-    
+
     public static void setData(CharacterData charData, String data) throws DOMException {
         charData.setText(data);
     }
@@ -227,13 +235,22 @@ public class DOMNodeHelper {
     public static String substringData(
         CharacterData charData, int offset, int count
     ) throws DOMException {
+        if (count < 0) {
+          throw new DOMException(
+             DOMException.INDEX_SIZE_ERR,
+             "Illegal value for count: " + count
+          );
+        }
         String text = charData.getText();
         int length = ( text != null ) ? text.length() : 0;
         if ( offset < 0 || offset >= length ) {
-            throw new DOMException( 
-                DOMException.INDEX_SIZE_ERR, 
+            throw new DOMException(
+                DOMException.INDEX_SIZE_ERR,
                 "No text at offset: " + offset
             );
+        }
+        if (offset + count > length) {
+          return text.substring(offset);
         }
         return text.substring( offset, offset + count );
     }
@@ -242,9 +259,9 @@ public class DOMNodeHelper {
         CharacterData charData, String arg
     ) throws DOMException {
         if ( charData.isReadOnly() ) {
-            throw new DOMException( 
+            throw new DOMException(
                 DOMException.NO_MODIFICATION_ALLOWED_ERR,
-                "CharacterData node is read only: " + charData 
+                "CharacterData node is read only: " + charData
             );
         }
         else {
@@ -260,9 +277,9 @@ public class DOMNodeHelper {
 
     public static void insertData(CharacterData charData, int offset, String arg) throws DOMException {
         if ( charData.isReadOnly() ) {
-            throw new DOMException( 
+            throw new DOMException(
                 DOMException.NO_MODIFICATION_ALLOWED_ERR,
-                "CharacterData node is read only: " + charData 
+                "CharacterData node is read only: " + charData
             );
         }
         else {
@@ -272,9 +289,9 @@ public class DOMNodeHelper {
             }
             else {
                 int length = text.length();
-                if ( offset < 0 || offset >= length ) {
-                    throw new DOMException( 
-                        DOMException.INDEX_SIZE_ERR, 
+                if ( offset < 0 || offset > length ) {
+                    throw new DOMException(
+                        DOMException.INDEX_SIZE_ERR,
                         "No text at offset: " + offset
                     );
                 }
@@ -289,18 +306,24 @@ public class DOMNodeHelper {
 
     public static void deleteData(CharacterData charData, int offset, int count) throws DOMException {
         if ( charData.isReadOnly() ) {
-            throw new DOMException( 
+            throw new DOMException(
                 DOMException.NO_MODIFICATION_ALLOWED_ERR,
-                "CharacterData node is read only: " + charData 
+                "CharacterData node is read only: " + charData
             );
         }
         else {
+            if (count < 0) {
+              throw new DOMException(
+                  DOMException.INDEX_SIZE_ERR,
+                  "Illegal value for count: " + count
+              );
+            }
             String text = charData.getText();
             if ( text != null ) {
                 int length = text.length();
                 if ( offset < 0 || offset >= length ) {
-                    throw new DOMException( 
-                        DOMException.INDEX_SIZE_ERR, 
+                    throw new DOMException(
+                        DOMException.INDEX_SIZE_ERR,
                         "No text at offset: " + offset
                     );
                 }
@@ -317,18 +340,24 @@ public class DOMNodeHelper {
         CharacterData charData, int offset, int count, String arg
     ) throws DOMException {
         if ( charData.isReadOnly() ) {
-            throw new DOMException( 
+            throw new DOMException(
                 DOMException.NO_MODIFICATION_ALLOWED_ERR,
-                "CharacterData node is read only: " + charData 
+                "CharacterData node is read only: " + charData
             );
         }
         else {
+            if (count < 0) {
+                throw new DOMException(
+                   DOMException.INDEX_SIZE_ERR,
+                   "Illegal value for count: " + count
+                );
+            }
             String text = charData.getText();
             if ( text != null ) {
                 int length = text.length();
                 if ( offset < 0 || offset >= length ) {
-                    throw new DOMException( 
-                        DOMException.INDEX_SIZE_ERR, 
+                    throw new DOMException(
+                        DOMException.INDEX_SIZE_ERR,
                         "No text at offset: " + offset
                     );
                 }
@@ -343,16 +372,17 @@ public class DOMNodeHelper {
 
 
     // Branch API
-    //-------------------------------------------------------------------------        
-    
+    //-------------------------------------------------------------------------
+
     public static void appendElementsByTagName(
         List list, Branch parent, String name
     ) {
+        final boolean isStar = "*".equals(name);
         for ( int i = 0, size = parent.nodeCount(); i < size; i++ ) {
             Node node = parent.node(i);
             if ( node instanceof Element ) {
                 Element element = (Element) node;
-                if ( name.equals( element.getName() ) ) {
+                if ( isStar || name.equals( element.getName() ) ) {
                     list.add( element );
                 }
                 appendElementsByTagName(list, element, name);
@@ -363,12 +393,17 @@ public class DOMNodeHelper {
     public static void appendElementsByTagNameNS(
         List list, Branch parent, String namespaceURI, String localName
     ) {
+        final boolean isStarNS = "*".equals(namespaceURI);
+        final boolean isStarName = "*".equals(localName);
         for ( int i = 0, size = parent.nodeCount(); i < size; i++ ) {
             Node node = parent.node(i);
             if ( node instanceof Element ) {
                 Element element = (Element) node;
-                if ( namespaceURI.equals( element.getNamespaceURI() ) 
-                        && localName.equals( element.getName() ) ) {
+                if ( ( (isStarNS ||
+                        ((namespaceURI == null || namespaceURI.length() == 0) &&
+                         (element.getNamespaceURI() == null || element.getNamespaceURI().length() == 0)) ||
+                        (namespaceURI != null && namespaceURI.equals( element.getNamespaceURI() ))))
+                        && (isStarName || localName.equals( element.getName() )) ) {
                     list.add( element );
                 }
                 appendElementsByTagNameNS(list, element, namespaceURI, localName);
@@ -376,14 +411,23 @@ public class DOMNodeHelper {
         }
     }
 
-    
+
     // Helper methods
-    //-------------------------------------------------------------------------        
-    
+    //-------------------------------------------------------------------------
+
     public static NodeList createNodeList( final List list ) {
         return new NodeList() {
             public org.w3c.dom.Node item(int index) {
-                return DOMNodeHelper.asDOMNode( (Node) list.get( index ) );
+                if (index >= getLength()) {
+                    /*
+                     * From the NodeList specification:
+                     * If index is greater than or equal to the number of nodes
+                     * in the list, this returns null.
+                     */
+                    return null;
+                } else {
+                    return DOMNodeHelper.asDOMNode( (Node) list.get( index ) );
+                }
             }
             public int getLength() {
                 return list.size();
@@ -392,6 +436,9 @@ public class DOMNodeHelper {
     }
 
     public static org.w3c.dom.Node asDOMNode(Node node) {
+        if ( node == null ) {
+            return null;
+        }
         if ( node instanceof org.w3c.dom.Node ) {
             return (org.w3c.dom.Node) node;
         }
@@ -402,8 +449,11 @@ public class DOMNodeHelper {
             return null;
         }
     }
-    
+
     public static org.w3c.dom.Document asDOMDocument(Document document) {
+        if ( document == null ) {
+            return null;
+        }
         if ( document instanceof org.w3c.dom.Document ) {
             return (org.w3c.dom.Document) document;
         }
@@ -413,8 +463,11 @@ public class DOMNodeHelper {
             return null;
         }
     }
-    
+
     public static org.w3c.dom.DocumentType asDOMDocumentType(DocumentType documentType) {
+        if ( documentType == null ) {
+            return null;
+        }
         if ( documentType instanceof org.w3c.dom.DocumentType ) {
             return (org.w3c.dom.DocumentType) documentType;
         }
@@ -426,6 +479,9 @@ public class DOMNodeHelper {
     }
 
     public static org.w3c.dom.Text asDOMText(CharacterData text) {
+        if ( text == null ) {
+            return null;
+        }
         if ( text instanceof org.w3c.dom.Text ) {
             return (org.w3c.dom.Text) text;
         }
@@ -437,6 +493,9 @@ public class DOMNodeHelper {
     }
 
     public static org.w3c.dom.Element asDOMElement(Node element) {
+        if ( element == null ) {
+            return null;
+        }
         if ( element instanceof org.w3c.dom.Element ) {
             return (org.w3c.dom.Element) element;
         }
@@ -448,6 +507,9 @@ public class DOMNodeHelper {
     }
 
     public static org.w3c.dom.Attr asDOMAttr(Node attribute) {
+        if ( attribute == null ) {
+            return null;
+        }
         if ( attribute instanceof org.w3c.dom.Attr ) {
             return (org.w3c.dom.Attr) attribute;
         }
@@ -458,12 +520,12 @@ public class DOMNodeHelper {
         }
     }
 
-    /** Called when a method has not been implemented yet 
+    /** Called when a method has not been implemented yet
       */
     public static void notSupported() {
         throw new DOMException( DOMException.NOT_SUPPORTED_ERR, "Not supported yet");
     }
-    
+
 }
 
 
@@ -493,8 +555,8 @@ public class DOMNodeHelper {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -509,7 +571,7 @@ public class DOMNodeHelper {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMNodeHelper.java,v 1.12 2003/04/07 22:15:01 jstrachan Exp $
+ * $Id: DOMNodeHelper.java,v 1.18 2004/06/25 08:03:35 maartenc Exp $
  */

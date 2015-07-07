@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultDocument.java,v 1.26 2003/04/07 22:14:37 jstrachan Exp $
+ * $Id: DefaultDocument.java,v 1.30 2004/07/11 10:49:37 maartenc Exp $
  */
 
 package org.dom4j.tree;
@@ -26,12 +26,15 @@ import org.xml.sax.EntityResolver;
   * of an XML document.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.26 $
+  * @version $Revision: 1.30 $
   */
 public class DefaultDocument extends AbstractDocument {
 
     protected static final List EMPTY_LIST = Collections.EMPTY_LIST;
     protected static final Iterator EMPTY_ITERATOR = EMPTY_LIST.iterator();
+    
+    /** The encoding of this document as stated in the XML declaration */
+    private String encoding;
     
     /** The name of the document */
     private String name;
@@ -103,6 +106,14 @@ public class DefaultDocument extends AbstractDocument {
         setDocType( getDocumentFactory().createDocType( name, publicId, systemId ) );
         return this;
     }    
+    
+    public String getXMLEncoding() {
+        return encoding;
+    }
+    
+    public void setXMLEncoding(String encoding) {
+        this.encoding = encoding;
+    }
     
     public EntityResolver getEntityResolver() {
         return entityResolver;
@@ -253,7 +264,20 @@ public class DefaultDocument extends AbstractDocument {
             childAdded(node);
         }
     }
-
+    
+    protected void addNode(int index, Node node) {
+        if ( node != null ) {
+            Document document = node.getDocument();
+            if (document != null && document != this) {
+                // XXX: could clone here
+                String message = "The Node already has an existing document: " + document;
+                throw new IllegalAddException(this, node, message);
+            }
+            contentList().add(index, node);
+            childAdded(node);
+        }
+    }
+    
     protected boolean removeNode(Node node) {
         if ( node == rootElement) {
             rootElement = null;
@@ -304,8 +328,8 @@ public class DefaultDocument extends AbstractDocument {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -320,7 +344,7 @@ public class DefaultDocument extends AbstractDocument {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultDocument.java,v 1.26 2003/04/07 22:14:37 jstrachan Exp $
+ * $Id: DefaultDocument.java,v 1.30 2004/07/11 10:49:37 maartenc Exp $
  */

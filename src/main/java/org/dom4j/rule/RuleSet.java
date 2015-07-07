@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: RuleSet.java,v 1.5 2003/04/07 22:15:29 jstrachan Exp $
+ * $Id: RuleSet.java,v 1.8 2004/06/25 12:34:48 maartenc Exp $
  */
 
 package org.dom4j.rule;
@@ -21,7 +21,7 @@ import org.dom4j.Node;
   * rules can be evaluated in order of priority.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.5 $
+  * @version $Revision: 1.8 $
   */
 public class RuleSet {
 
@@ -42,7 +42,6 @@ public class RuleSet {
     /** Performs an XSLT processing model match for the rule
       * which matches the given Node the best.
       *
-      * @param mode is the mode associated with the rule if any
       * @param node is the DOM4J Node to match against
       * @return the matching Rule or no rule if none matched
       */
@@ -118,8 +117,8 @@ public class RuleSet {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -134,7 +133,7 @@ public class RuleSet {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: RuleSet.java,v 1.5 2003/04/07 22:15:29 jstrachan Exp $
+ * $Id: RuleSet.java,v 1.8 2004/06/25 12:34:48 maartenc Exp $
  */

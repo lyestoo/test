@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractAttribute.java,v 1.16 2003/04/07 22:14:32 jstrachan Exp $
+ * $Id: AbstractAttribute.java,v 1.19 2004/06/25 08:03:40 maartenc Exp $
  */
 
 package org.dom4j.tree;
@@ -22,7 +22,7 @@ import org.dom4j.Visitor;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.16 $
+  * @version $Revision: 1.19 $
   */
 public abstract class AbstractAttribute extends AbstractNode implements Attribute {
 
@@ -98,17 +98,45 @@ public abstract class AbstractAttribute extends AbstractNode implements Attribut
     }
     
     public String getPath(Element context) {
+        StringBuffer result = new StringBuffer();
+
         Element parent = getParent();
-        return ( parent != null && parent != context ) 
-            ? parent.getPath( context ) + "/@" + getName() 
-            : "@" + getName();
+        if ((parent != null) && (parent != context)) {
+            result.append(parent.getPath(context));
+            result.append("/");
+        }
+        result.append("@");
+        
+        String uri = getNamespaceURI();
+        String prefix = getNamespacePrefix();
+        if (uri == null || uri.length() == 0 || prefix == null || prefix.length() == 0) {
+            result.append(getName());
+        } else {
+            result.append(getQualifiedName());
+        }
+
+        return result.toString();
     }
     
     public String getUniquePath(Element context) {
+        StringBuffer result = new StringBuffer();
+
         Element parent = getParent();
-        return ( parent != null && parent != context ) 
-            ? parent.getUniquePath( context ) + "/@" + getName() 
-            : "@" + getName();
+        if ((parent != null) && (parent != context)) {
+            result.append(parent.getUniquePath(context));
+            result.append("/");
+        }
+        result.append("@");
+        
+        String uri = getNamespaceURI();
+        String prefix = getNamespacePrefix();
+        if (uri == null || uri.length() == 0 || prefix == null || prefix.length() == 0) {
+            result.append(getName());
+        } else {
+            result.append(getQualifiedName());
+        }
+
+        return result.toString();
     }
 
     protected Node createXPathResult(Element parent) {
@@ -145,8 +173,8 @@ public abstract class AbstractAttribute extends AbstractNode implements Attribut
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -161,7 +189,7 @@ public abstract class AbstractAttribute extends AbstractNode implements Attribut
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractAttribute.java,v 1.16 2003/04/07 22:14:32 jstrachan Exp $
+ * $Id: AbstractAttribute.java,v 1.19 2004/06/25 08:03:40 maartenc Exp $
  */

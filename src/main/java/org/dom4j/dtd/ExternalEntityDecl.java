@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: ExternalEntityDecl.java,v 1.3 2002/05/20 08:14:17 jstrachan Exp $
+ * $Id: ExternalEntityDecl.java,v 1.7 2004/06/25 08:03:36 maartenc Exp $
  */
 
 package org.dom4j.dtd;
@@ -12,7 +12,7 @@ package org.dom4j.dtd;
 /** <p><code>ExternalEntityDecl</code> represents an external entity declaration in a DTD.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.7 $
   */
 public class ExternalEntityDecl {
 
@@ -78,13 +78,21 @@ public class ExternalEntityDecl {
 
     public String toString() {
         StringBuffer buffer = new StringBuffer( "<!ENTITY " );
-        buffer.append( name );
+        
+        if (name.startsWith("%")) {
+            buffer.append("% ");
+            buffer.append(name.substring(1));
+        } 
+        else {
+            buffer.append(name);
+        }
+        
         if (publicID != null) {
             buffer.append(" PUBLIC \"");
             buffer.append(publicID);
             buffer.append("\" ");
             if (systemID != null) {
-                buffer.append(" \"");
+                buffer.append("\"");
                 buffer.append(systemID);
                 buffer.append("\" ");
             }
@@ -126,8 +134,8 @@ public class ExternalEntityDecl {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -142,7 +150,7 @@ public class ExternalEntityDecl {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: ExternalEntityDecl.java,v 1.3 2002/05/20 08:14:17 jstrachan Exp $
+ * $Id: ExternalEntityDecl.java,v 1.7 2004/06/25 08:03:36 maartenc Exp $
  */

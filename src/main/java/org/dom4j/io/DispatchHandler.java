@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DispatchHandler.java,v 1.3 2002/05/20 08:14:16 jstrachan Exp $
+ * $Id: DispatchHandler.java,v 1.9 2004/08/02 18:44:07 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -25,7 +25,7 @@ import org.dom4j.ElementPath;
   * registered with it to process the elements encountered.
   *
   * @author <a href="mailto:dwhite@equipecom.com">Dave White</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.9 $
   */
 
 class DispatchHandler implements ElementHandler
@@ -79,6 +79,31 @@ class DispatchHandler implements ElementHandler
         return (ElementHandler)handlers.remove(path);   
     }
     
+     /** @return true when an <code>ElementHandler</code> is registered for
+       * the specified path.
+       */
+    public boolean containsHandler(String path) {
+        return handlers.containsKey(path);
+    }
+     
+    /**
+     * Get the registered {@link ElementHandler} for the specified path.
+     * @param path XML path to get the handler for
+     * @return the registered handler
+     */
+    public ElementHandler getHandler(String path){
+        return (ElementHandler)handlers.get(path);
+    }
+    
+    /**
+     * Returns the number of {@link ElementHandler} objects that are waiting for their elements
+     * closing tag.
+     * @return number of active handlers
+     */
+    public int getActiveHandlerCount(){
+       return handlerStack.size();
+    }
+
     /** When multiple <code>ElementHandler</code> instances have been 
       * registered, this will set a default <code>ElementHandler</code>
       * to be called for any path which does <b>NOT</b> have a handler
@@ -91,6 +116,19 @@ class DispatchHandler implements ElementHandler
         defaultHandler = handler;
     }
     
+    /**
+     * Used to remove all the Element Handlers and return things back to the way
+     * they were when object was created.
+     */
+    public void resetHandlers() {
+        atRoot          = true;
+        path            = "/";
+        pathStack.clear();
+        handlerStack.clear();
+        handlers.clear();
+	defaultHandler=null;
+    }
+
     /** @return the current path for the parse */
     public String getPath() { return path; }
     
@@ -152,8 +190,13 @@ class DispatchHandler implements ElementHandler
                 defaultHandler.onEnd(elementPath);
             }
         }
+        
         // Set path back to its parent
-        path = (String)pathStack.remove( pathStack.size() - 1 );
+        path = (String) pathStack.remove( pathStack.size() - 1 );
+        
+        if (pathStack.size() == 0) {
+            atRoot = true;
+        }
     }   
 }
 
@@ -184,8 +227,8 @@ class DispatchHandler implements ElementHandler
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -200,7 +243,7 @@ class DispatchHandler implements ElementHandler
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DispatchHandler.java,v 1.3 2002/05/20 08:14:16 jstrachan Exp $
+ * $Id: DispatchHandler.java,v 1.9 2004/08/02 18:44:07 maartenc Exp $
  */

@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DefaultNamespaceContext.java,v 1.5 2003/04/07 22:15:44 jstrachan Exp $
+ * $Id: DefaultNamespaceContext.java,v 1.7 2004/06/25 08:03:42 maartenc Exp $
  */
 
 package org.dom4j.xpath;
@@ -89,8 +89,8 @@ public class DefaultNamespaceContext implements NamespaceContext, Serializable {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -105,7 +105,7 @@ public class DefaultNamespaceContext implements NamespaceContext, Serializable {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DefaultNamespaceContext.java,v 1.5 2003/04/07 22:15:44 jstrachan Exp $
+ * $Id: DefaultNamespaceContext.java,v 1.7 2004/06/25 08:03:42 maartenc Exp $
  */

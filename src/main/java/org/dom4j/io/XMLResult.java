@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: XMLResult.java,v 1.4 2003/04/07 22:14:06 jstrachan Exp $
+ * $Id: XMLResult.java,v 1.7 2004/06/25 12:34:48 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -18,12 +18,12 @@ import javax.xml.transform.sax.SAXResult;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ext.LexicalHandler;
 
-/** <p><code>XMLResult</code> implements a JAXP {@link Result}
+/** <p><code>XMLResult</code> implements a JAXP {@link SAXResult}
   * for an output stream with support for pretty printing
   * and control over how the XML is formatted.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.4 $
+  * @version $Revision: 1.7 $
   */
 public class XMLResult extends SAXResult {
 
@@ -105,8 +105,8 @@ public class XMLResult extends SAXResult {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -121,7 +121,7 @@ public class XMLResult extends SAXResult {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: XMLResult.java,v 1.4 2003/04/07 22:14:06 jstrachan Exp $
+ * $Id: XMLResult.java,v 1.7 2004/06/25 12:34:48 maartenc Exp $
  */

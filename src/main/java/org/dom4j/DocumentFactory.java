@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: DocumentFactory.java,v 1.37 2003/04/07 22:14:51 jstrachan Exp $
+ * $Id: DocumentFactory.java,v 1.40 2004/07/11 10:49:36 maartenc Exp $
  */
 
 package org.dom4j;
@@ -38,7 +38,7 @@ import org.jaxen.VariableContext;
   * tree.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.37 $
+  * @version $Revision: 1.40 $
   */
 public class DocumentFactory implements Serializable {
 
@@ -90,6 +90,20 @@ public class DocumentFactory implements Serializable {
     public Document createDocument() {
         DefaultDocument answer = new DefaultDocument();
         answer.setDocumentFactory( this );
+        return answer;
+    }
+    
+    /**
+     * @since 1.5
+     */
+    public Document createDocument(String encoding) {
+        // to keep the DocumentFactory backwards compatible, we have to do this
+        // in this not so nice way, since subclasses only need to extend the
+        // createDocument() method.
+        Document answer = createDocument();
+        if (answer instanceof DefaultDocument) {
+            ((DefaultDocument) answer).setXMLEncoding(encoding);
+        }
         return answer;
     }
 
@@ -351,8 +365,8 @@ public class DocumentFactory implements Serializable {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -367,7 +381,7 @@ public class DocumentFactory implements Serializable {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DocumentFactory.java,v 1.37 2003/04/07 22:14:51 jstrachan Exp $
+ * $Id: DocumentFactory.java,v 1.40 2004/07/11 10:49:36 maartenc Exp $
  */

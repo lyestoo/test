@@ -58,6 +58,7 @@ import org.xml.sax.SAXException;
  * @author Updated by David Brownell &lt;david-b@pacbell.net&gt;
  * @version $Date: 2002/05/24 14:41:55 $
  * @see SAXDriver
+ * @deprecated Use Aelfred2 instead! THIS CLASS WILL BE REMOVED IN dom4j-1.6 !!
  */
 final class XmlParser
 {
@@ -1397,8 +1398,10 @@ loop:
     // Check for PCDATA alone.
     skipWhitespace ();
     if (tryRead (')')) {
-        dataBufferAppend (")*");
-        tryRead ('*');
+        dataBufferAppend (")");
+        if (tryRead ('*')) {
+            dataBufferAppend("*");
+        }
         return;
     }
 
@@ -1450,7 +1453,7 @@ loop:
     {
     String name;
     int type;
-    String enum = null;
+    String enumer = null;
 
     // Read the attribute name.
     name = readNmtoken (true);
@@ -1462,12 +1465,12 @@ loop:
     // Get the string of enumerated values
     // if necessary.
     if (type == ATTRIBUTE_ENUMERATED || type == ATTRIBUTE_NOTATION) {
-        enum = dataBufferToString ();
+        enumer = dataBufferToString ();
     }
 
     // Read the default value.
     requireWhitespace ();
-    parseDefault (elementName, name, type, enum);
+    parseDefault (elementName, name, type, enumer);
     }
 
 
@@ -1565,7 +1568,7 @@ loop:
     String elementName,
     String name,
     int type,
-    String enum
+    String enumer
     ) throws Exception
     {
     int valueType = ATTRIBUTE_DEFAULT_SPECIFIED;
@@ -1595,7 +1598,7 @@ loop:
         }
     } else
         value = readLiteral (flags);
-    setAttribute (elementName, name, type, enum, value, valueType);
+    setAttribute (elementName, name, type, enumer, value, valueType);
     }
 
 

@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DocumentHelper.java,v 1.13 2003/04/07 22:14:46 jstrachan Exp $
+ * $Id: DocumentHelper.java,v 1.23 2004/07/11 10:49:36 maartenc Exp $
  */
 
 package org.dom4j;
@@ -17,12 +17,13 @@ import java.util.StringTokenizer;
 import org.dom4j.io.SAXReader;
 import org.dom4j.rule.Pattern;
 import org.jaxen.VariableContext;
+import org.xml.sax.InputSource;
 
 /** <p><code>DocumentHelper</code> is a collection of helper methods 
   * for using DOM4J.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.13 $
+  * @version $Revision: 1.23 $
   */
 public class DocumentHelper {
 
@@ -175,7 +176,7 @@ public class DocumentHelper {
     }
     
     /** <p><code>sort</code> sorts the given List of Nodes
-      * using an XPath expression as a {@link Comparator}.
+      * using an XPath expression as a {@link java.util.Comparator}.
       *
       * @param list is the list of Nodes to sort
       * @param xpathExpression is the XPath expression used for comparison
@@ -186,7 +187,7 @@ public class DocumentHelper {
     }
     
     /** <p><code>sort</code> sorts the given List of Nodes
-      * using an XPath expression as a {@link Comparator}
+      * using an XPath expression as a {@link java.util.Comparator}
       * and optionally removing duplicates.</p>
       *
       * @param list is the list of Nodes to sort
@@ -208,7 +209,33 @@ public class DocumentHelper {
       */
     public static Document parseText(String text) throws DocumentException {
         SAXReader reader = new SAXReader();
-        return reader.read( new StringReader( text ) );
+        String encoding = getEncoding(text);
+        
+        InputSource source = new InputSource(new StringReader(text));
+        source.setEncoding(encoding);
+        return reader.read(source);
+    }
+    
+    private static String getEncoding(String text) {
+    	String result = null;
+    	
+    	String xml = text.trim();
+    	if (xml.startsWith("<?xml")) {
+    		int end = xml.indexOf("?>");
+    		String sub = xml.substring(0, end);
+			StringTokenizer tokens = new StringTokenizer(sub, " =\"\'");
+			while (tokens.hasMoreTokens()) {
+				String token = tokens.nextToken();
+				if ("encoding".equals(token)) {
+					if (tokens.hasMoreTokens()) {
+						result = tokens.nextToken();
+					}
+					break;
+				}
+			}
+    	}
+    	
+    	return result;
     }
 
     /** <p>makeElement</p> a helper method which navigates from the
@@ -220,14 +247,14 @@ public class DocumentHelper {
       * &lt;c&gt; element is returned.
       *
       * @param source is the Element or Document to start navigating from
-      * @param is a simple path expression, seperated by '/' which denotes
+      * @param path is a simple path expression, seperated by '/' which denotes
       * the path from the source to the resulting element such as a/b/c
       *
       * @return the first Element on the given path which either already
       * existed on the path or were created by this method.
       */
     public static Element makeElement(Branch source, String path) {
-        StringTokenizer enum = new StringTokenizer( path, "/" );
+        StringTokenizer tokens = new StringTokenizer( path, "/" );
         Element parent;
         if ( source instanceof Document ) {
             Document document = (Document) source;
@@ -235,7 +262,7 @@ public class DocumentHelper {
             
             // lets throw a NoSuchElementException 
             // if we are given an empty path
-            String name = enum.nextToken();
+            String name = tokens.nextToken();
             if ( parent == null ) {
                 parent = document.addElement( name );
             }
@@ -244,8 +271,8 @@ public class DocumentHelper {
             parent = (Element) source;
         }
         Element element = null;
-        while ( enum.hasMoreTokens() ) {
-            String name = enum.nextToken();
+        while ( tokens.hasMoreTokens() ) {
+            String name = tokens.nextToken();
             if ( name.indexOf( ':' ) > 0 ) {
                 element = parent.element( parent.getQName( name ) );
             }
@@ -288,8 +315,8 @@ public class DocumentHelper {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -304,7 +331,7 @@ public class DocumentHelper {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DocumentHelper.java,v 1.13 2003/04/07 22:14:46 jstrachan Exp $
+ * $Id: DocumentHelper.java,v 1.23 2004/07/11 10:49:36 maartenc Exp $
  */

@@ -1,14 +1,15 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: SAXHelper.java,v 1.12 2003/04/07 22:14:08 jstrachan Exp $
+ * $Id: SAXHelper.java,v 1.15 2004/06/25 08:03:38 maartenc Exp $
  */
 
 package org.dom4j.io;
 
+import org.dom4j.io.aelfred2.SAXDriver;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -19,7 +20,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
   * SAX and XMLReader objects.
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.12 $
+  * @version $Revision: 1.15 $
   */
 class SAXHelper {
 
@@ -58,44 +59,35 @@ class SAXHelper {
       */
     public static XMLReader createXMLReader(boolean validating) throws SAXException {
         XMLReader reader = null;
-        if ( classNameAvailable( "javax.xml.parsers.SAXParserFactory" ) ) {
-            // don't attempt to use JAXP if it is not in the ClassPath
+        if ( reader == null ) {
             reader = createXMLReaderViaJAXP( validating, true );
         }
         if ( reader == null ) {
-            if ( reader == null ) {
-                // lets try just use JAXP, maybe its a classloader issue
-                reader = createXMLReaderViaJAXP( validating, true );
+            try {
+                reader = XMLReaderFactory.createXMLReader();
             }
-            if ( reader == null ) {
-                try {
-                    reader = XMLReaderFactory.createXMLReader();
-                }
-                catch (Exception e) {
-                    if ( isVerboseErrorReporting() ) {
-                        // log all exceptions as warnings and carry
-                        // on as we have a default SAX parser we can use
-                        System.out.println( 
-                            "Warning: Caught exception attempting to use SAX to "
-                             + "load a SAX XMLReader " 
-                        );
-                        System.out.println( "Warning: Exception was: " + e );
-                        System.out.println( 
-                            "Warning: I will print the stack trace then carry on "
-                             + "using the default SAX parser" 
-                         );
-                        e.printStackTrace();
-                    }
-                    else {
-                        System.out.println( 
-                            "Warning: Error occurred using SAX to load a SAXParser. Will use Aelfred instead" 
-                        );
-                    }
+            catch (Exception e) {
+                if ( isVerboseErrorReporting() ) {
+                    // log all exceptions as warnings and carry
+                    // on as we have a default SAX parser we can use
+                    System.out.println( 
+                        "Warning: Caught exception attempting to use SAX to "
+                         + "load a SAX XMLReader " 
+                    );
+                    System.out.println( "Warning: Exception was: " + e );
+                    System.out.println( 
+                        "Warning: I will print the stack trace then carry on "
+                         + "using the default SAX parser" 
+                     );
+                    e.printStackTrace();
                 }
             }
-            if ( reader == null ) {
-                throw new SAXException( "Could not initialize a SAX Parser. Please add a SAX parser to your classpath along with preferably jaxp.jar" );
-            }
+        }
+        if ( reader == null ) {
+            System.out.println(
+                    "Warning: Error occurred using SAX to load a SAXParser. " +
+                    "Will use Aelfred instead");
+            reader = new SAXDriver();
         }
         return reader;
     }
@@ -121,35 +113,13 @@ class SAXHelper {
                          + "load a SAX XMLReader " 
                     );
                     System.out.println( "Warning: Exception was: " + e );
-                    System.out.println( 
-                        "Warning: I will print the stack trace then carry on "
-                         + "using the default SAX parser" 
-                     );
                     e.printStackTrace();
-                }
-                else {
-                    System.out.println( 
-                        "Warning: Error occurred using JAXP to load a SAXParser. Will use Aelfred instead" 
-                    );
                 }
             }
         }
         return null;
     }
 
-    /** @return true if the given class could be found using the class loader which loaded this 
-      * class
-      */
-    protected static boolean classNameAvailable( String className ) {
-        try {            
-            Class.forName( className, true, SAXHelper.class.getClassLoader() );
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
-    }
-    
     protected static boolean isVerboseErrorReporting() {
         try {
             String flag = System.getProperty( "org.dom4j.verbose" );
@@ -192,8 +162,8 @@ class SAXHelper {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -208,7 +178,7 @@ class SAXHelper {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXHelper.java,v 1.12 2003/04/07 22:14:08 jstrachan Exp $
+ * $Id: SAXHelper.java,v 1.15 2004/06/25 08:03:38 maartenc Exp $
  */

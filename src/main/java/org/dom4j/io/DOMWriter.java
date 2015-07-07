@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: DOMWriter.java,v 1.7 2003/04/07 22:14:05 jstrachan Exp $
+ * $Id: DOMWriter.java,v 1.15 2004/06/28 14:19:33 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -27,17 +27,19 @@ import org.dom4j.tree.NamespaceStack;
   * it as a W3C DOM object</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.7 $
+  * @version $Revision: 1.15 $
   */
 public class DOMWriter {
 
     private static boolean loggedWarning = false;
     private static final String[] DEFAULT_DOM_DOCUMENT_CLASSES = {
         "org.apache.xerces.dom.DocumentImpl", // Xerces
+        "gnu.xml.dom.DomDocument", // GNU JAXP
         "org.apache.crimson.tree.XmlDocument", // Crimson
         "com.sun.xml.tree.XmlDocument", // Sun's Project X
         "oracle.xml.parser.v2.XMLDocument", // Oracle V2
-        "oracle.xml.parser.XMLDocument" // Oracle V1
+        "oracle.xml.parser.XMLDocument", // Oracle V1
+        "org.dom4j.dom.DOMDocument" // Internal DOM implementation
     };
 
     // the Class used to create new DOM Document instances
@@ -55,18 +57,20 @@ public class DOMWriter {
     }
 
     public Class getDomDocumentClass() throws DocumentException {
-        if ( domDocumentClass == null ) {
+        Class result = domDocumentClass;
+        
+        if ( result == null ) {
             // lets try and find one in the classpath
             int size = DEFAULT_DOM_DOCUMENT_CLASSES.length;
             for ( int i = 0; i < size; i++ ) {
                 try {
                     String name = DEFAULT_DOM_DOCUMENT_CLASSES[i];
-                    domDocumentClass = Class.forName( 
+                    result = Class.forName( 
                         name,
                         true,
                         DOMWriter.class.getClassLoader()
                     );
-                    if ( domDocumentClass != null ) {
+                    if ( result != null ) {
                         break;
                     }
                 }
@@ -76,7 +80,7 @@ public class DOMWriter {
                 }
             }
         }
-        return domDocumentClass;
+        return result;
     }
     
     /** Sets the DOM {@link org.w3c.dom.Document} implementation
@@ -175,16 +179,20 @@ public class DOMWriter {
         org.w3c.dom.Node domCurrent,
         Element element
     ) {        
-        org.w3c.dom.Element domElement = null;
-        String elementUri = element.getNamespaceURI();
-        if (elementUri != null && elementUri.length() > 0 ) {            
-            domElement = domDocument.createElementNS( elementUri, element.getQualifiedName() );
-        }
-        else {
-            domElement = domDocument.createElement( element.getQualifiedName() );
-        }
+        String elUri = element.getNamespaceURI();
+        String elName = element.getQualifiedName();
+        org.w3c.dom.Element domElement = domDocument.createElementNS(elUri, elName);
         
         int stackSize = namespaceStack.size();
+        
+        // add the namespace of the element first
+        Namespace elementNamespace = element.getNamespace();
+        if (isNamespaceDeclaration(elementNamespace)) {
+            namespaceStack.push(elementNamespace);
+            writeNamespace(domElement, elementNamespace);
+        }
+        
+        // add the additional declared namespaces
         List declaredNamespaces = element.declaredNamespaces();
         for ( int i = 0, size = declaredNamespaces.size(); i < size ; i++ ) {
             Namespace namespace = (Namespace) declaredNamespaces.get(i);
@@ -197,14 +205,10 @@ public class DOMWriter {
         // add the attributes
         for ( int i = 0, size = element.attributeCount(); i < size ; i++ ) {
             Attribute attribute = (Attribute) element.attribute(i);
-            String uri = attribute.getNamespaceURI();
-            if ( uri != null && uri.length() > 0 ) {
-                //writeNamespace( domElement, attribute.getNamespace() );
-                domElement.setAttributeNS( uri, attribute.getQualifiedName(), attribute.getValue() );
-            }
-            else {
-                domElement.setAttribute( attribute.getName(), attribute.getValue() );
-            }
+            String attUri = attribute.getNamespaceURI();
+            String attName = attribute.getQualifiedName();
+            String value =  attribute.getValue();
+            domElement.setAttributeNS(attUri, attName, value);
         }
 
         // add content
@@ -266,9 +270,6 @@ public class DOMWriter {
         domCurrent.appendChild(domPI);
     }
     
-    /** @return the new local namespace set which may be different from the input
-      * set if a new namespace is added to the set
-      */
     protected void writeNamespace( 
         org.w3c.dom.Element domElement, 
         Namespace namespace
@@ -290,30 +291,40 @@ public class DOMWriter {
     protected org.w3c.dom.Document createDomDocument(
         Document document
     ) throws DocumentException {
-        // lets try JAXP first
-        org.w3c.dom.Document answer = createDomDocumentViaJAXP();
-        if ( answer != null ) {
-            return answer;
+        org.w3c.dom.Document result = null;
+        
+        // use the given domDocumentClass (if not null)
+        if (domDocumentClass != null) {
+            try {
+                result = (org.w3c.dom.Document) domDocumentClass.newInstance();
+            }
+            catch (Exception e) {
+                throw new DocumentException( 
+                    "Could not instantiate an instance of DOM Document with class: " 
+                    + domDocumentClass.getName(), e 
+                );
+            }
+        } else {
+            // lets try JAXP first before using the hardcoded default parsers
+            result = createDomDocumentViaJAXP();
+            if ( result == null ) {
+                Class theClass = getDomDocumentClass();
+                try {
+                    result = (org.w3c.dom.Document) theClass.newInstance();
+                }
+                catch (Exception e) {
+                    throw new DocumentException( 
+                        "Could not instantiate an instance of DOM Document with class: " 
+                        + theClass.getName(), e 
+                    );
+                }
+            }
         }
-        Class theClass = getDomDocumentClass();
-        try {
-            return (org.w3c.dom.Document) theClass.newInstance();
-        }
-        catch (Exception e) {
-            throw new DocumentException( 
-                "Could not instantiate an instance of DOM Document wtih class: " 
-                + theClass.getName(), e 
-            );
-        }
+        
+        return result;
     }
     
     protected org.w3c.dom.Document createDomDocumentViaJAXP() throws DocumentException {
-        if ( ! SAXHelper.classNameAvailable( "javax.xml.parsers.DocumentBuilderFactory" ) ) {
-            // don't attempt to use JAXP if it is not in the ClassPath
-            return null;
-        }
-        
-        // try use JAXP to load the XMLReader...
         try {
             return JAXPHelper.createDocument( false, true );
         }
@@ -398,8 +409,8 @@ public class DOMWriter {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -414,7 +425,7 @@ public class DOMWriter {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: DOMWriter.java,v 1.7 2003/04/07 22:14:05 jstrachan Exp $
+ * $Id: DOMWriter.java,v 1.15 2004/06/28 14:19:33 maartenc Exp $
  */

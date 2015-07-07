@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: SchemaParser.java,v 1.14 2003/04/07 22:15:20 jstrachan Exp $
+ * $Id: SchemaParser.java,v 1.17 2004/06/25 08:03:34 maartenc Exp $
  */
 
 package org.dom4j.datatype;
@@ -34,7 +34,7 @@ import org.xml.sax.InputSource;
  *
  * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
  * @author Yuxin Ruan
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.17 $
  */
 public class SchemaParser {
 
@@ -59,6 +59,9 @@ public class SchemaParser {
 
     /** NamedTypeResolver */
     private NamedTypeResolver namedTypeResolver;
+    
+    /** target namespace */
+    private Namespace targetNamespace;
 
     public SchemaParser() {
         this(DatatypeDocumentFactory.singleton);
@@ -66,19 +69,28 @@ public class SchemaParser {
 
     public SchemaParser(DatatypeDocumentFactory documentFactory) {
         this.documentFactory = documentFactory;
-        this.namedTypeResolver=new NamedTypeResolver(documentFactory);
+        this.namedTypeResolver = new NamedTypeResolver(documentFactory);
     }
-
 
     /** Parses the given schema document
      *
      * @param schemaDocument is the document of the XML Schema
      */
     public void build( Document schemaDocument ) {
+        this.targetNamespace = null;
+        internalBuild( schemaDocument );
+    }
+    
+    public void build( Document schemaDocument, Namespace targetNamespace) {
+        this.targetNamespace = targetNamespace;
+        internalBuild( schemaDocument );
+    }
+
+    private synchronized void internalBuild( Document schemaDocument ) {
         Element root = schemaDocument.getRootElement();
         if ( root != null ) {
             //handle schema includes
-            Iterator includeIter = root.elementIterator( XSD_INCLUDE);
+            Iterator includeIter = root.elementIterator( XSD_INCLUDE );
             while (includeIter.hasNext()) {
                 Element includeElement = (Element) includeIter.next();
                 String inclSchemaInstanceURI = includeElement.attributeValue("schemaLocation");
@@ -133,7 +145,7 @@ public class SchemaParser {
 
     /** processes an XML Schema &lt;element&gt; tag
      */
-    protected void onDatatypeElement( Element xsdElement , DocumentFactory parentFactory ) {
+    private void onDatatypeElement( Element xsdElement , DocumentFactory parentFactory ) {
         String name = xsdElement.attributeValue( "name" );
         String type = xsdElement.attributeValue( "type" );
         QName qname = getQName( name );
@@ -184,7 +196,7 @@ public class SchemaParser {
 
     /** processes an named XML Schema &lt;complexTypegt; tag
       */
-    protected void onNamedSchemaComplexType(Element schemaComplexType) {
+    private void onNamedSchemaComplexType(Element schemaComplexType) {
         Attribute nameAttr=schemaComplexType.attribute("name");
         if (nameAttr==null) return;
         String name=nameAttr.getText();
@@ -199,7 +211,7 @@ public class SchemaParser {
 
     /** processes an XML Schema &lt;complexTypegt; tag
      */
-    protected void onSchemaComplexType( Element schemaComplexType, DatatypeElementFactory elementFactory ) {
+    private void onSchemaComplexType( Element schemaComplexType, DatatypeElementFactory elementFactory ) {
         Iterator iter = schemaComplexType.elementIterator( XSD_ATTRIBUTE );
         while ( iter.hasNext() ) {
             Element xsdAttribute = (Element) iter.next();
@@ -238,7 +250,7 @@ public class SchemaParser {
         }
     }
 
-    protected void onChildElements(Element element,DatatypeElementFactory factory) {
+    private void onChildElements(Element element,DatatypeElementFactory factory) {
         Iterator iter = element.elementIterator( XSD_ELEMENT );
         while ( iter.hasNext() ) {
             Element xsdElement = (Element) iter.next();
@@ -248,7 +260,7 @@ public class SchemaParser {
 
     /** processes an XML Schema &lt;attribute&gt; tag
      */
-    protected void onDatatypeAttribute(
+    private void onDatatypeAttribute(
         Element xsdElement,
         DatatypeElementFactory elementFactory,
         Element xsdAttribute
@@ -268,7 +280,7 @@ public class SchemaParser {
 
     /** processes an XML Schema &lt;attribute&gt; tag
      */
-    protected XSDatatype dataTypeForXsdAttribute( Element xsdAttribute ) {
+    private XSDatatype dataTypeForXsdAttribute( Element xsdAttribute ) {
         String type = xsdAttribute.attributeValue( "type" );
         XSDatatype dataType = null;
         if ( type != null ) {
@@ -290,7 +302,7 @@ public class SchemaParser {
 
     /** processes an named XML Schema &lt;simpleTypegt; tag
       */
-    protected void onNamedSchemaSimpleType(Element schemaSimpleType) {
+    private void onNamedSchemaSimpleType(Element schemaSimpleType) {
         Attribute nameAttr=schemaSimpleType.attribute("name");
         if (nameAttr==null) return;
         String name=nameAttr.getText();
@@ -300,7 +312,7 @@ public class SchemaParser {
     }
 
     /** Loads a XSDatatype object from a <simpleType> attribute schema element */
-    protected XSDatatype loadXSDatatypeFromSimpleType( Element xsdSimpleType ) {
+    private XSDatatype loadXSDatatypeFromSimpleType( Element xsdSimpleType ) {
         Element xsdRestriction = xsdSimpleType.element( XSD_RESTRICTION );
         if ( xsdRestriction != null ) {
             String base = xsdRestriction.attributeValue( "base" );
@@ -341,7 +353,7 @@ public class SchemaParser {
     }
 
     /** Derives a new type from a base type and a set of restrictions */
-    protected XSDatatype deriveSimpleType( XSDatatype baseType, Element xsdRestriction ) {
+    private XSDatatype deriveSimpleType( XSDatatype baseType, Element xsdRestriction ) {
         TypeIncubator incubator = new TypeIncubator(baseType);
         ValidationContext context = null;
 
@@ -371,7 +383,7 @@ public class SchemaParser {
     /** @return the <code>DatatypeElementFactory</code> for the given
      * element QName, creating one if it does not already exist
      */
-    protected DatatypeElementFactory getDatatypeElementFactory( QName elementQName ) {
+    private DatatypeElementFactory getDatatypeElementFactory( QName elementQName ) {
         DatatypeElementFactory factory = documentFactory.getElementFactory( elementQName );
         if ( factory == null ) {
             factory = new DatatypeElementFactory( elementQName );
@@ -380,7 +392,7 @@ public class SchemaParser {
         return factory;
     }
 
-    protected XSDatatype getTypeByName( String type ) {
+    private XSDatatype getTypeByName( String type ) {
         XSDatatype dataType = (XSDatatype) dataTypeCache.get( type );
         if ( dataType == null ) {
             // first check to see if it is a built-in type
@@ -413,14 +425,18 @@ public class SchemaParser {
         return dataType;
     }    
 
-    protected QName getQName( String name ) {
-        return documentFactory.createQName(name);
+    private QName getQName( String name ) {
+        if (targetNamespace == null) {
+            return documentFactory.createQName(name);
+        } else {
+            return documentFactory.createQName(name, targetNamespace);
+        }
     }
 
     /** Called when there is a problem with the schema and the builder cannot
      * handle the XML Schema Data Types correctly
      */
-    protected void onSchemaError( String message ) {
+    private void onSchemaError( String message ) {
         // Some users may wish to disable exception throwing
         // and instead use some kind of listener for errors and continue
         //System.out.println( "WARNING: " + message );
@@ -456,8 +472,8 @@ public class SchemaParser {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -472,7 +488,7 @@ public class SchemaParser {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SchemaParser.java,v 1.14 2003/04/07 22:15:20 jstrachan Exp $
+ * $Id: SchemaParser.java,v 1.17 2004/06/25 08:03:34 maartenc Exp $
  */

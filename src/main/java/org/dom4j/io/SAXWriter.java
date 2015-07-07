@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: SAXWriter.java,v 1.18 2003/04/07 22:14:05 jstrachan Exp $
+ * $Id: SAXWriter.java,v 1.22 2004/06/25 12:34:47 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -46,7 +46,7 @@ import org.xml.sax.helpers.LocatorImpl;
 /** <p><code>SAXWriter</code> writes a DOM4J tree to a SAX ContentHandler.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.18 $
+  * @version $Revision: 1.22 $
   */
 public class SAXWriter implements XMLReader {
 
@@ -162,7 +162,7 @@ public class SAXWriter implements XMLReader {
     /** Generates SAX events for the given Document and all its content
       *
       * @param document is the Document to parse
-      * @throw SAXException if there is a SAX error processing the events
+      * @throws SAXException if there is a SAX error processing the events
       */
     public void write(Document document) throws SAXException {
         if (document != null) {       
@@ -183,7 +183,7 @@ public class SAXWriter implements XMLReader {
     /** Generates SAX events for the given Element and all its content
       *
       * @param element is the Element to parse
-      * @throw SAXException if there is a SAX error processing the events
+      * @throws SAXException if there is a SAX error processing the events
       */
     public void write( Element element ) throws SAXException {
         write( element, new NamespaceStack() );
@@ -211,7 +211,7 @@ public class SAXWriter implements XMLReader {
     /** Generates SAX events for the given text
       *
       * @param text is the text to send to the SAX ContentHandler
-      * @throw SAXException if there is a SAX error processing the events
+      * @throws SAXException if there is a SAX error processing the events
       */
     public void write( String text ) throws SAXException {
         if ( text != null ) {
@@ -223,7 +223,7 @@ public class SAXWriter implements XMLReader {
     /** Generates SAX events for the given CDATA
       *
       * @param cdata is the CDATA to parse
-      * @throw SAXException if there is a SAX error processing the events
+      * @throws SAXException if there is a SAX error processing the events
       */
     public void write( CDATA cdata ) throws SAXException {
         String text = cdata.getText();
@@ -240,7 +240,7 @@ public class SAXWriter implements XMLReader {
     /** Generates SAX events for the given Comment
       *
       * @param comment is the Comment to parse
-      * @throw SAXException if there is a SAX error processing the events
+      * @throws SAXException if there is a SAX error processing the events
       */
     public void write( Comment comment ) throws SAXException {
         if ( lexicalHandler != null ) {
@@ -252,8 +252,8 @@ public class SAXWriter implements XMLReader {
     
     /** Generates SAX events for the given Entity
       *
-              * @param e is the Entity to parse
-      * @throw SAXException if there is a SAX error processing the events
+      * @param entity is the Entity to parse
+      * @throws SAXException if there is a SAX error processing the events
       */
     public void write( Entity entity ) throws SAXException {
         String text = entity.getText();
@@ -271,7 +271,7 @@ public class SAXWriter implements XMLReader {
     /** Generates SAX events for the given ProcessingInstruction
       *
       * @param pi is the ProcessingInstruction to parse
-      * @throw SAXException if there is a SAX error processing the events
+      * @throws SAXException if there is a SAX error processing the events
       */
     public void write( ProcessingInstruction pi ) throws SAXException {        
         String target = pi.getTarget();
@@ -367,7 +367,7 @@ public class SAXWriter implements XMLReader {
 
     /** Sets the <code>LexicalHandler</code> .
       *
-      * @param entityResolver is the <code>LexicalHandler</code> 
+      * @param lexicalHandler is the <code>LexicalHandler</code> 
       */
     public void setLexicalHandler(LexicalHandler lexicalHandler) {
         this.lexicalHandler = lexicalHandler;
@@ -507,7 +507,7 @@ public class SAXWriter implements XMLReader {
         }
     }
     
-    /** The {@link Locator} is only really useful when parsing a textual
+    /** The {@link org.xml.sax.Locator} is only really useful when parsing a textual
       * document as its main purpose is to identify the line and column number.
       * Since we are processing an in memory tree which will probably have
       * its line number information removed, we'll just use -1 for the line
@@ -587,6 +587,16 @@ public class SAXWriter implements XMLReader {
       */
     protected AttributesImpl startPrefixMapping( Element element, NamespaceStack namespaceStack ) throws SAXException {
         AttributesImpl namespaceAttributes = null;
+        
+        // start with the namespace of the element
+        Namespace elementNamespace = element.getNamespace();
+        if ((elementNamespace != null) && !isIgnoreableNamespace(elementNamespace, namespaceStack)) {
+            namespaceStack.push(elementNamespace);
+            contentHandler.startPrefixMapping(
+                    elementNamespace.getPrefix(), elementNamespace.getURI());
+            namespaceAttributes = addNamespaceAttribute(namespaceAttributes, elementNamespace);
+        }
+        
         List declaredNamespaces = element.declaredNamespaces();
         for ( int i = 0, size = declaredNamespaces.size(); i < size ; i++ ) {
             Namespace namespace = (Namespace) declaredNamespaces.get(i);
@@ -724,8 +734,8 @@ public class SAXWriter implements XMLReader {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -740,7 +750,7 @@ public class SAXWriter implements XMLReader {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: SAXWriter.java,v 1.18 2003/04/07 22:14:05 jstrachan Exp $
+ * $Id: SAXWriter.java,v 1.22 2004/06/25 12:34:47 maartenc Exp $
  */

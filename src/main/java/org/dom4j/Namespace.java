@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Namespace.java,v 1.17 2003/04/07 22:14:53 jstrachan Exp $
+ * $Id: Namespace.java,v 1.20 2004/06/25 08:03:33 maartenc Exp $
  */
 
 package org.dom4j;
@@ -16,7 +16,7 @@ import org.dom4j.tree.NamespaceCache;
 /** <p><code>Namespace</code> is a Flyweight Namespace that can be shared amongst nodes.</p>
   * 
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.17 $
+  * @version $Revision: 1.20 $
   */
 public class Namespace extends AbstractNode {
     
@@ -92,7 +92,10 @@ public class Namespace extends AbstractNode {
         return hashCode;
     }
 
-  
+    /**
+     * Checks whether this Namespace equals the given Namespace. Two Namespaces
+     * are equals if their URI and prefix are equal.
+     */  
     public boolean equals(Object object) {
         if ( this == object ) {
             return true;
@@ -217,8 +220,8 @@ public class Namespace extends AbstractNode {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -233,7 +236,7 @@ public class Namespace extends AbstractNode {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Namespace.java,v 1.17 2003/04/07 22:14:53 jstrachan Exp $
+ * $Id: Namespace.java,v 1.20 2004/06/25 08:03:33 maartenc Exp $
  */

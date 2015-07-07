@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
  * This software is open source.
  * See the bottom of this file for the licence.
  *
- * $Id: OutputFormat.java,v 1.9 2002/05/20 08:14:16 jstrachan Exp $
+ * $Id: OutputFormat.java,v 1.13 2004/06/25 08:03:37 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -13,7 +13,7 @@ package org.dom4j.io;
   * used by {@link XMLWriter} and its base classes to format the XML output
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.9 $
+  * @version $Revision: 1.13 $
   */
 public class OutputFormat implements Cloneable {
 
@@ -22,6 +22,9 @@ public class OutputFormat implements Cloneable {
 
     /** Whether or not to suppress the XML declaration - default is <code>false</code> */
     private boolean suppressDeclaration = false;
+    
+    /** Whether or not to print new line after the XML declaration - default is <code>true</code> */
+    private boolean newLineAfterDeclaration = true;
 
     /** The encoding format */
     private String encoding = "UTF-8";
@@ -52,6 +55,9 @@ public class OutputFormat implements Cloneable {
 
     /** Controls when to output a line.separtor every so many tags in case of no lines and total text trimming.*/
     private int newLineAfterNTags = 0;  //zero means don't bother.
+    
+    /** Quote character to use when writing attributes. */
+    private char attributeQuoteChar = '\"';
 
 
     /** Creates an <code>OutputFormat</code> with
@@ -171,6 +177,24 @@ public class OutputFormat implements Cloneable {
       */
     public boolean isSuppressDeclaration() {
         return suppressDeclaration;
+    }
+    
+    /** <p> This will set whether a new line is printed after the XML
+      *  declaration (assuming it is not supressed.)
+      * 
+      *  @param newLineAfterDeclaration <code>boolean</code> indicating 
+      *  whether or not to print new line following the XML declaration. The
+      *  default is true.
+      *  
+      */
+    public void setNewLineAfterDeclaration(boolean newLineAfterDeclaration) {
+        this.newLineAfterDeclaration = newLineAfterDeclaration;
+    }
+
+    /** @return true if a new line should be printed following XML declaration
+      */
+    public boolean isNewLineAfterDeclaration() {
+        return newLineAfterDeclaration;
     }
 
     public boolean isExpandEmptyElements() {
@@ -310,6 +334,28 @@ public class OutputFormat implements Cloneable {
         newLineAfterNTags = tagCount;
     }
 
+    public char getAttributeQuoteCharacter() {
+        return attributeQuoteChar;
+    }
+
+    /**
+     * Sets the character used to quote attribute values. The specified
+     * character must be a valid XML attribute quote character, otherwise an
+     * <code>IllegalArgumentException</code> will be thrown.
+     * 
+     * @param quoteChar The character to use when quoting attribute values.
+     * @throws IllegalArgumentException If the specified character is not a
+     *         valid XML attribute quote character.
+     */
+    public void setAttributeQuoteCharacter(char quoteChar) {
+        if (quoteChar == '\'' || quoteChar == '"') {
+            attributeQuoteChar = quoteChar;
+        } else {
+            throw new IllegalArgumentException(
+                    "Invalid attribute quote character (" + quoteChar + ")");
+        }
+    }
+
     /** Parses command line arguments of the form
       * <code>-omitEncoding -indentSize 3 -newlines -trimText</code>
       *
@@ -413,8 +459,8 @@ public class OutputFormat implements Cloneable {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -429,7 +475,7 @@ public class OutputFormat implements Cloneable {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: OutputFormat.java,v 1.9 2002/05/20 08:14:16 jstrachan Exp $
+ * $Id: OutputFormat.java,v 1.13 2004/06/25 08:03:37 maartenc Exp $
  */

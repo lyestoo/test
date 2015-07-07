@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: ElementStack.java,v 1.8 2003/04/07 22:14:08 jstrachan Exp $
+ * $Id: ElementStack.java,v 1.12 2004/08/02 18:44:07 maartenc Exp $
  */
 
 package org.dom4j.io;
@@ -20,7 +20,7 @@ import org.dom4j.ElementPath;
   * when a node is complete.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.8 $
+  * @version $Revision: 1.12 $
   */
 class ElementStack implements ElementPath {
 
@@ -44,6 +44,10 @@ class ElementStack implements ElementPath {
     public void setDispatchHandler(DispatchHandler handler)
     {
         this.handler = handler;   
+    }
+    
+    public DispatchHandler getDispatchHandler(){
+       return this.handler;
     }
     
     /** Peeks at the top element on the stack without changing the contents
@@ -140,6 +144,13 @@ class ElementStack implements ElementPath {
         this.handler.removeHandler(getHandlerPath(path));
     }
     
+    /** @return true when an <code>ElementHandler</code> is registered for
+      * the specified path.
+      */
+    public boolean containsHandler(String path) {
+        return this.handler.containsHandler(path);
+    }
+
     private String getHandlerPath(String path) {
         String handlerPath;
         if (this.handler == null) {
@@ -185,8 +196,8 @@ class ElementStack implements ElementPath {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -201,7 +212,7 @@ class ElementStack implements ElementPath {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: ElementStack.java,v 1.8 2003/04/07 22:14:08 jstrachan Exp $
+ * $Id: ElementStack.java,v 1.12 2004/08/02 18:44:07 maartenc Exp $
  */

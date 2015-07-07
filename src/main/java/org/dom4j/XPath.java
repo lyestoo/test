@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: XPath.java,v 1.13 2003/04/07 22:14:56 jstrachan Exp $
+ * $Id: XPath.java,v 1.18 2004/06/25 12:34:47 maartenc Exp $
  */
 
 package org.dom4j;
@@ -20,7 +20,7 @@ import org.jaxen.VariableContext;
   * it has been parsed from a String.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.13 $
+  * @version $Revision: 1.18 $
   */
 public interface XPath extends NodeFilter {
 
@@ -69,6 +69,7 @@ public interface XPath extends NodeFilter {
       * the XPath expression. 
       *
       * @deprecated please use evaluate(Object) instead.
+      *             WILL BE REMOVED IN dom4j-1.6 !!
       */
     public Object selectObject(Object context);
 
@@ -134,7 +135,7 @@ public interface XPath extends NodeFilter {
     
     /** <p><code>numberValueOf</code> evaluates an XPath expression
       * and returns the numeric value of the XPath expression if the XPath
-      * expression results in a number, or null if the result is not a number.
+      * expression results is a number, or null if the result is not a number.
       *
       * @param context is either a node or a list of nodes on which to 
       *    evalute the XPath
@@ -143,15 +144,34 @@ public interface XPath extends NodeFilter {
       */
     public Number numberValueOf(Object context);
 
+    /** 
+     * Retrieve a boolean-value interpretation of this XPath
+     * expression when evaluated against a given context.
+     *
+     * <p>
+     * The boolean-value of the expression is determined per
+     * the <code>boolean(..)</code> core function as defined
+     * in the XPath specification.  This means that an expression
+     * that selects zero nodes will return <code>false</code>,
+     * while an expression that selects one-or-more nodes will
+     * return <code>true</code>.
+     * </p>
+     *
+     * @param context The node, nodeset or Context object for evaluation. This value can be null
+     * @return The boolean-value interpretation of this expression.
+     * @since 1.5
+     */
+    public boolean booleanValueOf(Object context);
+
     /** <p><code>sort</code> sorts the given List of Nodes
-      * using this XPath expression as a {@link Comparator}.</p>
+      * using this XPath expression as a {@link java.util.Comparator}.</p>
       *
       * @param list is the list of Nodes to sort
       */
     public void sort( List list );
     
     /** <p><code>sort</code> sorts the given List of Nodes
-      * using this XPath expression as a {@link Comparator} 
+      * using this XPath expression as a {@link java.util.Comparator} 
       * and optionally removing duplicates.</p>
       *
       * @param list is the list of Nodes to sort
@@ -233,8 +253,8 @@ public interface XPath extends NodeFilter {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -249,7 +269,7 @@ public interface XPath extends NodeFilter {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: XPath.java,v 1.13 2003/04/07 22:14:56 jstrachan Exp $
+ * $Id: XPath.java,v 1.18 2004/06/25 12:34:47 maartenc Exp $
  */

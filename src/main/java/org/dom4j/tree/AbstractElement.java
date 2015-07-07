@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: AbstractElement.java,v 1.68 2003/04/07 22:14:16 jstrachan Exp $
+ * $Id: AbstractElement.java,v 1.77 2004/06/25 12:34:49 maartenc Exp $
  */
 
 package org.dom4j.tree;
@@ -40,7 +40,7 @@ import org.xml.sax.Attributes;
   * tree implementors to use for implementation inheritence.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.68 $
+  * @version $Revision: 1.77 $
   */
 
 public abstract class AbstractElement
@@ -131,6 +131,10 @@ public abstract class AbstractElement
     }
 
     public String getPath(Element context) {
+        
+        if (this == context) {
+            return ".";
+        }
 
         Element parent = getParent();
 
@@ -585,25 +589,25 @@ public abstract class AbstractElement
 
     public Iterator elementIterator() {
 
-        List list = contentList();
+        List list = elements();
 
-        return new ElementIterator(list.iterator());
+        return list.iterator();
 
     }
 
     public Iterator elementIterator(String name) {
 
-        List list = contentList();
+        List list = elements(name);
 
-        return new ElementNameIterator(list.iterator(), name);
+        return list.iterator();
 
     }
 
     public Iterator elementIterator(QName qName) {
 
-        List list = contentList();
+        List list = elements(qName);
 
-        return new ElementQNameIterator(list.iterator(), qName);
+        return list.iterator();
 
     }
 
@@ -831,12 +835,22 @@ public abstract class AbstractElement
 
     }
 
+    /**
+     * @deprecated As of version 0.5. Please use 
+     *    {@link #addAttribute(String,String)} instead.
+     *    WILL BE REMOVED IN dom4j-1.6 !!
+     **/
     public void setAttributeValue(String name, String value) {
 
         addAttribute(name, value);
 
     }
 
+    /**
+     * @deprecated As of version 0.5. Please use 
+     *    {@link #addAttribute(String,String)} instead.
+     *    WILL BE REMOVED IN dom4j-1.6 !!
+     **/
     public void setAttributeValue(QName qName, String value) {
 
         addAttribute(qName, value);
@@ -1621,7 +1635,7 @@ public abstract class AbstractElement
      * <code>CDATASections</code>, the normalize operation alone may not be 
      * sufficient, since XPointers do not differentiate between 
      * <code>Text</code> nodes and <code>CDATASection</code> nodes.
-     * @version DOM Level 2
+     * @since DOM Level 2
      */
 
     public void normalize() {
@@ -1950,16 +1964,48 @@ public abstract class AbstractElement
 
     }
 
+    public List getNamespacesForURI(String uri) {
+
+        BackedList answer = createResultList();
+
+//        if (getNamespaceURI().equals(uri)) {
+//
+//            answer.addLocal(getNamespace());
+//
+//        }
+
+        List list = contentList();
+
+        int size = list.size();
+
+        for (int i = 0; i < size; i++) {
+
+            Object object = list.get(i);
+
+            if ((object instanceof Namespace) 
+
+                && ((Namespace) object).getURI().equals(uri)) {
+                
+                    answer.addLocal(object);
+                    
+            }
+
+        }
+
+        return answer;
+        
+    }
+
     public List declaredNamespaces() {
 
         BackedList answer = createResultList();
 
-        if (getNamespaceURI().length() > 0) {
-
-            answer.addLocal(getNamespace());
-
-        }
-
+//        if (getNamespaceURI().length() > 0) {
+//
+//            answer.addLocal(getNamespace());
+//
+//        }
+//
         List list = contentList();
 
         int size = list.size();
@@ -1995,8 +2041,11 @@ public abstract class AbstractElement
             if (object instanceof Namespace) {
 
                 Namespace namespace = (Namespace) object;
+                
+                if (! namespace.equals(getNamespace())) {
 
-                answer.addLocal(namespace);
+                    answer.addLocal(namespace);
+                }
 
             }
 
@@ -2094,12 +2143,39 @@ public abstract class AbstractElement
         addNewNode(node);
 
     }
+    
+    protected void addNode(int index, Node node) {
+        
+        if (node.getParent() != null) {
+
+            // XXX: could clone here
+
+            String message =
+                "The Node already has an existing parent of \""
+                    + node.getParent().getQualifiedName()
+                    + "\"";
+
+            throw new IllegalAddException(this, node, message);
+
+        }
+
+        addNewNode(index, node);
+
+    }
 
     /** Like addNode() but does not require a parent check */
 
     protected void addNewNode(Node node) {
 
         contentList().add(node);
+
+        childAdded(node);
+
+    }
+
+    protected void addNewNode(int index, Node node) {
+
+        contentList().add(index, node);
 
         childAdded(node);
 
@@ -2231,8 +2307,8 @@ public abstract class AbstractElement
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -2247,7 +2323,7 @@ public abstract class AbstractElement
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: AbstractElement.java,v 1.68 2003/04/07 22:14:16 jstrachan Exp $
+ * $Id: AbstractElement.java,v 1.77 2004/06/25 12:34:49 maartenc Exp $
  */

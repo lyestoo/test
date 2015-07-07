@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: UserDataElement.java,v 1.6 2003/04/07 22:13:58 jstrachan Exp $
+ * $Id: UserDataElement.java,v 1.10 2004/08/04 18:22:40 maartenc Exp $
  */
 
 package org.dom4j.util;
@@ -21,10 +21,12 @@ import org.dom4j.tree.DefaultElement;
   * adorn the trees with user defined objects.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.6 $
+  * @version $Revision: 1.10 $
   */
 public class UserDataElement extends DefaultElement {
 
+//    private static final DocumentFactory DOCUMENT_FACTORY = UserDataDocumentFactory.getInstance();
+    
     /** The user data object */
     private Object data;
 
@@ -78,7 +80,11 @@ public class UserDataElement extends DefaultElement {
         Element answer = getDocumentFactory().createElement(qName);
         answer.setData( getCopyOfUserData() );
         return answer;
-    }    
+    }
+    
+//    protected DocumentFactory getDocumentFactory() {
+//        return DOCUMENT_FACTORY;
+//    }
 }
 
 
@@ -108,8 +114,8 @@ public class UserDataElement extends DefaultElement {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -124,7 +130,7 @@ public class UserDataElement extends DefaultElement {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: UserDataElement.java,v 1.6 2003/04/07 22:13:58 jstrachan Exp $
+ * $Id: UserDataElement.java,v 1.10 2004/08/04 18:22:40 maartenc Exp $
  */

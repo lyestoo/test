@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: XMLTableColumnDefinition.java,v 1.5 2003/04/07 23:08:26 jstrachan Exp $
+ * $Id: XMLTableColumnDefinition.java,v 1.8 2004/06/25 12:34:49 maartenc Exp $
  */
 
 package org.dom4j.swing;
@@ -19,7 +19,7 @@ import org.dom4j.XPath;
   * within a table definition.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.5 $ 
+  * @version $Revision: 1.8 $ 
   */
 public class XMLTableColumnDefinition implements Serializable {
 
@@ -155,8 +155,8 @@ public class XMLTableColumnDefinition implements Serializable {
         return columnNameXPath;
     }
     
-    /** Setter for property xpath.
-     * @param xpath New value of property xpath.
+    /** Setter for property columnNameXPath.
+     * @param columnNameXPath New value of property xpath.
      */
     public void setColumnNameXPath(XPath columnNameXPath) {
         this.columnNameXPath = columnNameXPath;
@@ -201,8 +201,8 @@ public class XMLTableColumnDefinition implements Serializable {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -217,7 +217,7 @@ public class XMLTableColumnDefinition implements Serializable {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: XMLTableColumnDefinition.java,v 1.5 2003/04/07 23:08:26 jstrachan Exp $
+ * $Id: XMLTableColumnDefinition.java,v 1.8 2004/06/25 12:34:49 maartenc Exp $
  */

@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: XMLErrorHandler.java,v 1.3 2003/04/07 22:13:58 jstrachan Exp $
+ * $Id: XMLErrorHandler.java,v 1.5 2004/06/25 08:03:42 maartenc Exp $
  */
 
 package org.dom4j.util;
@@ -20,7 +20,7 @@ import org.xml.sax.SAXParseException;
   * using XSLT or the errors can be included in a SOAP message.
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.3 $
+  * @version $Revision: 1.5 $
   */
 public class XMLErrorHandler implements ErrorHandler {
      
@@ -145,8 +145,8 @@ public class XMLErrorHandler implements ErrorHandler {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -161,7 +161,7 @@ public class XMLErrorHandler implements ErrorHandler {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: XMLErrorHandler.java,v 1.3 2003/04/07 22:13:58 jstrachan Exp $
+ * $Id: XMLErrorHandler.java,v 1.5 2004/06/25 08:03:42 maartenc Exp $
  */

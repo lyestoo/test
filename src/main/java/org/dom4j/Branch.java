@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Branch.java,v 1.26 2003/04/07 22:14:45 jstrachan Exp $
+ * $Id: Branch.java,v 1.30 2004/06/25 12:34:46 maartenc Exp $
  */
 
 package org.dom4j;
@@ -20,7 +20,7 @@ import java.util.List;
   * polymorphic manner when changing or navigating child nodes (content).</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.26 $
+  * @version $Revision: 1.30 $
   */
 public interface Branch extends Node {
 
@@ -82,10 +82,10 @@ public interface Branch extends Node {
     public void setContent(List content);    
     
     /** Appends the content of the given branch to this branch instance.
-      * This method behaves like the {@link Collection#addAll(java.util.Collection)} 
+      * This method behaves like the {@link java.util.Collection#addAll(java.util.Collection)} 
       * method.
       *
-      * @param element is the element whose content will be added to me.
+      * @param branch is the branch whose content will be added to me.
       */
     public void appendContent(Branch branch);
     
@@ -163,7 +163,7 @@ public interface Branch extends Node {
     
     /** Adds the given <code>Comment</code> to this branch.
       * If the given node already has a parent defined then an
-      * <code>InvalidAddNodeException</code> will be thrown.
+      * <code>IllegalAddException</code> will be thrown.
       *
       * @param comment is the comment to be added
       */
@@ -171,7 +171,7 @@ public interface Branch extends Node {
     
     /** Adds the given <code>Element</code> to this branch.
       * If the given node already has a parent defined then an
-      * <code>InvalidAddNodeException</code> will be thrown.
+      * <code>IllegalAddException</code> will be thrown.
       *
       * @param element is the element to be added
       */
@@ -179,7 +179,7 @@ public interface Branch extends Node {
     
     /** Adds the given <code>ProcessingInstruction</code> to this branch.
       * If the given node already has a parent defined then an
-      * <code>InvalidAddNodeException</code> will be thrown.
+      * <code>IllegalAddException</code> will be thrown.
       *
       * @param pi is the processing instruction to be added
       */
@@ -247,7 +247,7 @@ public interface Branch extends Node {
      * <code>CDATASections</code>, the normalize operation alone may not be 
      * sufficient, since XPointers do not differentiate between 
      * <code>Text</code> nodes and <code>CDATASection</code> nodes.
-     * @version DOM Level 2
+     * @since DOM Level 2
      */
     public void normalize();
 }
@@ -279,8 +279,8 @@ public interface Branch extends Node {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -295,7 +295,7 @@ public interface Branch extends Node {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Branch.java,v 1.26 2003/04/07 22:14:45 jstrachan Exp $
+ * $Id: Branch.java,v 1.30 2004/06/25 12:34:46 maartenc Exp $
  */

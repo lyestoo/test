@@ -1,10 +1,10 @@
 /*
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  * 
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: Document.java,v 1.8 2002/05/20 08:14:11 jstrachan Exp $
+ * $Id: Document.java,v 1.11 2004/07/11 10:49:36 maartenc Exp $
  */
 
 package org.dom4j;
@@ -16,7 +16,7 @@ import org.xml.sax.EntityResolver;
 /** <p><code>Document</code> defines an XML Document.</p>
   *
   * @author <a href="mailto:jstrachan@apache.org">James Strachan</a>
-  * @version $Revision: 1.8 $
+  * @version $Revision: 1.11 $
   */
 public interface Document extends Branch {
 
@@ -65,8 +65,6 @@ public interface Document extends Branch {
       */
     public Document addDocType(String name, String publicId, String systemId);    
 
-    
-
     /** @return the DocumentType property 
       */
     public DocumentType getDocType();
@@ -86,6 +84,24 @@ public interface Document extends Branch {
       */
     public void setEntityResolver(EntityResolver entityResolver);
     
+    /**
+     * Return the encoding of this document, as part of the XML declaration
+     * This is <code>null</code> when unspecified or when it is not known (such
+     * as when the Document was created in memory) or when the implementation 
+     * does not support this operation.
+     * <p>
+     * The way this encoding is retrieved also depends on the way the XML
+     * source is parsed. For instance, if the SAXReader is used and if the
+     * underlying XMLReader implementation support the
+     * <code>org.xml.sax.ext.Locator2</code> interface, the result returned
+     * by this method is specified by the <code>getEncoding()</code>
+     * method of that interface. 
+     *
+     * @return  The encoding of this document, as stated in the XML declaration,
+     *          or <code>null</code> if unknown.
+     * @since   1.5
+     */
+    public String getXMLEncoding();
 }
 
 
@@ -118,8 +134,8 @@ public interface Document extends Branch {
  *    permission of MetaStuff, Ltd. DOM4J is a registered
  *    trademark of MetaStuff, Ltd.
  *
- * 5. Due credit should be given to the DOM4J Project
- *    (http://dom4j.org/).
+ * 5. Due credit should be given to the DOM4J Project - 
+ *    http://www.dom4j.org
  *
  * THIS SOFTWARE IS PROVIDED BY METASTUFF, LTD. AND CONTRIBUTORS
  * ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT
@@ -134,7 +150,7 @@ public interface Document extends Branch {
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
+ * Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: Document.java,v 1.8 2002/05/20 08:14:11 jstrachan Exp $
+ * $Id: Document.java,v 1.11 2004/07/11 10:49:36 maartenc Exp $
  */

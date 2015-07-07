@@ -28,6 +28,7 @@ import org.xml.sax.ext.LexicalHandler;
  *
  * @author David Brownell
  * @version $Date: 2002/05/24 14:41:55 $
+ * @deprecated Use Aelfred2 instead! THIS CLASS WILL BE REMOVED IN dom4j-1.6 !!
  */
 public class DefaultHandler extends org.xml.sax.helpers.DefaultHandler
     implements LexicalHandler, DeclHandler
