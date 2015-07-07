@@ -4,7 +4,7 @@
  * This software is open source. 
  * See the bottom of this file for the licence.
  * 
- * $Id: XPath.java,v 1.10 2001/12/14 11:32:09 jstrachan Exp $
+ * $Id: XPath.java,v 1.11 2002/03/13 03:29:55 jstrachan Exp $
  */
 
 package org.dom4j;
@@ -21,7 +21,7 @@ import org.jaxen.VariableContext;
   * it has been parsed from a String.</p>
   *
   * @author <a href="mailto:james.strachan@metastuff.com">James Strachan</a>
-  * @version $Revision: 1.10 $
+  * @version $Revision: 1.11 $
   */
 public interface XPath extends NodeFilter {
 
@@ -34,7 +34,8 @@ public interface XPath extends NodeFilter {
 
     
     /** <p><code>matches</code> returns true if the given node matches 
-      * the XPath expression.</p>
+      * the XPath expression. To be more precise when evaluating this XPath
+      * expression on the given node the result set must include the node.</p>
       *
       * @return true if the given node matches this XPath expression
       */
@@ -251,5 +252,5 @@ public interface XPath extends NodeFilter {
  *
  * Copyright 2001 (C) MetaStuff, Ltd. All Rights Reserved.
  *
- * $Id: XPath.java,v 1.10 2001/12/14 11:32:09 jstrachan Exp $
+ * $Id: XPath.java,v 1.11 2002/03/13 03:29:55 jstrachan Exp $
  */
